@@ -1,0 +1,23 @@
+# Raw and processed datasets — large, not meant for git history
+data/raw/
+data/processed/
+data/self_collected/
+
+# Generated results — figures, metrics, logs
+results/
+
+# Large binary/video formats, wherever they show up
+*.avi
+*.mp4
+*.mat
+
+# MATLAB
+*.asv
+*.autosave
+slprj/
+codegen/
+
+# OS cruft
+Thumbs.db
+desktop.ini
+.DS_Store
