@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Segment 2 — Face Detection &amp; ROI Extraction</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1c1e21;
+    --muted: #5b6270;
+    --border: #e3e6ea;
+    --code-bg: #f4f5f7;
+    --link: #1a5fb4;
+    --card-bg: #f8f9fb;
+    --intuition-bg: #eef4fd;
+    --intuition-border: #1a5fb4;
+    --pitfall-bg: #fdf2e9;
+    --pitfall-border: #b5540a;
+    --pausecheck-bg: #edf9ee;
+    --pausecheck-border: #1f7a2e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --fg: #e7e9ec;
+      --muted: #9aa2ad;
+      --border: #2c2f34;
+      --code-bg: #1d2024;
+      --link: #6fa8f5;
+      --card-bg: #1a1d22;
+      --intuition-bg: #17233a;
+      --intuition-border: #5b8fd9;
+      --pitfall-bg: #33230f;
+      --pitfall-border: #d98a3d;
+      --pausecheck-bg: #16281a;
+      --pausecheck-border: #4caf5c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.2rem 1.5rem 5rem;
+    font-size: 17px;
+  }
+  nav.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.1rem;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+  nav.site-nav .brand {
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    margin-right: 0.4rem;
+  }
+  nav.site-nav a {
+    color: var(--link);
+    text-decoration: none;
+    padding: 0.15rem 0.1rem;
+  }
+  nav.site-nav a:hover { text-decoration: underline; }
+  nav.site-nav a.active {
+    color: var(--fg);
+    font-weight: 700;
+    text-decoration: none;
+    pointer-events: none;
+  }
+  nav.site-nav span.sep { color: var(--border); }
+  h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+  h1 {
+    font-size: 1.9rem;
+    margin-top: 0;
+    border-bottom: 3px solid var(--link);
+    padding-bottom: 0.4rem;
+  }
+  h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+  h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+  a { color: var(--link); }
+  p, li { color: var(--fg); }
+  code {
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+    font-size: 0.9em;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+  }
+  pre code { background: none; padding: 0; font-size: 0.87em; }
+  blockquote {
+    border-left: 3px solid var(--border);
+    margin-left: 0;
+    padding-left: 1rem;
+    color: var(--muted);
+  }
+  div.intuition, div.pitfall, div.pausecheck {
+    border-left: 5px solid;
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    margin: 1.5rem 0;
+  }
+  div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+  div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+  div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+  div.intuition p:first-child::before {
+    content: "Intuition First"; display: block; font-weight: 700;
+    color: var(--intuition-border); margin-bottom: 0.5rem;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  div.pitfall p:first-child::before {
+    content: "Common Beginner Mistake"; display: block; font-weight: 700;
+    color: var(--pitfall-border); margin-bottom: 0.5rem;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  div.pausecheck p:first-child::before {
+    content: "Pause and Check Yourself"; display: block; font-weight: 700;
+    color: var(--pausecheck-border); margin-bottom: 0.5rem;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+  th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+  #TOC {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.3rem;
+    margin-bottom: 2rem;
+    font-size: 0.92rem;
+  }
+  #TOC ul { margin: 0.3rem 0; }
+  footer.page-footer {
+    margin-top: 3.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.1rem;
+    margin: 1.8rem 0;
+  }
+  .card {
+    display: block;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.3rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: border-color 0.15s ease;
+  }
+  .card:hover { border-color: var(--link); }
+  .card .card-icon { font-size: 1.6rem; }
+  .card h3 {
+    margin: 0.5rem 0 0.3rem;
+    color: var(--fg);
+    font-size: 1.05rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0 1.8rem;
+  }
+  .pill {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+</style>
+
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 2 &middot; Spandan</span>
+<span class="active">Home</span>
+<span class="sep">&middot;</span>
+<a href="Segment2_Face_ROI_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<a href="Segment2_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<a href="Segment2_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment2_Face_ROI_Guideline.pdf">PDF</a>
+</nav>
+
+<h1>Segment 2: Face Detection &amp; ROI Extraction</h1>
+
+<p>
+This is the documentation site for <strong>Segment 2</strong> of the
+<strong>Spandan</strong> project (contactless heart-rate &amp; SpO2 estimation
+from ordinary video — EEE 312 DSP Lab, BUET). Segment 2 covers exactly one
+job: detect the face in each video frame, crop a forehead skin patch, and
+turn it into three raw signals — R(t), G(t), B(t) — plus the true sampling
+rate f<sub>s</sub>. Nothing here does filtering, CHROM/POS, FFT heart rate,
+or SpO2 — those are later segments.
+</p>
+
+<div class="pill-row">
+  <span class="pill">Viola-Jones face detection</span>
+  <span class="pill">Forehead ROI cropping</span>
+  <span class="pill">Spatial averaging (choir effect)</span>
+  <span class="pill">UBFC-rPPG dataset</span>
+  <span class="pill">MATLAB</span>
+</div>
+
+<h2>Where to start</h2>
+
+<div class="card-grid">
+  <a class="card" href="Segment2_Face_ROI_Guideline.html">
+    <div class="card-icon">📘</div>
+    <h3>Guideline</h3>
+    <p>Start here if you're new to this segment. The theory: why forehead
+    skin specifically, Viola-Jones intuition, the "choir effect" analogy for
+    spatial averaging, why the sampling rate must be read from the file, and
+    the common pitfalls (lighting, motion, detection dropouts). Includes
+    "Intuition First", "Common Beginner Mistake", and "Pause and Check
+    Yourself" call-outs throughout.</p>
+  </a>
+  <a class="card" href="Segment2_LineByLine_Explanation.html">
+    <div class="card-icon">🔍</div>
+    <h3>Line-by-Line Explanation</h3>
+    <p>A block-by-block walkthrough of the actual MATLAB implementation
+    (<code>loadUBFCVideo.m</code> and <code>extractROISignals.m</code>) —
+    what each part does and why, including the real false-positive
+    face-detection bug found and fixed while testing this segment.</p>
+  </a>
+  <a class="card" href="Segment2_Team_README.html">
+    <div class="card-icon">👥</div>
+    <h3>Team README</h3>
+    <p>Practical instructions for the other team members: where to put your
+    assigned subject videos, how to edit the subject list in the batch
+    script, how to run it, and where your output lands so everyone's
+    results merge cleanly.</p>
+  </a>
+  <a class="card" href="Segment2_Face_ROI_Guideline.pdf">
+    <div class="card-icon">📄</div>
+    <h3>Guideline (PDF)</h3>
+    <p>The same guideline content as a printable/shareable PDF, built with
+    pandoc + xelatex + tcolorbox, styled call-out boxes included.</p>
+  </a>
+</div>
+
+<h2>The code</h2>
+
+<p>
+The actual implementation lives in the main project scaffold, not in this
+docs folder:
+</p>
+
+<ul>
+  <li><code><a href="../matlab/src/io/loadUBFCVideo.m">matlab/src/io/loadUBFCVideo.m</a></code> — opens a subject's video, reads the true frame rate.</li>
+  <li><code><a href="../matlab/src/roi/extractROISignals.m">matlab/src/roi/extractROISignals.m</a></code> — face detection, ROI cropping, per-frame R/G/B averaging.</li>
+  <li><code><a href="../matlab/scripts/run_segment2_roi_batch.m">matlab/scripts/run_segment2_roi_batch.m</a></code> — batch driver the team runs over their assigned subjects.</li>
+</ul>
+
+<h2>What comes out of this segment</h2>
+
+<p>
+For every subject processed: <code>data/processed/&lt;subjectID&gt;_rgb_traces.mat</code>
+(fields <code>R</code>, <code>G</code>, <code>B</code>, <code>fs</code>,
+<code>subjectID</code>, <code>numDroppedFrames</code>) and
+<code>results/figures/&lt;subjectID&gt;_roi_sanity.png</code> — a sanity-check
+image with the detected face box and the final ROI box drawn on it. Always
+look at the PNG before trusting the <code>.mat</code> output — that's the
+whole point of it.
+</p>
+
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 2 (face detection + ROI extraction) docs — BUET EEE 312.
+  Source markdown lives in <code>segment2_face_roi/</code>; the actual code lives under <code>matlab/src/</code>.
+</footer>
+
+</body>
+</html>

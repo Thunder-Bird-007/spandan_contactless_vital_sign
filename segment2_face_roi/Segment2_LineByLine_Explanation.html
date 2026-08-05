@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Segment 2 — Line-by-Line Explanation</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav a.active {
+      color: var(--fg);
+      font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 2 &middot; Spandan</span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<a href="Segment2_Face_ROI_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<span class="active">Line-by-Line Explanation</span>
+<span class="sep">&middot;</span>
+<a href="Segment2_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment2_Face_ROI_Guideline.pdf">PDF</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 2 — Line-by-Line Explanation</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#segment-2-line-by-line-explanation"
+id="toc-segment-2-line-by-line-explanation">Segment 2 — Line-by-Line
+Explanation</a>
+<ul>
+<li><a href="#part-1-loadubfcvideo.m"
+id="toc-part-1-loadubfcvideo.m">Part 1 —
+<code>loadUBFCVideo.m</code></a></li>
+<li><a href="#part-2-extractroisignals.m"
+id="toc-part-2-extractroisignals.m">Part 2 —
+<code>extractROISignals.m</code></a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="segment-2-line-by-line-explanation">Segment 2 — Line-by-Line
+Explanation</h1>
+<p>This document walks through
+<code>matlab/src/io/loadUBFCVideo.m</code> and
+<code>matlab/src/roi/extractROISignals.m</code> block by block, in plain
+teaching language. It assumes you’ve read Chapter 4 of the project’s
+Orientation Lecture (Viola-Jones intuition, the “choir effect” analogy
+for spatial averaging) but haven’t seen this specific code before. The
+code files themselves are deliberately bare of inline comments — this
+document is where the <em>why</em> lives.</p>
+<hr />
+<h2 id="part-1-loadubfcvideo.m">Part 1 —
+<code>loadUBFCVideo.m</code></h2>
+<h3 id="what-the-function-is-for">What the function is for</h3>
+<p>This is the very first step of the whole pipeline: open a subject’s
+<code>.avi</code> file and hand back something later code can pull
+frames from, plus the two numbers everything downstream needs — the
+frame rate and the frame count.</p>
+<h3 id="the-file-existence-check">The file-existence check</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="op">~</span><span class="va">isfile</span>(<span class="va">videoPath</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">error</span>(<span class="ss">&#39;loadUBFCVideo:fileNotFound&#39;</span><span class="op">,</span> <span class="ss">&#39;Video file not found: %s&#39;</span><span class="op">,</span> <span class="va">videoPath</span>)<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p>Before doing anything else, we check the path actually points at a
+real file. Without this, <code>VideoReader</code> would still throw an
+error if the path is wrong, but MATLAB’s own error message is a generic
+low-level one (“Unable to open file”) that doesn’t tell you
+<em>which</em> subject’s video is missing. When you’re running a batch
+over dozens of subjects and one folder is misnamed, a clear error naming
+the exact path saves a lot of guessing. This is exactly the kind of
+failure the batch script (Part 4) is built to catch and log, then move
+on from.</p>
+<h3 id="opening-the-video">Opening the video</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">frames</span> <span class="op">=</span> <span class="va">VideoReader</span>(<span class="va">videoPath</span>)<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">frameRate</span> <span class="op">=</span> <span class="va">frames</span>.<span class="va">FrameRate</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="va">numFrames</span> <span class="op">=</span> <span class="va">frames</span>.<span class="va">NumFrames</span><span class="op">;</span></span></code></pre></div>
+<p><code>VideoReader</code> is MATLAB’s built-in handle for a video
+file. Creating one does <strong>not</strong> decode the whole video into
+memory — it just opens the file and reads its header (container info,
+codec, frame rate, duration). That header read is fast even though the
+file itself might be a gigabyte or more.</p>
+<p>We deliberately return the <code>VideoReader</code> object itself as
+<code>frames</code>, rather than looping through it here and returning a
+giant <code>H x W x 3 x numFrames</code> array of pixel data. The task
+brief was explicit about this: UBFC-rPPG videos are uncompressed AVI,
+and a single subject’s video can be 1–2 GB on disk. Uncompressed data
+expands further once loaded (each frame becomes a full-size RGB
+<code>uint8</code> array), and loading every frame for every subject up
+front would either exhaust RAM or make the whole pipeline painfully slow
+before any real work even starts. Instead, whoever calls
+<code>loadUBFCVideo</code> gets a <em>handle</em> they can stream frames
+from one at a time — see how <code>extractROISignals.m</code> does
+exactly that with <code>hasFrame</code>/<code>readFrame</code>.</p>
+<p><code>frames.FrameRate</code> reads the frame rate directly from the
+AVI container’s own header field — it is not something MATLAB guesses or
+something we hardcode. This matters a lot for this project specifically:
+<code>docs/DATA_FORMAT.md</code> confirms (by directly parsing the AVI
+headers) that UBFC-rPPG videos are <em>not</em> a clean 30 fps — they
+range roughly 28.6–29.8 fps and the exact value differs per subject. If
+we hardcoded <code>fs = 30</code>, every downstream FFT-based heart-rate
+estimate would be computed against a frequency axis that’s subtly wrong
+for every subject, which is exactly the kind of silent, hard-to-notice
+bug that produces believable-but-incorrect results. Reading it straight
+from the file avoids that entirely.</p>
+<p><code>frames.NumFrames</code> is likewise read from the container’s
+frame index rather than counted by decoding every frame — fast for an
+uncompressed AVI like these.</p>
+<hr />
+<h2 id="part-2-extractroisignals.m">Part 2 —
+<code>extractROISignals.m</code></h2>
+<h3 id="the-overall-shape-of-the-function">The overall shape of the
+function</h3>
+<p>The function receives the <code>VideoReader</code> handle and the
+frame rate from <code>loadUBFCVideo.m</code>, and its job is to walk
+through the video frame by frame, find the face, crop a small skin
+patch, and average the pixels in that patch into one number per channel
+per frame. By the end it has built three vectors — <code>R</code>,
+<code>G</code>, <code>B</code> — that are the raw material every later
+pipeline stage (filtering, CHROM/POS, FFT heart rate) works on.</p>
+<h3 id="setting-up-before-the-loop">Setting up before the loop</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">detectEveryN</span> <span class="op">=</span> <span class="fl">5</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="va">faceDetector</span> <span class="op">=</span> <span class="va">vision</span>.<span class="va">CascadeObjectDetector</span>()<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="va">frames</span>.<span class="va">CurrentTime</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="va">numFrames</span> <span class="op">=</span> <span class="va">frames</span>.<span class="va">NumFrames</span><span class="op">;</span></span></code></pre></div>
+<p><code>vision.CascadeObjectDetector()</code> builds a Viola-Jones face
+detector using its default frontal-face model. Viola-Jones works by
+sliding a window over the image at many scales and checking, at each
+position, a cascade of simple rectangular-contrast tests (this region
+should be darker than that region, etc.) — most non-face windows get
+rejected after just the first one or two cheap tests, which is why it
+can run in real time on a CPU without any GPU or deep learning involved.
+That’s the “cascade” in the name: a sequence of increasingly strict
+filters, arranged so the vast majority of the image is thrown out almost
+for free.</p>
+<p><code>frames.CurrentTime = 0</code> rewinds the reader to the start
+of the video. This matters if the same <code>VideoReader</code> object
+were ever reused or partly read before this function is called — it
+guarantees we always start from frame 1.</p>
+<p><strong>Why detect every 5th frame instead of every single
+frame</strong> (the <code>detectEveryN = 5</code> choice): running the
+full Viola-Jones cascade on every one of ~2000–2400 frames is the single
+most expensive operation in this function. A face does not move far in
+the roughly 1/6th of a second it takes to skip 5 frames at ~29 fps — a
+resting subject sitting in front of a webcam simply doesn’t jump several
+centimeters between one detection and the next. So the trade-off is: run
+the expensive detector only once every 5 frames, and for the frames in
+between, reuse the most recent bounding box. This cuts detector calls by
+80% with essentially no cost to ROI accuracy for this kind of
+mostly-still footage, which is exactly the UBFC-rPPG recording setup
+(seated subject, static camera). The downside is that if a subject makes
+a <em>fast</em> head movement, the reused box can lag behind the true
+face position for up to 4 frames before the next detection call catches
+up — for this dataset and this use case that lag is judged an acceptable
+trade for roughly 5x faster processing. This number is not a MATLAB
+built-in default; it is a project-specific choice that a different
+dataset (faster head motion, lower frame rate) might need to
+revisit.</p>
+<h3 id="preallocating-the-output-arrays">Preallocating the output
+arrays</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">R</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">numFrames</span>)<span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">G</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">numFrames</span>)<span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="va">B</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">numFrames</span>)<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="va">roiTimestamps</span> <span class="op">=</span> <span class="va">zeros</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">numFrames</span>)<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="va">frameDroppedFlag</span> <span class="op">=</span> <span class="va">false</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">numFrames</span>)<span class="op">;</span></span></code></pre></div>
+<p>MATLAB arrays that grow one element at a time inside a loop
+(<code>R(end+1) = ...</code>) force MATLAB to reallocate and copy the
+whole array on every iteration, which gets very slow for thousands of
+frames. Preallocating a fixed-size array up front and filling it in by
+index avoids that entirely. <code>frameDroppedFlag</code> is a
+same-length logical array that starts all <code>false</code> and gets
+flipped to <code>true</code> at any frame index where the detector had
+to fall back instead of finding a face fresh — this is how the “log
+which frames this happened on” requirement is implemented without
+printing to the console on every single frame.</p>
+<h3 id="the-main-per-frame-loop">The main per-frame loop</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">frameIdx</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> <span class="va">hasFrame</span>(<span class="va">frames</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">frameIdx</span> <span class="op">=</span> <span class="va">frameIdx</span> <span class="op">+</span> <span class="fl">1</span><span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">img</span> <span class="op">=</span> <span class="va">readFrame</span>(<span class="va">frames</span>)<span class="op">;</span></span></code></pre></div>
+<p>This is a plain <code>while</code>/counter loop, not a vectorized
+“process the whole video at once” trick — the task deliberately asked
+for an explicit, readable frame-by-frame loop rather than clever
+vectorization, and this is also simply how streaming video decoding has
+to work: <code>readFrame</code> can only hand back one frame at a time,
+in order, advancing an internal read pointer. <code>hasFrame</code> just
+asks “is there another frame left to read” so the loop stops cleanly at
+the true end of the file rather than relying purely on the
+<code>numFrames</code> count (which, for some container formats, can be
+a slight over- or under-estimate of what’s actually decodable — the loop
+is written defensively against that).</p>
+<h3 id="deciding-whether-to-run-the-detector-this-frame">Deciding
+whether to run the detector this frame</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="va">runDetectionThisFrame</span> <span class="op">=</span> <span class="va">mod</span>(<span class="va">frameIdx</span> <span class="op">-</span> <span class="fl">1</span><span class="op">,</span> <span class="va">detectEveryN</span>) <span class="op">==</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">runDetectionThisFrame</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">bboxes</span> <span class="op">=</span> <span class="va">step</span>(<span class="va">faceDetector</span><span class="op">,</span> <span class="va">img</span>)<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">isempty</span>(<span class="va">bboxes</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">frameDroppedFlag</span>(<span class="va">frameIdx</span>) <span class="op">=</span> <span class="va">true</span><span class="op">;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">disp</span>([<span class="ss">&#39;Frame &#39;</span> <span class="va">num2str</span>(<span class="va">frameIdx</span>) <span class="ss">&#39;: face detector found nothing, reusing last known bounding box.&#39;</span>])<span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">currentBBox</span> <span class="op">=</span> <span class="va">lastGoodBBox</span><span class="op">;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">bestBBox</span> <span class="op">=</span> <span class="va">bboxes</span>(<span class="fl">1</span><span class="op">,</span> <span class="op">:</span>)<span class="op">;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">bestArea</span> <span class="op">=</span> <span class="va">bboxes</span>(<span class="fl">1</span><span class="op">,</span> <span class="fl">3</span>) <span class="op">*</span> <span class="va">bboxes</span>(<span class="fl">1</span><span class="op">,</span> <span class="fl">4</span>)<span class="op">;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">for</span> <span class="va">boxRow</span> <span class="op">=</span> <span class="fl">2</span><span class="op">:</span><span class="va">size</span>(<span class="va">bboxes</span><span class="op">,</span> <span class="fl">1</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>            <span class="va">thisArea</span> <span class="op">=</span> <span class="va">bboxes</span>(<span class="va">boxRow</span><span class="op">,</span> <span class="fl">3</span>) <span class="op">*</span> <span class="va">bboxes</span>(<span class="va">boxRow</span><span class="op">,</span> <span class="fl">4</span>)<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span> <span class="va">thisArea</span> <span class="op">&gt;</span> <span class="va">bestArea</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                <span class="va">bestArea</span> <span class="op">=</span> <span class="va">thisArea</span><span class="op">;</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                <span class="va">bestBBox</span> <span class="op">=</span> <span class="va">bboxes</span>(<span class="va">boxRow</span><span class="op">,</span> <span class="op">:</span>)<span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            <span class="kw">end</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">end</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">currentBBox</span> <span class="op">=</span> <span class="va">bestBBox</span><span class="op">;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">lastGoodBBox</span> <span class="op">=</span> <span class="va">currentBBox</span><span class="op">;</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="va">currentBBox</span> <span class="op">=</span> <span class="va">lastGoodBBox</span><span class="op">;</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p><code>mod(frameIdx - 1, detectEveryN) == 0</code> is just the “every
+Nth frame” test — it’s true on frame 1, frame 6, frame 11, and so on,
+implementing the trade-off described above.</p>
+<p><code>step(faceDetector, img)</code> is how you actually run a
+<code>vision.CascadeObjectDetector</code> in MATLAB — <code>step</code>
+is the standard call pattern for MATLAB System objects (the class
+<code>vision.CascadeObjectDetector</code> belongs to). It returns one
+row per detected face, each row formatted
+<code>[x y width height]</code> in pixels — <code>x, y</code> is the
+top-left corner of the box.</p>
+<p><strong>Why the largest box, not just the first one.</strong> The
+obvious first instinct is “UBFC-rPPG videos are single-subject
+recordings, so just take <code>bboxes(1, :)</code>, the first detected
+face.” That was this implementation’s first version — and it broke on
+real data. Testing against subject <code>6-gt</code> in this dataset,
+<code>step</code> returned <em>two</em> rows for the middle frame: a
+tiny <code>[3 428 49 49]</code> box in a bottom corner of the frame (a
+false positive — some patch of background texture that happened to pass
+the whole Viola-Jones cascade) and the actual face at
+<code>[295 120 183 183]</code>. Because <code>bboxes(1, :)</code> just
+takes whichever row the detector happens to list first — which is not
+guaranteed to be sorted by confidence or size — the first version of
+this code locked onto the tiny false-positive box for that subject’s
+entire video, and the sanity PNG for that subject showed the ROI sitting
+on an empty corner of the room instead of a face. The fix, shown above,
+is a small explicit loop that compares <code>width * height</code>
+across every returned row and keeps whichever one is largest. This works
+because in a single-subject frontal recording, a real face detection is
+almost always a much bigger box than a stray false positive — background
+clutter rarely coincidentally matches the cascade at a large scale. It’s
+not a mathematically guaranteed fix (a close-up false positive could in
+principle be large too), but for this dataset and this camera framing it
+is a simple, cheap, and effective one — and it is exactly the kind of
+failure the mandatory sanity PNG (see the next section) is there to
+catch before anyone trusts the resulting signal.</p>
+<p>If <code>step</code> comes back empty, that means Viola-Jones
+genuinely found no face-shaped region this frame (could be a brief
+awkward head angle, motion blur, or a lighting flicker). Rather than
+crash, or — worse — silently write zero into
+<code>R</code>/<code>G</code>/<code>B</code> for that frame (which would
+look like a legitimate physical measurement of “no light at all,”
+corrupting the signal), we fall back to <code>lastGoodBBox</code>, the
+most recent bounding box that <em>did</em> come from a real successful
+detection, and we flag the frame and print exactly which frame it
+happened on. This is the “handle missed detections per frame gracefully”
+requirement from the brief, implemented literally.</p>
+<p>On frames where we don’t run the detector at all (the 4 out of every
+5 “skip” frames), we don’t even attempt detection — we just carry
+forward <code>lastGoodBBox</code> directly. This isn’t a failure and
+isn’t logged as one; it is the intended behavior of the every-N-frames
+strategy.</p>
+<h3 id="the-one-time-cold-start-fallback">The one-time cold-start
+fallback</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">isempty</span>(<span class="va">currentBBox</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">frameDroppedFlag</span>(<span class="va">frameIdx</span>) <span class="op">=</span> <span class="va">true</span><span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">disp</span>([<span class="ss">&#39;Frame &#39;</span> <span class="va">num2str</span>(<span class="va">frameIdx</span>) <span class="ss">&#39;: no bounding box available yet, using centered fallback box.&#39;</span>])<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">currentBBox</span> <span class="op">=</span> [<span class="va">round</span>(<span class="fl">0.2</span> <span class="op">*</span> <span class="va">frameWidth</span>)<span class="op">,</span> <span class="va">round</span>(<span class="fl">0.2</span> <span class="op">*</span> <span class="va">frameHeight</span>)<span class="op">,</span> <span class="va">round</span>(<span class="fl">0.6</span> <span class="op">*</span> <span class="va">frameWidth</span>)<span class="op">,</span> <span class="va">round</span>(<span class="fl">0.6</span> <span class="op">*</span> <span class="va">frameHeight</span>)]<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p>There’s one edge case the logic above doesn’t cover: what if the very
+first frame (or first several frames, if the subject briefly isn’t
+facing the camera yet) fails to detect a face at all? Then
+<code>lastGoodBBox</code> is still empty — there is nothing to fall back
+to yet. Rather than let the ROI crop step below crash on an empty box,
+we use a generic centered box covering the middle 60% of the frame width
+and height. This is a coarse fallback, not a real face detection, but it
+is far better than a crash, and it only ever applies to the small number
+of frames before the first successful detection — every one of these
+frames is flagged and printed just like a normal detection miss, so
+nothing is hidden.</p>
+<h3 id="turning-a-face-box-into-a-forehead-roi-box">Turning a face box
+into a forehead ROI box</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="va">faceX</span> <span class="op">=</span> <span class="va">currentBBox</span>(<span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="va">faceY</span> <span class="op">=</span> <span class="va">currentBBox</span>(<span class="fl">2</span>)<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="va">faceW</span> <span class="op">=</span> <span class="va">currentBBox</span>(<span class="fl">3</span>)<span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="va">faceH</span> <span class="op">=</span> <span class="va">currentBBox</span>(<span class="fl">4</span>)<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="va">roiX1</span> <span class="op">=</span> <span class="va">max</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">round</span>(<span class="va">faceX</span> <span class="op">+</span> <span class="fl">0.30</span> <span class="op">*</span> <span class="va">faceW</span>))<span class="op">;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="va">roiX2</span> <span class="op">=</span> <span class="va">min</span>(<span class="va">frameWidth</span><span class="op">,</span> <span class="va">round</span>(<span class="va">faceX</span> <span class="op">+</span> <span class="fl">0.70</span> <span class="op">*</span> <span class="va">faceW</span>))<span class="op">;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="va">roiY1</span> <span class="op">=</span> <span class="va">max</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">round</span>(<span class="va">faceY</span> <span class="op">+</span> <span class="fl">0.10</span> <span class="op">*</span> <span class="va">faceH</span>))<span class="op">;</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="va">roiY2</span> <span class="op">=</span> <span class="va">min</span>(<span class="va">frameHeight</span><span class="op">,</span> <span class="va">round</span>(<span class="va">faceY</span> <span class="op">+</span> <span class="fl">0.30</span> <span class="op">*</span> <span class="va">faceH</span>))<span class="op">;</span></span></code></pre></div>
+<p>The Viola-Jones face box spans roughly hairline-to-chin vertically
+and ear-to-ear horizontally. We don’t want the whole face — eyes and
+eyebrows move (blinking, expressions), the mouth moves (talking,
+swallowing), and hair/background at the very edges of the box carries no
+blood-flow signal at all and would just dilute the average with noise.
+What we want is a patch of <em>plain, mostly-still skin</em> with strong
+blood perfusion under it.</p>
+<p>The chosen fractions crop a horizontal band that sits: -
+<strong>Horizontally</strong>, from 30% to 70% of the face box width —
+i.e. the central 40%, discarding the outer 30% on each side where hair,
+ears, and the edge of the face curve away from the camera tend to sit. -
+<strong>Vertically</strong>, from 10% to 30% of the face box height —
+i.e. a band just below the hairline and well above where eyebrows
+typically start (eyebrows are usually somewhere past the 35–40% mark
+down a Viola-Jones face box). This keeps the crop squarely on forehead
+skin and clear of both hair above and eyes/eyebrows below.</p>
+<p>These specific numbers (0.30/0.70 horizontally, 0.10/0.30 vertically)
+were chosen by inspection as a safe, conservative forehead patch rather
+than tuned against ground truth — see the sanity PNGs in
+<code>results/figures/</code> for a visual check that they land where
+intended for this project’s subjects. <code>max(1, ...)</code> and
+<code>min(frameWidth/frameHeight, ...)</code> just guard against the box
+mathematically stepping outside the actual frame if a detected face box
+happens to sit very close to an image edge.</p>
+<h3
+id="averaging-the-roi-into-one-number-per-channel-the-choir-effect">Averaging
+the ROI into one number per channel — the “choir effect”</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">roiPatch</span> <span class="op">=</span> <span class="va">img</span>(<span class="va">roiY1</span><span class="op">:</span><span class="va">roiY2</span><span class="op">,</span> <span class="va">roiX1</span><span class="op">:</span><span class="va">roiX2</span><span class="op">,</span> <span class="op">:</span>)<span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="va">redChannel</span> <span class="op">=</span> <span class="va">double</span>(<span class="va">roiPatch</span>(<span class="op">:,</span> <span class="op">:,</span> <span class="fl">1</span>))<span class="op">;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="va">greenChannel</span> <span class="op">=</span> <span class="va">double</span>(<span class="va">roiPatch</span>(<span class="op">:,</span> <span class="op">:,</span> <span class="fl">2</span>))<span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="va">blueChannel</span> <span class="op">=</span> <span class="va">double</span>(<span class="va">roiPatch</span>(<span class="op">:,</span> <span class="op">:,</span> <span class="fl">3</span>))<span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="va">R</span>(<span class="va">frameIdx</span>) <span class="op">=</span> <span class="va">mean</span>(<span class="va">redChannel</span>(<span class="op">:</span>))<span class="op">;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="va">G</span>(<span class="va">frameIdx</span>) <span class="op">=</span> <span class="va">mean</span>(<span class="va">greenChannel</span>(<span class="op">:</span>))<span class="op">;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="va">B</span>(<span class="va">frameIdx</span>) <span class="op">=</span> <span class="va">mean</span>(<span class="va">blueChannel</span>(<span class="op">:</span>))<span class="op">;</span></span></code></pre></div>
+<p><code>img(roiY1:roiY2, roiX1:roiX2, :)</code> crops out just the
+forehead patch — all rows from <code>roiY1</code> to <code>roiY2</code>,
+all columns from <code>roiX1</code> to <code>roiX2</code>, and all 3
+color planes (<code>:</code> in the third dimension). Each color plane
+is converted to <code>double</code> before averaging, because the raw
+frame is <code>uint8</code> (0–255 integers) and <code>uint8</code>
+arithmetic in MATLAB saturates and rounds in ways that would quietly
+corrupt an average of a large pixel patch.</p>
+<p>The single <code>mean(...)</code> call over every pixel in that
+patch, for each channel, one number, is the “choir effect” from the
+Orientation Lecture: any one pixel’s blood-flow-driven brightness change
+is tiny and buried in camera sensor noise — like a single singer’s voice
+being hard to pick out. But the <em>pattern</em> of that tiny change is
+shared across every pixel in the ROI at once (blood volume under the
+whole patch of skin rises and falls together), while the noise at each
+pixel is independent and random. Averaging hundreds or thousands of
+pixels together lets that shared, physiologically-driven signal survive
+while the independent per-pixel noise mostly cancels out — the same way
+a choir of untrained voices sounds more in tune together than any one
+voice does alone. This is also exactly why we crop a <em>specific</em>
+patch of skin rather than averaging the whole image: including hair,
+background, or eyes would add pixels whose brightness has nothing to do
+with blood flow, diluting the very signal the averaging is trying to
+strengthen.</p>
+<p><code>roiTimestamps(frameIdx) = (frameIdx - 1) / frameRate;</code>
+builds each frame’s timestamp in seconds directly from its position and
+the true frame rate read back in <code>loadUBFCVideo.m</code> — frame 1
+is time 0, frame 2 is time <code>1/frameRate</code>, and so on. This is
+what later lets a ground-truth signal (sampled on its own independent
+clock) be aligned against these per-frame RGB values.</p>
+<h3 id="capturing-one-frame-for-the-sanity-check-figure">Capturing one
+frame for the sanity-check figure</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="va">currentROIBBox</span> <span class="op">=</span> [<span class="va">roiX1</span><span class="op">,</span> <span class="va">roiY1</span><span class="op">,</span> <span class="va">roiX2</span> <span class="op">-</span> <span class="va">roiX1</span><span class="op">,</span> <span class="va">roiY2</span> <span class="op">-</span> <span class="va">roiY1</span>]<span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">frameIdx</span> <span class="op">==</span> <span class="va">debugFrame</span>.<span class="va">frameIndex</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">debugFrame</span>.<span class="va">image</span> <span class="op">=</span> <span class="va">img</span><span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">debugFrame</span>.<span class="va">faceBBox</span> <span class="op">=</span> <span class="va">currentBBox</span><span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">debugFrame</span>.<span class="va">roiBBox</span> <span class="op">=</span> <span class="va">currentROIBBox</span><span class="op">;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">debugFrame</span>.<span class="va">frameIndex</span> <span class="op">=</span> <span class="va">frameIdx</span><span class="op">;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p><code>debugFrame.frameIndex</code> was initialized before the loop to
+<code>round(numFrames / 2)</code> — the middle frame of the video. On
+the one loop iteration where <code>frameIdx</code> reaches that target,
+we save a copy of the raw frame plus both bounding boxes (face and ROI),
+converting the ROI box into the same <code>[x y width height]</code>
+format as the face box so both can be drawn the same way. This is the
+data <code>scripts/run_segment2_roi_batch.m</code> uses to draw the two
+colored rectangles and save the sanity PNG — the whole point being that
+a human can glance at one frame per subject and immediately confirm the
+ROI landed on forehead skin, not hair, background, or eyes, before
+trusting any signal built from it.</p>
+<h3
+id="trimming-the-arrays-and-finalizing-the-dropped-frame-list">Trimming
+the arrays and finalizing the dropped-frame list</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="va">actualNumFrames</span> <span class="op">=</span> <span class="va">frameIdx</span><span class="op">;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">actualNumFrames</span> <span class="op">&lt;</span> <span class="va">numFrames</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">R</span> <span class="op">=</span> <span class="va">R</span>(<span class="fl">1</span><span class="op">:</span><span class="va">actualNumFrames</span>)<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="va">droppedFrameIdx</span> <span class="op">=</span> <span class="va">find</span>(<span class="va">frameDroppedFlag</span>)<span class="op">;</span></span></code></pre></div>
+<p>Because the arrays were preallocated using
+<code>frames.NumFrames</code> (a count read from the file header) but
+the loop actually stops based on <code>hasFrame</code> (what can really
+be decoded), the two counts can occasionally disagree by a frame or two.
+If fewer frames were actually read than were preallocated for, this
+trims the unused trailing zeros off every output array so nothing
+downstream mistakes an unfilled zero for a real (very dark) measurement.
+<code>find(frameDroppedFlag)</code> turns the logical true/false array
+built during the loop into the actual list of frame numbers where a
+fallback bounding box was used — this is the
+<code>droppedFrameIdx</code> output, and its length becomes
+<code>numDroppedFrames</code> when the batch script saves the
+<code>.mat</code> file.</p>
+<p>Finally, there’s a small safety check after the loop: if the video
+turned out to be so short that the loop never reached the target middle
+frame for the debug snapshot, the last frame processed is used instead,
+so <code>debugFrame.image</code> is never left empty.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 2 (face detection + ROI extraction) docs — BUET EEE 312.
+  Source markdown lives in <code>segment2_face_roi/</code>; the actual code lives under <code>matlab/src/</code>.
+</footer>
+</body>
+</html>

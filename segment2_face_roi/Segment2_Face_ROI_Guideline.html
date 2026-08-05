@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Team Spandan" />
+  <title>Segment 2 — Face &amp; ROI Guideline</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      font-size: 11pt;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav a.active {
+      color: var(--fg);
+      font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 2 &middot; Spandan</span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<span class="active">Guideline</span>
+<span class="sep">&middot;</span>
+<a href="Segment2_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<a href="Segment2_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment2_Face_ROI_Guideline.pdf">PDF</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 2 — Face &amp; ROI Guideline</h1>
+<p class="subtitle">Spandan: Contactless Vital Sign Monitoring — EEE 312
+DSP Project, BUET</p>
+<p class="author">Team Spandan</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#why-this-segment-exists"
+id="toc-why-this-segment-exists">Why This Segment Exists</a></li>
+<li><a href="#why-forehead-skin-specifically"
+id="toc-why-forehead-skin-specifically">Why Forehead Skin,
+Specifically</a></li>
+<li><a href="#viola-jones-face-detection-high-level-intuition"
+id="toc-viola-jones-face-detection-high-level-intuition">Viola-Jones
+Face Detection, High-Level Intuition</a></li>
+<li><a href="#detecting-every-nth-frame-not-every-frame"
+id="toc-detecting-every-nth-frame-not-every-frame">Detecting Every Nth
+Frame, Not Every Frame</a></li>
+<li><a href="#why-fs-must-be-read-from-the-file-never-assumed"
+id="toc-why-fs-must-be-read-from-the-file-never-assumed">Why
+<em>f</em><sub>s</sub> Must Be Read From the File, Never
+Assumed</a></li>
+<li><a href="#spatial-averaging-and-the-choir-effect"
+id="toc-spatial-averaging-and-the-choir-effect">Spatial Averaging and
+the Choir Effect</a></li>
+<li><a href="#common-pitfalls-in-this-segment"
+id="toc-common-pitfalls-in-this-segment">Common Pitfalls in This
+Segment</a></li>
+<li><a href="#how-this-segment-feeds-into-the-next-one"
+id="toc-how-this-segment-feeds-into-the-next-one">How This Segment Feeds
+Into the Next One</a></li>
+</ul>
+</nav>
+<h1 id="why-this-segment-exists">Why This Segment Exists</h1>
+<p>Every later stage of this project — filtering, CHROM/POS combination,
+FFT-based heart rate, and SpO2 estimation — assumes it already has three
+clean 1-D signals: <em>R</em>(<em>t</em>), <em>G</em>(<em>t</em>),
+<em>B</em>(<em>t</em>). Those signals have to come from somewhere. This
+segment is that “somewhere”: it takes a raw facial video and turns it
+into those three traces, plus the true sampling rate
+<em>f</em><sub>s</sub>.</p>
+<p>Nothing in this segment does any <em>signal processing</em> in the
+DSP sense yet — no filtering, no frequency analysis. It is purely
+computer vision (finding the face) and spatial averaging (turning a
+patch of pixels into one number). But if this stage picks the wrong
+patch of skin, or gets the sampling rate wrong, every DSP technique
+applied afterward is polishing a signal that was corrupted before
+Chapter 4 ever comes into play. Get this part right and boring;
+everything interesting happens later.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Think of this whole segment as
+building a very crude, very cheap “contact PPG sensor” out of a webcam.
+A real pulse oximeter clips onto a fingertip and shines light through
+skin, measuring how much light gets absorbed as blood volume rises and
+falls with each heartbeat. A camera pointed at a face is doing something
+similar, just passively: ambient light bounces off skin, and the
+<em>amount</em> of light that bounces back changes very slightly as
+blood volume under that skin changes. This segment’s whole job is to
+isolate the right patch of skin and turn its pixel brightness into a
+number, frame by frame, so later stages can go looking for the heartbeat
+hiding in that number’s tiny fluctuations.</p>
+</div>
+<h1 id="why-forehead-skin-specifically">Why Forehead Skin,
+Specifically</h1>
+<p>Not every visible pixel in a video frame is useful. A good ROI
+(region of interest) for remote photoplethysmography needs three
+properties:</p>
+<ol type="1">
+<li><strong>It has to be skin with real blood flow underneath
+it</strong> — hair, glasses, and background contribute no physiological
+signal at all, only noise.</li>
+<li><strong>It has to move as little as possible</strong> — the mouth
+moves when talking, eyes move and blink, eyebrows move with expression.
+Any of that motion contaminates the tiny blood-flow signal with a much
+larger motion artifact.</li>
+<li><strong>It has to be reasonably flat and uniformly lit</strong> — a
+patch that curves sharply (like the side of the nose) picks up shading
+changes whenever the head turns slightly, which looks like a brightness
+change but has nothing to do with blood flow.</li>
+</ol>
+<p>The forehead satisfies all three better than almost anywhere else on
+the face. It’s a broad, relatively flat, usually well-lit expanse of
+skin that barely moves even when a subject talks or blinks, and it sits
+well clear of hair (below the hairline) and well clear of eyes/eyebrows
+(above them). Cheeks are a common second choice in published rPPG work,
+but they sit closer to the mouth (jaw motion while talking or swallowing
+bleeds in) and are more prone to specular glare from directly overhead
+lighting. This project’s implementation uses a forehead-only crop for
+that reason — a smaller, safer target rather than trying to combine two
+regions and risk including the motion-heavy area between them.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> It’s tempting to just
+average the <em>entire</em> face bounding box that the detector returns,
+on the theory that “more pixels means more averaging means less noise.”
+This is backwards. The choir-effect averaging described below only helps
+when every pixel is contributing the <em>same underlying signal</em>
+plus independent noise. Once you include eyes, eyebrows, mouth, and hair
+inside the average, you aren’t reducing noise anymore — you’re mixing in
+whole different signals (blinking, talking, hair barely reflecting light
+at all) that have nothing to do with blood flow and swamp out the real
+one. A smaller, purer patch of just forehead skin beats a bigger,
+messier patch of “mostly face.”</p>
+</div>
+<h1 id="viola-jones-face-detection-high-level-intuition">Viola-Jones
+Face Detection, High-Level Intuition</h1>
+<p>Finding “where is the face” in each frame is done with the
+Viola-Jones algorithm (<code>vision.CascadeObjectDetector</code> in
+MATLAB), a classical, pre-deep-learning face detector from 2001 that is
+still fast and reliable enough for a task like this.</p>
+<p>The core idea is a <strong>cascade of simple tests</strong>. Instead
+of one expensive check that decides “is this a face” all at once,
+Viola-Jones slides a candidate window across the image (at many
+positions and many sizes) and runs it through a sequence of very cheap
+tests, each based on comparing the brightness of one rectangular region
+against another (for example: “the eye region is usually darker than the
+cheek region below it”). Any one of these tests by itself is a weak,
+unreliable signal — but chained together in the right order, with the
+cheapest and most discriminating tests first, the vast majority of
+non-face windows get rejected within the first one or two tests, almost
+for free. Only the small fraction of windows that pass <em>every</em>
+test in the cascade get reported as a detected face.</p>
+<p>This is why Viola-Jones can run in real time on ordinary hardware
+with no GPU: it spends almost no computation on the (overwhelming
+majority of) regions of an image that obviously aren’t a face, and only
+does more work on regions that are actually promising.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> It’s easy to assume a face
+detector either “works” or “doesn’t,” as if detection were binary and
+permanent per video. In practice it’s per-frame and imperfect — the
+exact same subject, sitting still, can have a frame where the detector
+confidently finds a face and the very next frame where a slight head
+tilt or motion blur makes it return nothing at all. Code that calls the
+detector once and assumes the result holds for the rest of the video
+will silently break the moment that assumption fails. This segment’s
+implementation handles that explicitly: every detection attempt is
+checked for an empty result, and a fallback (the last known good box) is
+used instead of crashing or writing garbage.</p>
+<p>It’s also a mistake to assume the detector only ever returns
+<em>one</em> box per frame just because there’s only one person in the
+video. Testing this implementation against a real UBFC-rPPG subject
+turned up exactly this: Viola-Jones returned two boxes for one frame —
+the real face, and a tiny false-positive box sitting on a patch of
+background clutter. Code that blindly takes “the first box” can just as
+easily lock onto the false positive as the real face, with no error or
+warning at all. This implementation instead compares the area of every
+returned box and keeps the largest one, since a real face is almost
+always the biggest detected region in a single-subject frontal
+recording. This bug was only caught because of the mandatory sanity PNG
+described later in this guide — the <code>.mat</code> output alone gave
+no indication anything was wrong.</p>
+</div>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> Before reading on: why
+would running the full Viola-Jones cascade on <em>every single
+frame</em> of a ~2400-frame video be wasteful, given that the subject is
+sitting mostly still in front of a static camera? What would you reuse
+from one frame to the next instead of re-detecting from scratch?</p>
+</div>
+<h1 id="detecting-every-nth-frame-not-every-frame">Detecting Every Nth
+Frame, Not Every Frame</h1>
+<p>Running the detector on every frame is the most expensive part of
+this whole segment. Given that UBFC-rPPG subjects are seated and largely
+still, and that consecutive frames are only about 1/29th of a second
+apart, a face simply cannot move far enough between frames for detection
+to meaningfully change from one frame to the next.</p>
+<p>This implementation exploits that: it runs the full detector once
+every 5 frames, and on the frames in between, reuses the most recent
+successfully-detected bounding box rather than re-running detection.
+This cuts the number of expensive detector calls by 80% for a negligible
+cost in ROI accuracy, for this kind of relatively static footage. The
+trade-off is explicit and worth stating plainly: if a subject moves
+their head quickly, the reused bounding box can lag behind the true face
+position for up to 4 frames before the next real detection call catches
+up. For a different dataset with faster head motion or a lower frame
+rate, this interval would need to be revisited — it is a tuned choice
+for <em>this</em> dataset’s recording conditions, not a universal
+constant.</p>
+<h1 id="why-fs-must-be-read-from-the-file-never-assumed">Why
+<em>f</em><sub>s</sub> Must Be Read From the File, Never Assumed</h1>
+<p>It’s tempting to assume every video in a dataset runs at a clean 30
+frames per second and hardcode that number. For UBFC-rPPG, this
+assumption is simply false: direct inspection of the AVI file headers in
+this project (see <code>docs/DATA_FORMAT.md</code>) confirms frame rates
+ranging from roughly 28.6 to 29.8 fps, and the exact value differs per
+subject.</p>
+<p>This matters far beyond bookkeeping. Every later stage of this
+pipeline that involves frequency — the bandpass filter restricting the
+signal to the 0.7–4 Hz physiological heart-rate band, and the FFT that
+converts the combined pulse signal into a heart rate in bpm — depends on
+knowing the <em>true</em> sampling rate to correctly interpret what
+frequency each FFT bin corresponds to. If the sampling rate used in
+those calculations is off by even a few percent (30 assumed vs. 28.67
+actual, for example), every computed heart rate comes out scaled by that
+same few percent — a small, believable-looking error that is very easy
+to miss during a demo and very easy to get marked down for in a report
+that’s supposed to be about <em>classical DSP correctness</em>. Reading
+<code>frameRate</code> directly from <code>VideoReader</code>’s own
+header field, once per subject, costs nothing and eliminates this entire
+category of error.</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> If the true frame rate for
+a subject is 28.67 fps but the code assumed a flat 30 fps, and the FFT
+stage later detects a dominant frequency at bin corresponding to “72
+bpm” under the wrong assumed rate, what would the <em>actual</em>
+correct heart rate be? (Hint: the error scales the same way in every
+frequency-domain calculation downstream of the wrong assumption.)</p>
+</div>
+<h1 id="spatial-averaging-and-the-choir-effect">Spatial Averaging and
+the Choir Effect</h1>
+<p>Once the right patch of forehead skin is identified, the raw pixel
+data inside it is a small block of numbers — width × height × 3 color
+channels, for every single frame. The next step collapses each channel
+of that block down to just <em>one number per frame</em>: the mean pixel
+value across every pixel in the patch, done separately for red, green,
+and blue.</p>
+<div class="intuition">
+<p><strong>Intuition first — the choir effect.</strong> A single pixel’s
+brightness change from blood flow is minuscule — far smaller than
+ordinary camera sensor noise at that one pixel. Trying to read the
+heartbeat off of one pixel is like trying to make out a whispered word
+from one voice in a noisy room: technically there, practically
+impossible to hear cleanly. But blood volume under an entire patch of
+skin rises and falls <em>together</em> — every pixel in that patch
+carries a small piece of the same shared signal, while each pixel’s
+sensor noise is essentially independent and random. Averaging hundreds
+or thousands of pixels together is like a choir: no single voice needs
+to be loud or perfectly in tune, because the shared melody (the thing
+every voice has in common) reinforces itself across all of them, while
+each voice’s individual imperfections — being independent of each other
+— tend to cancel out rather than add up. The larger and more uniform the
+“choir” (the ROI), the more the shared signal stands out relative to the
+noise.</p>
+</div>
+<p>This is also precisely why ROI <em>selection</em> matters so much
+before this averaging step. The choir effect only strengthens a signal
+that is actually shared across the averaged pixels. Pixels from hair,
+background, or eyes aren’t singing the same song at all — averaging them
+in doesn’t add more “choir,” it adds more noise sources that have
+nothing in common with the blood-flow signal, which is exactly why a
+tight, purely-skin ROI consistently outperforms a larger but messier
+one.</p>
+<h1 id="common-pitfalls-in-this-segment">Common Pitfalls in This
+Segment</h1>
+<p><strong>Lighting changes.</strong> If ambient lighting shifts during
+a recording (a cloud passing outside a window, a flickering fluorescent
+light), that shift shows up in <em>R</em>(<em>t</em>),
+<em>G</em>(<em>t</em>), <em>B</em>(<em>t</em>) as a slow drift or a
+sudden jump that has nothing to do with the heartbeat. This segment does
+not correct for it — that’s explicitly the job of the
+detrending/filtering stage that comes next. What this segment
+<em>is</em> responsible for is not making the problem worse: picking a
+stable, consistently-lit ROI (the forehead, rather than a patch near a
+shifting shadow line) minimizes how much lighting variation gets baked
+into the raw signal in the first place.</p>
+<p><strong>Subject movement.</strong> Beyond the detection-lag trade-off
+already discussed, any head movement changes which pixels of the
+<em>sensor</em> are looking at which pixels of the <em>face</em>, even
+when the ROI box itself tracks correctly. Fast or frequent movement is
+one of the harder open problems in remote PPG generally — this classical
+pipeline does not attempt motion compensation beyond re-detecting the
+face periodically.</p>
+<p><strong>Detection dropouts.</strong> As covered above, Viola-Jones
+will occasionally fail on a perfectly normal frame. The failure mode to
+avoid is not the dropout itself (that’s expected and handled), but
+<em>silently</em> handling it in a way that corrupts the signal — for
+example, writing zero brightness for a dropped frame, which looks to any
+later stage exactly like a sudden, physiologically impossible blackout.
+This segment logs every frame where a fallback bounding box had to be
+used, both to the console and as a count saved alongside the signal,
+precisely so this isn’t invisible to whoever reviews the output
+later.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Treating a
+<code>.mat</code> file of <em>R</em>, <em>G</em>, <em>B</em> traces as
+trustworthy just because the code ran without throwing an error. A face
+detector can lock onto the wrong region (background texture that happens
+to pass the cascade, for instance) and still return a bounding box every
+time — no crash, no error message, just a wrong answer to every average
+built from then on. This is exactly why this segment mandates a
+sanity-check PNG for every subject: a human glancing at the image with
+both boxes drawn on it can catch a mis-detected or mis-cropped ROI in
+about two seconds, something no amount of clean code execution can
+guarantee on its own.</p>
+</div>
+<h1 id="how-this-segment-feeds-into-the-next-one">How This Segment Feeds
+Into the Next One</h1>
+<p>The output of this segment —
+<code>data/processed/&lt;subjectID&gt;_rgb_traces.mat</code>, containing
+<code>R</code>, <code>G</code>, <code>B</code>, <code>fs</code>,
+<code>subjectID</code>, and <code>numDroppedFrames</code> — is the
+entire input the next segment needs. Segment 3 (detrending and bandpass
+filtering, <code>filtering/detrendSignal.m</code> and
+<code>filtering/bandpassClean.m</code>) takes each of these three raw
+traces and:</p>
+<ol type="1">
+<li>Removes slow drift (the kind of lighting/DC-level wandering
+discussed above) that isn’t part of the pulsatile signal.</li>
+<li>Bandpass-filters each channel to the 0.7–4 Hz range — the
+physiologically plausible range for human heart rate (42–240 bpm) —
+discarding frequency content outside that band as noise by
+definition.</li>
+</ol>
+<p>Everything downstream of that (CHROM/POS combination, FFT heart rate,
+SpO2 ratio-of-ratios) assumes its input is already three reasonably
+clean per-channel traces sampled at a known, correct rate. That
+assumption is exactly what this segment is responsible for delivering —
+nothing more, nothing less. If a subject’s sanity PNG looks wrong, or
+<code>numDroppedFrames</code> is unexpectedly high for a whole
+recording, that is the moment to investigate — before, not after, that
+subject’s data is fed into three more stages of processing built on top
+of it.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 2 (face detection + ROI extraction) docs — BUET EEE 312.
+  Source markdown lives in <code>segment2_face_roi/</code>; the actual code lives under <code>matlab/src/</code>.
+</footer>
+</body>
+</html>
