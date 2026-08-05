@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Team Spandan" />
+  <title>Segment 4 — CHROM/POS &amp; FFT Heart Rate Guideline</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      font-size: 11pt;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav span.active {
+      color: var(--fg);
+      font-weight: 700;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 4 &middot; Spandan</span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<span class="active">Guideline</span>
+<span class="sep">&middot;</span>
+<a href="Segment4_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_HeartRate_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../segment3_filtering/index.html">&larr; Segment 3</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 4 — CHROM/POS &amp; FFT Heart Rate
+Guideline</h1>
+<p class="subtitle">Spandan: Contactless Vital Sign Monitoring — EEE 312
+DSP Project, BUET</p>
+<p class="author">Team Spandan</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#why-this-segment-exists"
+id="toc-why-this-segment-exists">Why This Segment Exists</a></li>
+<li><a href="#why-raw-green-fft-alone-is-motion-fragile"
+id="toc-why-raw-green-fft-alone-is-motion-fragile">Why Raw-Green FFT
+Alone Is Motion-Fragile</a></li>
+<li><a
+href="#what-chrom-and-pos-physically-do-differently-the-skin-tone-vector-picture"
+id="toc-what-chrom-and-pos-physically-do-differently-the-skin-tone-vector-picture">What
+CHROM and POS Physically Do Differently — the Skin-Tone-Vector
+Picture</a></li>
+<li><a href="#why-re-filtering-after-combination-is-necessary"
+id="toc-why-re-filtering-after-combination-is-necessary">Why
+Re-Filtering After Combination Is Necessary</a></li>
+<li><a
+href="#the-fft-window-length-vs.-frequency-resolution-tradeoff-in-concrete-bpm-terms"
+id="toc-the-fft-window-length-vs.-frequency-resolution-tradeoff-in-concrete-bpm-terms">The
+FFT Window-Length vs. Frequency-Resolution Tradeoff, in Concrete bpm
+Terms</a></li>
+<li><a href="#common-pitfalls-in-this-segment"
+id="toc-common-pitfalls-in-this-segment">Common Pitfalls in This
+Segment</a></li>
+<li><a href="#how-this-segments-three-estimates-feed-into-segment-6"
+id="toc-how-this-segments-three-estimates-feed-into-segment-6">How This
+Segment’s Three Estimates Feed Into Segment 6</a></li>
+<li><a href="#verification-on-this-projects-own-data"
+id="toc-verification-on-this-projects-own-data">Verification on This
+Project’s Own Data</a></li>
+</ul>
+</nav>
+<h1 id="why-this-segment-exists">Why This Segment Exists</h1>
+<p>Segment 3 handed us three clean, bandpass-filtered signals —
+<code>R_filtered(t)</code>, <code>G_filtered(t)</code>,
+<code>B_filtered(t)</code> — each restricted to the 0.7-4 Hz pulse band,
+with drift and out-of-band noise already removed. The most obvious next
+step is to just pick one of them, say the green channel (green is known
+to carry the strongest plethysmographic signal of the three, since
+hemoglobin absorbs green light more strongly than red), run an FFT on
+it, and call the dominant frequency the heart rate.</p>
+<p>That naive approach — call it <strong>green-only</strong> — is
+exactly what this segment implements as a baseline, alongside two much
+better alternatives: <strong>CHROM</strong> and <strong>POS</strong>,
+two published algorithms that combine all three color channels together
+instead of using just one. This document explains why combining channels
+helps, what re-filtering after combination is for, what the FFT
+peak-picking step actually promises (and doesn’t), and the concrete
+resolution limits of doing this on UBFC-rPPG-length clips.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Picking one channel and hoping it’s
+clean enough is like trying to follow one radio station by ear in a room
+with several overlapping broadcasts, using only one antenna pointed in a
+fixed direction. CHROM and POS are like combining several antennas
+pointed in different directions and adding their signals together in a
+way that’s specifically tuned to cancel the interference and reinforce
+the one broadcast you actually want — using more information (three
+channels instead of one) to do a strictly better job than any single
+channel could alone.</p>
+</div>
+<h1 id="why-raw-green-fft-alone-is-motion-fragile">Why Raw-Green FFT
+Alone Is Motion-Fragile</h1>
+<p>Green-only FFT works reasonably well on a perfectly still subject
+under constant lighting — and on real UBFC-rPPG footage, it often does
+show a visible peak somewhere in the valid band. The problem is
+<em>robustness</em>, not correctness in the ideal case:</p>
+<ul>
+<li><strong>Motion moves the whole color point, not just the
+pulse.</strong> Any small head movement, re-positioning, or facial
+expression change shifts the ROI’s average brightness in ways that have
+nothing to do with blood volume, and a single channel has no way to
+distinguish “brightness changed because of motion” from “brightness
+changed because of pulse.” Both look like the same kind of wiggle in
+<code>G_filtered(t)</code> alone.</li>
+<li><strong>A single channel gives the FFT nothing to cross-check
+against.</strong> With only one signal, there’s no way to tell whether a
+given frequency peak is the real pulse or a motion artifact that
+happened to have periodic-ish energy in the 0.7-4 Hz band (a subject
+shifting position every second or two, say, or breathing-linked
+movement). The FFT will happily report whichever peak is largest, real
+or not.</li>
+<li><strong>Confirmed on this project’s own test subjects (see
+Verification section)</strong>: on subject <code>6-gt</code>, green-only
+FFT reports <strong>65.7 bpm</strong> against a ground-truth average of
+<strong>82.6 bpm</strong> — off by 17 bpm, a clinically large error —
+while CHROM and POS both land within about half a beat per minute of the
+same ground truth on that same subject. The green-only spectrum for that
+subject (see the sanity PNGs in <code>results/figures/</code>) is
+visibly scattered, with no single clean dominant peak, exactly the
+failure mode described above.</li>
+</ul>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Assuming that because green
+is “the best single channel” for rPPG, using only green must be nearly
+as good as combining all three. In practice, combining channels isn’t
+about finding a <em>better single channel</em> — it’s about using the
+redundancy across channels to actively cancel out shared, non-pulse
+variation (motion, lighting), something no single channel can do no
+matter how good it is on its own.</p>
+</div>
+<h1
+id="what-chrom-and-pos-physically-do-differently-the-skin-tone-vector-picture">What
+CHROM and POS Physically Do Differently — the Skin-Tone-Vector
+Picture</h1>
+<p>Both CHROM and POS start from the same physical observation: plot a
+small patch of skin’s average (R, G, B) color as a point moving through
+3D color space, frame by frame. Two very different things move that
+point around:</p>
+<ol type="1">
+<li><strong>Motion and lighting changes</strong> move the point mostly
+along a single direction — informally, the “skin-tone vector.” Whether
+the room got slightly brighter, or the subject turned slightly toward
+the light, the <em>relative proportions</em> of R, G, B tend to hold
+roughly constant even as the point moves — it’s mostly getting brighter
+or dimmer along a fixed direction, not changing color balance.</li>
+<li><strong>The cardiac pulse</strong> moves the point in a genuinely
+different direction, because arterial blood volume changes affect red,
+green, and blue light absorption by different physical amounts (a
+consequence of hemoglobin’s specific absorption spectrum). This
+pulse-driven motion is small compared to (1), but it points a different
+way.</li>
+</ol>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Imagine a marble sitting on a
+slightly tilted glass table (representing the skin-tone plane that
+lighting/motion mostly confines its movement to), that also has a tiny
+motor underneath giving it a small, rapid, repeating nudge in a
+direction that ISN’T flat along the table’s tilt (the pulse). If you
+only watched the marble’s shadow along one wall (one color channel),
+you’d see a mix of the big slow sliding motion and the tiny rapid nudge,
+tangled together, hard to separate. If instead you set up your camera to
+watch specifically the direction <em>perpendicular</em> to the table’s
+tilt, the big sliding motion mostly disappears from view (it’s confined
+to the tilted plane) and the tiny rapid nudge becomes much easier to see
+clearly.</p>
+</div>
+<p>CHROM builds two fixed linear combinations of the normalized channels
+(<code>Xs = 3Rn - 2Gn</code>, <code>Ys = 1.5Rn + Gn - 1.5Bn</code>)
+chosen so that the skin-tone/motion direction affects <code>Xs</code>
+and <code>Ys</code> in a highly correlated, proportional way, while the
+pulse affects them differently. Subtracting a rescaled <code>Ys</code>
+from <code>Xs</code> (rescaled by <code>alpha = std(Xs)/std(Ys)</code>,
+so the subtraction doesn’t leave a lopsided residual) cancels most of
+the shared motion/lighting component and keeps the differential
+pulse-driven part.</p>
+<p>POS (<code>S1 = Gn - Bn</code>, <code>S2 = Gn + Bn - 2Rn</code>) does
+the same thing with a different, more generally derived pair of
+directions — the published POS paper shows this specific pair spans the
+skin-tone-orthogonal plane more robustly across a wider range of skin
+tones and lighting conditions than CHROM’s fixed coefficients, at the
+cost of being a slightly less “physically interpretable” derivation than
+CHROM’s absorption-spectrum reasoning. Both algorithms are ultimately
+doing the same kind of thing: project onto a direction where
+motion/lighting mostly cancels and the pulse mostly survives, informed
+by two different (but related) models of where in RGB space that
+direction sits.</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> If a video were recorded
+under a colored light source that shifted the whole scene noticeably
+toward one color (say, warm yellow indoor lighting versus cool
+daylight), would you expect that to move the skin-color point mostly
+along the “skin-tone” direction, mostly along the “pulse” direction, or
+some mix — and what does that imply about how well CHROM/POS should
+handle a lighting-color change compared to green-only?</p>
+</div>
+<h1 id="why-re-filtering-after-combination-is-necessary">Why
+Re-Filtering After Combination Is Necessary</h1>
+<p><code>chromCombine.m</code> and <code>posCombine.m</code> both take
+already-bandpassed (0.7-4 Hz) channels as input. It would be reasonable
+to assume the combined output is automatically still confined to that
+same band — after all, a linear combination of band-limited signals is
+still band-limited to the same band… <strong>in continuous, ideal
+math.</strong> In practice, this segment re-runs
+<code>bandpassClean.m</code> on the CHROM and POS outputs before handing
+them to <code>fftHeartRate.m</code>, for two concrete reasons:</p>
+<ol type="1">
+<li><strong>The normalization step divides by a raw (unfiltered)
+mean</strong>, and while that mean is a scalar (not time-varying), any
+residual numerical imprecision or subtle nonlinearity introduced by
+combining three independently-filtered signals (rather than filtering
+the true combined physical quantity directly) can reintroduce a small
+amount of energy outside the original band — small, but not exactly
+zero.</li>
+<li><strong>Defense in depth, matching this project’s Segment 3
+philosophy.</strong> <code>fftHeartRate.m</code> already masks its
+search to 0.7-4 Hz before peak-picking (a second independent safeguard —
+see below) — re-filtering before that is a first safeguard, not a
+redundant one, because it means the actual <em>signal</em> handed
+downstream (not just the <em>search window</em>) is clean, which matters
+if anyone later wants to inspect or plot the combined pulse waveform
+directly rather than just its FFT peak.</li>
+</ol>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Reasoning “the inputs were
+already bandpassed, so the output must be too” and skipping the
+re-filter step to save a function call. This is the kind of assumption
+that holds in a textbook derivation but is worth re-verifying
+empirically rather than trusting by default — which is exactly why this
+segment’s mandatory sanity PNGs plot the <em>actual</em> re-filtered
+spectrum, not an assumed one.</p>
+</div>
+<h1
+id="the-fft-window-length-vs.-frequency-resolution-tradeoff-in-concrete-bpm-terms">The
+FFT Window-Length vs. Frequency-Resolution Tradeoff, in Concrete bpm
+Terms</h1>
+<p>This is the same tradeoff from the Orientation Lecture’s STFT
+material, applied here to a single whole-clip FFT (which is really just
+a one-window spectral estimate — the same math, without the “sliding”
+part of STFT).</p>
+<p><strong>The rule:</strong> for a signal sampled at
+<code>frameRate</code> Hz with <code>N</code> samples total, the FFT’s
+frequency bins are spaced <code>frameRate / N</code> Hz apart. That
+spacing is the <em>finest</em> frequency difference the FFT can
+distinguish — two true frequencies closer together than that will blur
+into the same bin or adjacent bins, no matter how clean the signal is. A
+<strong>longer</strong> recording (more samples <code>N</code>, same
+frame rate) gives <strong>finer</strong> resolution; a
+<strong>shorter</strong> recording gives <strong>coarser</strong>
+resolution. This is a hard mathematical limit, not something better
+peak-picking logic can work around.</p>
+<p><strong>Concretely, for this dataset:</strong> UBFC-rPPG DATASET_1
+clips run approximately 80-90 seconds at approximately 28.6-29.8 fps.
+Working through the three subjects used to verify this segment
+(<code>5-gt</code>, <code>6-gt</code>, <code>7-gt</code>,
+<code>fs ~ 28.67</code> fps, <code>N ~ 2360-2410</code> frames):</p>
+<pre><code>bin spacing (Hz) = frameRate / N ~ 28.67 / 2400 ~ 0.0119 Hz
+bin spacing (bpm) = 0.0119 * 60 ~ 0.71 bpm</code></pre>
+<p>So on this dataset’s typical clip length, <strong>the achievable
+heart-rate precision is roughly ±0.7 bpm</strong> — not the
+fraction-of-a-bpm precision that a raw decimal FFT output
+(e.g. <code>76.4105</code>) visually suggests. That number is exactly
+which bin won the peak search, not a continuous, arbitrarily precise
+measurement. A useful rule of thumb: <strong>halving the clip length
+roughly doubles the bpm resolution</strong> (makes it coarser) — a
+40-second clip at the same frame rate would resolve only to about ±1.4
+bpm, and a 10-second clip (closer to what a live/real-time system, or a
+short self-collected test clip, might use) would resolve only to roughly
+±5-6 bpm, which starts to matter clinically.</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> Segment 4 reports
+<code>HR_chrom</code> to four decimal places in its CSV output. Given
+the ~0.7 bpm bin spacing above, is reporting that many decimal places
+misleading, and if so, what would be a more honest way to communicate
+the estimate’s actual precision to someone reading the results
+table?</p>
+</div>
+<p><strong>Why CHROM and POS reported identical bpm on all three test
+subjects.</strong> This was checked directly (not assumed): the two
+combined signals are similar but not literally identical (verified by
+comparing them sample-by-sample), just strongly correlated, since both
+are different linear combinations of the same three
+physically-correlated color channels, both tuned to isolate the same
+underlying cardiac frequency. Given the ~0.7 bpm bin spacing above, two
+signals whose true dominant frequency both fall inside the same bin will
+report the exact same <code>hrBpm</code>, even though a continuous
+(infinite-resolution) frequency estimate would likely show a small
+difference between them. This is an expected consequence of the
+resolution ceiling, not a sign that the two algorithms produced the same
+computation.</p>
+<h1 id="common-pitfalls-in-this-segment">Common Pitfalls in This
+Segment</h1>
+<p><strong>Picking a peak outside the valid band by mistake.</strong>
+Covered in detail in the Line-by-Line document —
+<code>fftHeartRate.m</code> masks the search to 0.7-4 Hz <em>before</em>
+calling <code>max()</code>, specifically so a strong out-of-band spike
+(drift residue near 0 Hz, high-frequency noise above 4 Hz) can never be
+selected, even by accident. Finding the global peak first and checking
+afterward whether it happens to be in range is a materially weaker
+guarantee than masking first — always mask first.</p>
+<p><strong>Multiple close peaks from a noisy ROI or heavy
+motion.</strong> Even inside the valid band, a noisy signal can show two
+or three comparably-sized peaks close together (for example, a true
+pulse peak plus a nearby motion-linked peak that didn’t fully cancel).
+<code>fftHeartRate.m</code>’s <code>max()</code> will pick whichever is
+<em>numerically</em> largest, which is not guaranteed to be the
+physiologically correct one if the real peak and a noise peak are close
+in magnitude. This is precisely why Step 6’s sanity PNGs are mandatory
+rather than optional: a human glancing at the spectrum can immediately
+tell “clean, single, obvious peak” (like <code>5-gt</code>’s CHROM/POS
+spectra) apart from “scattered energy, ambiguous winner” (like
+<code>6-gt</code>’s green-only spectrum) in a way no automated check in
+this segment currently does. If a subject’s sanity PNG shows the latter
+pattern for CHROM or POS (not just green-only, which is expected to be
+weaker), that subject’s estimate should be treated with real skepticism
+before being trusted downstream.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Trusting a bpm number just
+because the script ran without error. <code>fftHeartRate.m</code> will
+always return <em>some</em> value in range — even for a spectrum with no
+clean peak at all, it just returns whichever noisy bin happened to be
+tallest. A plausible-looking bpm number is not the same as a
+<em>trustworthy</em> one; that judgment call is exactly what the
+mandatory sanity PNG is for.</p>
+</div>
+<h1 id="how-this-segments-three-estimates-feed-into-segment-6">How This
+Segment’s Three Estimates Feed Into Segment 6</h1>
+<p>For every subject, this segment produces three independent bpm
+estimates — <code>HR_chrom</code>, <code>HR_pos</code>,
+<code>HR_green</code> — saved to
+<code>data/processed/&lt;subjectID&gt;_hr_estimates.mat</code> and
+appended as one row to
+<code>results/metrics/segment4_hr_summary.csv</code>, alongside whatever
+ground-truth HR is available for that subject (<code>NaN</code> if not —
+see the Team README for exactly when that happens).</p>
+<p>This is deliberately <strong>not</strong> a formal validation step.
+The <code>abs_error_*</code> columns in the CSV are for quick,
+per-subject eyeballing only — “does this number look roughly sane” — not
+a substitute for Segment 6’s actual job:
+<code>validation/runLOSO.m</code> and
+<code>validation/computeMetrics.m</code> (both still untouched stubs,
+out of scope for this segment) will run proper leave-one-subject-out
+cross-validation across every available subject and report MAE, RMSE,
+Pearson correlation, and Bland-Altman agreement for each of the three HR
+estimation methods this segment provides — letting the team make an
+evidence-based call on which of CHROM, POS, or green-only (or some
+combination) to carry forward, instead of assuming one is best from the
+literature alone.</p>
+<h1 id="verification-on-this-projects-own-data">Verification on This
+Project’s Own Data</h1>
+<p>This segment was run end-to-end on the three DATASET_1 subjects with
+both Segment 2 and Segment 3 output already available
+(<code>5-gt</code>, <code>6-gt</code>, <code>7-gt</code>).
+<code>io/loadGroundTruth.m</code> is still an unimplemented stub as of
+Segment 4 (it belongs to a later segment and was intentionally left
+untouched), so the batch script’s own ground-truth column reads
+<code>NaN</code> for all three subjects by design. As an independent
+manual check (outside the pipeline code, just reading
+<code>gtdump.xmp</code>’s HR column directly), the mean ground-truth HR
+for these three subjects is:</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Subject</th>
+<th>HR_chrom</th>
+<th>HR_pos</th>
+<th>HR_green</th>
+<th>Ground truth (mean, manual check)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>5-gt</code></td>
+<td>76.41 bpm</td>
+<td>76.41 bpm</td>
+<td>72.84 bpm</td>
+<td>77.32 bpm</td>
+</tr>
+<tr>
+<td><code>6-gt</code></td>
+<td>83.02 bpm</td>
+<td>83.02 bpm</td>
+<td>65.69 bpm</td>
+<td>82.57 bpm</td>
+</tr>
+<tr>
+<td><code>7-gt</code></td>
+<td>91.77 bpm</td>
+<td>91.77 bpm</td>
+<td>95.41 bpm</td>
+<td>94.68 bpm</td>
+</tr>
+</tbody>
+</table>
+<p>CHROM and POS land within about 1-3 bpm of ground truth on all three
+subjects. Green-only is close on two subjects but off by nearly 17 bpm
+on <code>6-gt</code> — exactly the motion-fragility failure mode this
+document opened with, and visibly confirmed by that subject’s noisy,
+ambiguous green-only spectrum in
+<code>results/figures/6-gt_heartrate_sanity.png</code>.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 4 (CHROM/POS pulse extraction + FFT heart rate) docs — BUET EEE 312.
+  Source markdown lives in <code>segment4_heartrate/</code>; the actual code lives under <code>matlab/src/pulseextraction/</code> and <code>matlab/src/heartrate/</code>.
+</footer>
+</body>
+</html>

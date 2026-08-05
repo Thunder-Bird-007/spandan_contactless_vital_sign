@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Segment 4 — Team README</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav span.active {
+      color: var(--fg);
+      font-weight: 700;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 4 &middot; Spandan</span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_HeartRate_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<span class="active">Team README</span>
+<span class="sep">&middot;</span>
+<a href="Segment4_HeartRate_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../segment3_filtering/index.html">&larr; Segment 3</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 4 — Team README</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#segment-4-chrompos-fft-heart-rate-team-instructions"
+id="toc-segment-4-chrompos-fft-heart-rate-team-instructions">Segment 4
+(CHROM/POS + FFT Heart Rate) — Team Instructions</a>
+<ul>
+<li><a href="#before-you-start-confirm-your-segment-3-output-exists"
+id="toc-before-you-start-confirm-your-segment-3-output-exists">1. Before
+you start: confirm your Segment 3 output exists</a></li>
+<li><a href="#editing-the-subject-list"
+id="toc-editing-the-subject-list">2. Editing the subject list</a></li>
+<li><a href="#running-it" id="toc-running-it">3. Running it</a></li>
+<li><a href="#where-your-output-lands-and-how-we-merge-it-later"
+id="toc-where-your-output-lands-and-how-we-merge-it-later">4. Where your
+output lands (and how we merge it later)</a></li>
+<li><a
+href="#how-the-shared-csv-works-read-this-before-running-on-a-shared-folder"
+id="toc-how-the-shared-csv-works-read-this-before-running-on-a-shared-folder">5.
+How the shared CSV works — read this before running on a shared
+folder</a></li>
+<li><a href="#sanity-checked-on-this-projects-own-data"
+id="toc-sanity-checked-on-this-projects-own-data">6. Sanity-checked on
+this project’s own data</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="segment-4-chrompos-fft-heart-rate-team-instructions">Segment 4
+(CHROM/POS + FFT Heart Rate) — Team Instructions</h1>
+<p>This covers only Segment 4 of the pipeline: combining each subject’s
+filtered <code>R/G/B</code> traces from Segment 3 into a single pulse
+signal via CHROM and via POS, running FFT-based heart-rate extraction on
+both combined signals plus the raw green channel, and comparing all
+three against ground truth where it’s available. It does
+<strong>not</strong> cover SpO2 ratio-of-ratios/calibration or LOSO
+validation — those are Segments 5/6 and are still stubs.</p>
+<p>The actual code lives in the main scaffold, not in this folder:</p>
+<ul>
+<li><a
+href="../matlab/src/pulseextraction/chromCombine.m"><code>matlab/src/pulseextraction/chromCombine.m</code></a></li>
+<li><a
+href="../matlab/src/pulseextraction/posCombine.m"><code>matlab/src/pulseextraction/posCombine.m</code></a></li>
+<li><a
+href="../matlab/src/heartrate/fftHeartRate.m"><code>matlab/src/heartrate/fftHeartRate.m</code></a></li>
+<li><a
+href="../matlab/scripts/run_segment4_heartrate_batch.m"><code>matlab/scripts/run_segment4_heartrate_batch.m</code></a></li>
+</ul>
+<p>This <code>segment4_heartrate/</code> folder is docs only:</p>
+<ul>
+<li><code>Segment4_HeartRate_Guideline.pdf</code> — theory background
+(why raw-green FFT is motion-fragile, what CHROM/POS physically do
+differently, why re-filtering after combination matters, the FFT
+resolution tradeoff in concrete bpm numbers for this dataset, common
+pitfalls).</li>
+<li><code>Segment4_LineByLine_Explanation.md</code> — a plain-language
+walkthrough of every block of <code>chromCombine.m</code>,
+<code>posCombine.m</code>, and <code>fftHeartRate.m</code>, including
+the reasoning behind every parameter and judgment call.</li>
+<li>This README.</li>
+</ul>
+<h2 id="before-you-start-confirm-your-segment-3-output-exists">1. Before
+you start: confirm your Segment 3 output exists</h2>
+<p>This segment reads, for each subject, <strong>two</strong> files
+already produced by earlier segments:</p>
+<pre><code>data/processed/&lt;subjectID&gt;_filtered_traces.mat   (Segment 3 output)
+data/processed/&lt;subjectID&gt;_rgb_traces.mat        (Segment 2 output)</code></pre>
+<p>You need both, not just the filtered one — the raw
+<code>_rgb_traces.mat</code> is used only to compute a physically
+meaningful brightness level for CHROM/ POS’s normalization step (see the
+Guideline PDF / Line-by-Line doc for why the filtered signal’s own mean
+can’t be used for this). If you’ve run Segment 3 on your subjects
+already, both files should already be sitting in
+<code>data/processed/</code> — Segment 3 loads
+<code>_rgb_traces.mat</code> itself and never deletes it. If you don’t
+see both files for a subject, re-run
+<code>run_segment2_roi_batch.m</code> then
+<code>run_segment3_filtering_batch.m</code> for that subject first.</p>
+<h2 id="editing-the-subject-list">2. Editing the subject list</h2>
+<p>Open <code>matlab/scripts/run_segment4_heartrate_batch.m</code>.
+Right at the top there is one variable to edit:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">subjectList</span> <span class="op">=</span> {<span class="ss">&#39;5-gt&#39;</span><span class="op">,</span> <span class="ss">&#39;6-gt&#39;</span><span class="op">,</span> <span class="ss">&#39;7-gt&#39;</span>}<span class="op">;</span></span></code></pre></div>
+<p>Change it to your own subject IDs — the same ones you already used
+for Segments 2 and 3, since this script reads their
+<code>_filtered_traces.mat</code> and <code>_rgb_traces.mat</code> files
+by that exact ID.</p>
+<h2 id="running-it">3. Running it</h2>
+<ol type="1">
+<li>Open MATLAB, <code>cd</code> into <code>spandan/matlab/</code>.</li>
+<li>Run <code>startup</code> (adds <code>src/</code> to the path).</li>
+<li>Either <code>cd scripts</code> and run
+<code>run_segment4_heartrate_batch</code>, or add
+<code>matlab/scripts</code> to the path first
+(<code>addpath('scripts')</code>) and run it from
+<code>matlab/</code>.</li>
+</ol>
+<p>It prints progress per subject as it goes — the frame rate and frame
+count read from your Segment 3 output, the three HR estimates
+(<code>HR_chrom</code>, <code>HR_pos</code>, <code>HR_green</code>), and
+the ground-truth HR if one was found. If a subject’s
+<code>_filtered_traces.mat</code> or <code>_rgb_traces.mat</code> is
+missing, it says so and continues to the next subject rather than
+stopping the whole batch — check the summary printed at the very end for
+anything that failed.</p>
+<p><strong>About the ground-truth column.</strong>
+<code>io/loadGroundTruth.m</code> is a later segment’s stub and is
+intentionally untouched by Segment 4. This batch script tries to call it
+for each subject (using <code>gtdump.xmp</code> for DATASET_1 subjects
+or <code>ground_truth.txt</code> for DATASET_2 subjects, if found under
+<code>data/raw/UBFC-rPPG/</code>), but until someone implements that
+function, every subject’s <code>HR_groundtruth</code> will read
+<code>NaN</code> — this is expected, not a bug in this segment. Once
+<code>loadGroundTruth.m</code> is implemented, re-running this script
+will start filling in real ground truth automatically, no changes needed
+here.</p>
+<h2 id="where-your-output-lands-and-how-we-merge-it-later">4. Where your
+output lands (and how we merge it later)</h2>
+<p>For every subject in your list, this produces:</p>
+<ul>
+<li><code>data/processed/&lt;subjectID&gt;_hr_estimates.mat</code> —
+contains <code>HR_chrom</code>, <code>HR_pos</code>,
+<code>HR_green</code>, <code>HR_groundtruth</code>,
+<code>subjectID</code>, <code>fs</code>. Named after the subject’s own
+ID, same collision-free pattern as Segment 3.</li>
+<li><code>results/figures/&lt;subjectID&gt;_heartrate_sanity.png</code>
+— three stacked FFT spectra (CHROM, POS, green-only), each restricted to
+0-5 Hz with the valid 0.7-4 Hz band shaded and the detected peak marked.
+<strong>Look at this before trusting a subject’s numbers</strong> — you
+want to see one clean, obvious peak inside the shaded band for CHROM and
+POS. If instead you see scattered, ambiguous energy with no clear winner
+(this is somewhat expected for the green-only subplot — that’s the whole
+point of this segment — but is a red flag if it happens for CHROM or POS
+too), flag that subject before its numbers move on to Segment 5/6.</li>
+<li>One appended row in the <strong>shared</strong>
+<code>results/metrics/segment4_hr_summary.csv</code> — see below.</li>
+</ul>
+<h2
+id="how-the-shared-csv-works-read-this-before-running-on-a-shared-folder">5.
+How the shared CSV works — read this before running on a shared
+folder</h2>
+<p><code>results/metrics/segment4_hr_summary.csv</code> is a single file
+all four team members write to. The script is written so this is
+safe:</p>
+<ul>
+<li><strong>It checks whether the file already has a header before
+writing one.</strong> If the CSV already exists (because you or a
+teammate already ran this script at least once), it will NOT write a
+second header row — it just appends your subjects’ rows underneath
+whatever’s already there.</li>
+<li><strong>It appends one row per subject as that subject finishes
+processing</strong>, not all at once at the end. It never reads the
+whole file into memory and rewrites it, so it can’t accidentally
+overwrite rows a teammate already wrote.</li>
+<li><strong>Columns</strong>:
+<code>subjectID, HR_chrom, HR_pos, HR_green, HR_groundtruth, abs_error_chrom, abs_error_pos, abs_error_green</code>
+— the <code>abs_error_*</code> columns are <code>NaN</code> for any
+subject without ground truth (which, per the note above, is currently
+<em>every</em> subject until <code>loadGroundTruth.m</code> is
+implemented).</li>
+<li><strong>What this does NOT protect against</strong>: if you and a
+teammate both run the script on the exact same subject ID, you’ll get
+two rows for that subject (harmless duplication, not data loss — just
+dedupe by eyeballing <code>subjectID</code> before using the CSV for
+anything final). And if the folder is synced live (e.g. a cloud-synced
+drive) and two people run the script at literally the same moment,
+there’s a small window where both could check “does the header exist
+yet” at once — in practice, just don’t both run it in the very same
+minute and this isn’t an issue.</li>
+</ul>
+<p>Once everyone’s done, the shared CSV already has everyone’s rows in
+it — there’s no separate merge step needed, unlike Segment 3’s
+per-team-member <code>.mat</code>/<code>.png</code> files (which still
+need manual copying into one shared folder, since those aren’t
+append-safe the way a CSV is).</p>
+<h2 id="sanity-checked-on-this-projects-own-data">6. Sanity-checked on
+this project’s own data</h2>
+<p>This segment was run end-to-end on <code>5-gt</code>,
+<code>6-gt</code>, <code>7-gt</code> (the three DATASET_1 subjects with
+both Segment 2 and Segment 3 output available). See the Guideline PDF’s
+“Verification” section for the actual numbers — CHROM/POS landed within
+1-3 bpm of ground truth on all three, while green-only was off by nearly
+17 bpm on one subject, visibly confirmed by that subject’s scattered
+sanity-PNG spectrum.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 4 (CHROM/POS pulse extraction + FFT heart rate) docs — BUET EEE 312.
+  Source markdown lives in <code>segment4_heartrate/</code>; the actual code lives under <code>matlab/src/pulseextraction/</code> and <code>matlab/src/heartrate/</code>.
+</footer>
+</body>
+</html>

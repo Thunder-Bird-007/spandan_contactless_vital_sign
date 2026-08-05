@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Segment 4 — CHROM/POS Pulse Extraction &amp; FFT Heart Rate</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1c1e21;
+    --muted: #5b6270;
+    --border: #e3e6ea;
+    --code-bg: #f4f5f7;
+    --link: #1a5fb4;
+    --card-bg: #f8f9fb;
+    --intuition-bg: #eef4fd;
+    --intuition-border: #1a5fb4;
+    --pitfall-bg: #fdf2e9;
+    --pitfall-border: #b5540a;
+    --pausecheck-bg: #edf9ee;
+    --pausecheck-border: #1f7a2e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --fg: #e7e9ec;
+      --muted: #9aa2ad;
+      --border: #2c2f34;
+      --code-bg: #1d2024;
+      --link: #6fa8f5;
+      --card-bg: #1a1d22;
+      --intuition-bg: #17233a;
+      --intuition-border: #5b8fd9;
+      --pitfall-bg: #33230f;
+      --pitfall-border: #d98a3d;
+      --pausecheck-bg: #16281a;
+      --pausecheck-border: #4caf5c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.2rem 1.5rem 5rem;
+    font-size: 17px;
+  }
+  nav.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.1rem;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+  nav.site-nav .brand {
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    margin-right: 0.4rem;
+  }
+  nav.site-nav a {
+    color: var(--link);
+    text-decoration: none;
+    padding: 0.15rem 0.1rem;
+  }
+  nav.site-nav a:hover { text-decoration: underline; }
+  nav.site-nav span.active {
+    color: var(--fg);
+    font-weight: 700;
+  }
+  nav.site-nav span.sep { color: var(--border); }
+  h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+  h1 {
+    font-size: 1.9rem;
+    margin-top: 0;
+    border-bottom: 3px solid var(--link);
+    padding-bottom: 0.4rem;
+  }
+  h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+  h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+  a { color: var(--link); }
+  p, li { color: var(--fg); }
+  code {
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+    font-size: 0.9em;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+  }
+  pre code { background: none; padding: 0; font-size: 0.87em; }
+  blockquote {
+    border-left: 3px solid var(--border);
+    margin-left: 0;
+    padding-left: 1rem;
+    color: var(--muted);
+  }
+  div.intuition, div.pitfall, div.pausecheck {
+    border-left: 5px solid;
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    margin: 1.5rem 0;
+  }
+  div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+  div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+  div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+  div.intuition p:first-child::before {
+    content: "Intuition First"; display: block; font-weight: 700;
+    color: var(--intuition-border); margin-bottom: 0.5rem;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  div.pitfall p:first-child::before {
+    content: "Common Beginner Mistake"; display: block; font-weight: 700;
+    color: var(--pitfall-border); margin-bottom: 0.5rem;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  div.pausecheck p:first-child::before {
+    content: "Pause and Check Yourself"; display: block; font-weight: 700;
+    color: var(--pausecheck-border); margin-bottom: 0.5rem;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+  th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+  #TOC {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.3rem;
+    margin-bottom: 2rem;
+    font-size: 0.92rem;
+  }
+  #TOC ul { margin: 0.3rem 0; }
+  footer.page-footer {
+    margin-top: 3.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1.1rem;
+    margin: 1.8rem 0;
+  }
+  .card {
+    display: block;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.3rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: border-color 0.15s ease;
+  }
+  .card:hover { border-color: var(--link); }
+  .card .card-icon { font-size: 1.6rem; }
+  .card h3 {
+    margin: 0.5rem 0 0.3rem;
+    color: var(--fg);
+    font-size: 1.05rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  .pill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0 1.8rem;
+  }
+  .pill {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+</style>
+
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 4 &middot; Spandan</span>
+<span class="active">Home</span>
+<span class="sep">&middot;</span>
+<a href="Segment4_HeartRate_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_HeartRate_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../segment3_filtering/index.html">&larr; Segment 3</a>
+</nav>
+
+<h1>Segment 4: CHROM/POS Pulse Extraction &amp; FFT Heart Rate</h1>
+
+<p>
+This is the documentation site for <strong>Segment 4</strong> of the
+<strong>Spandan</strong> project (contactless heart-rate &amp; SpO2 estimation
+from ordinary video — EEE 312 DSP Lab, BUET). Segment 4 takes the cleaned,
+bandpass-filtered R(t), G(t), B(t) traces that Segment 3 produced and
+combines them into a single pulse signal using the published CHROM and POS
+algorithms, then estimates heart rate via FFT peak-picking — run on the
+CHROM signal, the POS signal, and the raw green channel alone, so the team
+has three independent estimates to compare. Nothing here does SpO2
+ratio-of-ratios/calibration or LOSO validation — those are later segments.
+</p>
+
+<div class="pill-row">
+  <span class="pill">CHROM (de Haan &amp; Jeanne, 2013)</span>
+  <span class="pill">POS (Wang et al., 2017)</span>
+  <span class="pill">FFT peak-picking</span>
+  <span class="pill">0.7&ndash;4 Hz search band</span>
+  <span class="pill">MATLAB</span>
+</div>
+
+<h2>Where to start</h2>
+
+<div class="card-grid">
+  <a class="card" href="Segment4_HeartRate_Guideline.html">
+    <div class="card-icon">📘</div>
+    <h3>Guideline</h3>
+    <p>Start here if you're new to this segment. The theory: why raw-green
+    FFT alone is motion-fragile, what CHROM/POS physically do differently
+    (skin-tone-vector intuition, not just the algebra), why re-filtering
+    after combination matters, the FFT window-length vs. frequency-resolution
+    tradeoff in concrete bpm terms for this dataset, and the common
+    pitfalls. Includes "Intuition First", "Common Beginner Mistake", and
+    "Pause and Check Yourself" call-outs throughout.</p>
+  </a>
+  <a class="card" href="Segment4_LineByLine_Explanation.html">
+    <div class="card-icon">🔍</div>
+    <h3>Line-by-Line Explanation</h3>
+    <p>A block-by-block walkthrough of the actual MATLAB implementation
+    (<code>chromCombine.m</code>, <code>posCombine.m</code>,
+    <code>fftHeartRate.m</code>) — what each part does, why it's written
+    that way, and the reasoning behind every judgment call, including the
+    Rn/Gn/Bn normalization-source decision and why the function signatures
+    grew beyond the original stubs.</p>
+  </a>
+  <a class="card" href="Segment4_Team_README.html">
+    <div class="card-icon">👥</div>
+    <h3>Team README</h3>
+    <p>Practical instructions for the other team members: confirming your
+    Segment 3 output exists, how to edit the subject list in the batch
+    script, how to run it, where your HR estimates land, and how the
+    shared CSV append behavior works so nobody overwrites a teammate's
+    rows.</p>
+  </a>
+  <a class="card" href="Segment4_HeartRate_Guideline.pdf">
+    <div class="card-icon">📄</div>
+    <h3>Guideline (PDF)</h3>
+    <p>The same guideline content as a printable/shareable PDF, built
+    with pandoc + xelatex + tcolorbox, styled call-out boxes included.</p>
+  </a>
+</div>
+
+<h2>The code</h2>
+
+<p>
+The actual implementation lives in the main project scaffold, not in
+this docs folder:
+</p>
+
+<ul>
+  <li><code><a href="../matlab/src/pulseextraction/chromCombine.m">matlab/src/pulseextraction/chromCombine.m</a></code> — CHROM channel combination.</li>
+  <li><code><a href="../matlab/src/pulseextraction/posCombine.m">matlab/src/pulseextraction/posCombine.m</a></code> — POS channel combination.</li>
+  <li><code><a href="../matlab/src/heartrate/fftHeartRate.m">matlab/src/heartrate/fftHeartRate.m</a></code> — FFT peak-picking in the 0.7&ndash;4 Hz band, converted to bpm.</li>
+  <li><code><a href="../matlab/scripts/run_segment4_heartrate_batch.m">matlab/scripts/run_segment4_heartrate_batch.m</a></code> — batch driver the team runs over their filtered subjects.</li>
+</ul>
+
+<h2>What comes out of this segment</h2>
+
+<p>
+For every subject processed: <code>data/processed/&lt;subjectID&gt;_hr_estimates.mat</code>
+(fields <code>HR_chrom</code>, <code>HR_pos</code>, <code>HR_green</code>,
+<code>HR_groundtruth</code>, <code>subjectID</code>, <code>fs</code>), one
+appended row in the shared
+<code>results/metrics/segment4_hr_summary.csv</code>, and
+<code>results/figures/&lt;subjectID&gt;_heartrate_sanity.png</code> — three
+stacked FFT spectra (CHROM, POS, green-only), each restricted to 0&ndash;5 Hz
+with the valid 0.7&ndash;4 Hz band shaded and the detected peak marked.
+Always look at the PNG before trusting a subject's numbers — you want one
+clean, obvious peak inside the shaded band for CHROM and POS, not
+scattered, ambiguous energy.
+</p>
+
+<h2>Other segments</h2>
+
+<div class="card-grid">
+  <a class="card" href="../segment3_filtering/index.html">
+    <div class="card-icon">⬅️</div>
+    <h3>Segment 3 — Detrending &amp; Bandpass Filtering</h3>
+    <p>The previous stage: polynomial detrending and Butterworth bandpass
+    filtering, producing the cleaned R(t), G(t), B(t) traces this segment
+    combines.</p>
+  </a>
+</div>
+
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 4 (CHROM/POS pulse extraction + FFT heart rate) docs — BUET EEE 312.
+  Source markdown lives in <code>segment4_heartrate/</code>; the actual code lives under <code>matlab/src/pulseextraction/</code> and <code>matlab/src/heartrate/</code>.
+</footer>
+
+</body>
+</html>

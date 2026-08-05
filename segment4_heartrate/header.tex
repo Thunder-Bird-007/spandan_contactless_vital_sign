@@ -1,0 +1,56 @@
+% header.tex
+%
+% Shared LaTeX preamble additions for the Segment 2 guideline PDF, passed
+% to pandoc via --include-in-header. Defines the lmodern font shim (some
+% MiKTeX/xelatex combinations need this pulled in explicitly rather than
+% relying on pandoc's default template to load it silently) and the three
+% styled call-out box environments used by div_envs.lua: intuition,
+% pitfall, check.
+
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage[most]{tcolorbox}
+\sloppy
+\emergencystretch=2em
+
+\newtcolorbox{intuition}{
+  enhanced,
+  breakable,
+  colback=blue!5!white,
+  colframe=blue!55!black,
+  colbacktitle=blue!55!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title={Intuition First},
+  boxrule=0.6pt,
+  arc=2mm,
+  left=6pt, right=6pt, top=4pt, bottom=4pt
+}
+
+\newtcolorbox{pitfall}{
+  enhanced,
+  breakable,
+  colback=orange!7!white,
+  colframe=orange!65!black,
+  colbacktitle=orange!65!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title={Common Beginner Mistake},
+  boxrule=0.6pt,
+  arc=2mm,
+  left=6pt, right=6pt, top=4pt, bottom=4pt
+}
+
+\newtcolorbox{pausecheck}{
+  enhanced,
+  breakable,
+  colback=green!6!white,
+  colframe=green!35!black,
+  colbacktitle=green!35!black,
+  coltitle=white,
+  fonttitle=\bfseries,
+  title={Pause and Check Yourself},
+  boxrule=0.6pt,
+  arc=2mm,
+  left=6pt, right=6pt, top=4pt, bottom=4pt
+}

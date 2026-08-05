@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Segment 4 — Line-by-Line Explanation</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav span.active {
+      color: var(--fg);
+      font-weight: 700;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 4 &middot; Spandan</span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_HeartRate_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<span class="active">Line-by-Line Explanation</span>
+<span class="sep">&middot;</span>
+<a href="Segment4_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment4_HeartRate_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../segment3_filtering/index.html">&larr; Segment 3</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 4 — Line-by-Line Explanation</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#segment-4-line-by-line-explanation"
+id="toc-segment-4-line-by-line-explanation">Segment 4 — Line-by-Line
+Explanation</a>
+<ul>
+<li><a href="#part-0-the-one-judgment-call-you-need-to-understand-first"
+id="toc-part-0-the-one-judgment-call-you-need-to-understand-first">Part
+0 — The One Judgment Call You Need to Understand First</a></li>
+<li><a href="#part-1-chromcombine.m" id="toc-part-1-chromcombine.m">Part
+1 — <code>chromCombine.m</code></a>
+<ul>
+<li><a href="#signature" id="toc-signature">Signature</a></li>
+<li><a href="#normalization"
+id="toc-normalization">Normalization</a></li>
+<li><a href="#the-chrominance-combination-itself"
+id="toc-the-chrominance-combination-itself">The chrominance combination
+itself</a></li>
+<li><a href="#combining-xs-and-ys-into-one-signal"
+id="toc-combining-xs-and-ys-into-one-signal">Combining <code>Xs</code>
+and <code>Ys</code> into one signal</a></li>
+</ul></li>
+<li><a href="#part-2-poscombine.m" id="toc-part-2-poscombine.m">Part 2 —
+<code>posCombine.m</code></a>
+<ul>
+<li><a href="#signature-1" id="toc-signature-1">Signature</a></li>
+<li><a href="#normalization-1"
+id="toc-normalization-1">Normalization</a></li>
+<li><a href="#the-pos-combination-itself"
+id="toc-the-pos-combination-itself">The POS combination itself</a></li>
+</ul></li>
+<li><a href="#part-3-fftheartrate.m" id="toc-part-3-fftheartrate.m">Part
+3 — <code>fftHeartRate.m</code></a>
+<ul>
+<li><a href="#signature-2" id="toc-signature-2">Signature</a></li>
+<li><a href="#taking-the-fft-and-keeping-only-the-useful-half"
+id="toc-taking-the-fft-and-keeping-only-the-useful-half">Taking the FFT
+and keeping only the useful half</a></li>
+<li><a
+href="#turning-bin-indices-into-real-frequencies-never-a-hardcoded-number"
+id="toc-turning-bin-indices-into-real-frequencies-never-a-hardcoded-number">Turning
+bin indices into real frequencies — never a hardcoded number</a></li>
+<li><a
+href="#restricting-the-search-to-the-physiological-band-before-peak-picking"
+id="toc-restricting-the-search-to-the-physiological-band-before-peak-picking">Restricting
+the search to the physiological band <em>before</em>
+peak-picking</a></li>
+<li><a href="#from-the-masked-spectrum-to-a-heart-rate-in-bpm"
+id="toc-from-the-masked-spectrum-to-a-heart-rate-in-bpm">From the masked
+spectrum to a heart rate in bpm</a></li>
+<li><a
+href="#the-frequency-resolution-tradeoff-in-concrete-numbers-for-this-dataset"
+id="toc-the-frequency-resolution-tradeoff-in-concrete-numbers-for-this-dataset">The
+frequency-resolution tradeoff, in concrete numbers for this
+dataset</a></li>
+</ul></li>
+<li><a href="#how-this-segment-feeds-into-segment-6"
+id="toc-how-this-segment-feeds-into-segment-6">How This Segment Feeds
+Into Segment 6</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="segment-4-line-by-line-explanation">Segment 4 — Line-by-Line
+Explanation</h1>
+<p>This document walks through
+<code>matlab/src/pulseextraction/chromCombine.m</code>,
+<code>matlab/src/pulseextraction/posCombine.m</code>, and
+<code>matlab/src/heartrate/fftHeartRate.m</code> block by block, in
+plain teaching language. It assumes you’ve just finished Chapters 6-7 of
+the project’s Orientation Lecture (FFT heart rate, the
+frequency-resolution tradeoff tied to STFT, and the CHROM/POS formulas)
+but haven’t seen this specific implementation before. The code files
+themselves are deliberately bare of inline comments — this document is
+where the <em>why</em> lives, exactly as it was for Segments 2 and
+3.</p>
+<hr />
+<h2 id="part-0-the-one-judgment-call-you-need-to-understand-first">Part
+0 — The One Judgment Call You Need to Understand First</h2>
+<p>Both <code>chromCombine.m</code> and <code>posCombine.m</code> take
+<strong>more arguments than the original stub declared.</strong> The
+stub said:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">pulseSignal</span> <span class="op">=</span> <span class="va">chromCombine</span>(<span class="va">R</span><span class="op">,</span> <span class="va">G</span><span class="op">,</span> <span class="va">B</span>)</span></code></pre></div>
+<p>The shipped version says:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">pulseSignal</span> <span class="op">=</span> <span class="va">chromCombine</span>(<span class="va">R</span><span class="op">,</span> <span class="va">G</span><span class="op">,</span> <span class="va">B</span><span class="op">,</span> <span class="va">RRaw</span><span class="op">,</span> <span class="va">GRaw</span><span class="op">,</span> <span class="va">BRaw</span>)</span></code></pre></div>
+<p>This wasn’t a casual change — it’s the direct result of a real
+numerical problem the task brief itself flagged, and it’s worth
+understanding <em>before</em> reading the rest of this document, because
+it explains half the lines in both files.</p>
+<p>CHROM and POS both start by normalizing each color channel by its own
+temporal mean:</p>
+<pre><code>Rn = R / mean(R)
+Gn = G / mean(G)
+Bn = B / mean(B)</code></pre>
+<p>The point of this step is to cancel out <strong>overall
+brightness</strong> — how bright this particular subject’s skin is, how
+bright the room’s lighting is — so that what’s left (<code>Rn</code>,
+<code>Gn</code>, <code>Bn</code>) reflects only the <em>shape</em> of
+each channel’s variation over time, not its absolute scale. That’s what
+makes CHROM/POS more robust across subjects and lighting conditions than
+just picking one raw channel.</p>
+<p>The catch: by the time Segment 4 runs, <code>R</code>,
+<code>G</code>, <code>B</code> are <strong>already</strong>
+<code>R_filtered</code>, <code>G_filtered</code>,
+<code>B_filtered</code> — the <em>output of Segment 3’s
+<code>bandpassClean.m</code></em>. A bandpass filter’s whole job is to
+reject the 0 Hz (DC) component. That means <code>mean(R_filtered)</code>
+is not a meaningful brightness level at all — it’s a number extremely
+close to zero (on the order of <code>1e-10</code> to <code>1e-3</code>,
+depending on numerical rounding), left over only from filter edge
+effects. Dividing by that number is numerically unstable: it can blow
+<code>Rn</code> up to a huge value, or even flip its sign, depending on
+which way that near-zero mean happens to round. Using it as literally
+written would silently produce garbage, not an error — exactly the kind
+of “ran fine, wrong answer” bug this project’s earlier segments have
+been careful to avoid.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> It’s tempting to read “Rn =
+R / mean(R)” and just plug in whatever variable happens to be called
+<code>R</code> in scope — in this case, <code>R_filtered</code>. The
+formula is correct; the <em>input</em> to feed it is the trap. Always
+ask what a filtered signal’s own mean actually represents (here: almost
+nothing, since the filter design specifically targets removing that
+component) before dividing by it.</p>
+</div>
+<p>The fix: both functions accept the <strong>raw, pre-filter</strong>
+channel traces (<code>RRaw</code>, <code>GRaw</code>, <code>BRaw</code>
+— i.e. <code>R</code>, <code>G</code>, <code>B</code> straight out of
+<code>data/processed/&lt;subjectID&gt;_rgb_traces.mat</code>, Segment
+2’s output, before any detrending or filtering) purely so they can
+compute <code>mean(RRaw)</code>, <code>mean(GRaw)</code>,
+<code>mean(BRaw)</code> — genuine, physically meaningful average
+pixel-brightness levels — and use <em>those</em> as the normalization
+denominator, while still combining the actual filtered signals
+(<code>R</code>, <code>G</code>, <code>B</code> in the function body)
+for <code>Xs</code>/<code>Ys</code>/<code>S1</code>/<code>S2</code>.
+This is exactly what published CHROM implementations do in spirit:
+normalize the pulsatile ripple by the skin’s DC brightness level, not by
+the ripple’s own (near-zero) mean.</p>
+<p><code>run_segment4_heartrate_batch.m</code> loads both
+<code>.mat</code> files for this exact reason —
+<code>_filtered_traces.mat</code> for the signals actually being
+combined, and <code>_rgb_traces.mat</code> for the raw means alone.</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> Why is <code>mean()</code>
+of a bandpass-filtered signal expected to be close to zero regardless of
+what the <em>unfiltered</em> signal’s brightness level was? (Hint: think
+about what a bandpass filter’s frequency response looks like exactly at
+0 Hz.)</p>
+</div>
+<hr />
+<h2 id="part-1-chromcombine.m">Part 1 — <code>chromCombine.m</code></h2>
+<h3 id="signature">Signature</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">pulseSignal</span> <span class="op">=</span> <span class="va">chromCombine</span>(<span class="va">R</span><span class="op">,</span> <span class="va">G</span><span class="op">,</span> <span class="va">B</span><span class="op">,</span> <span class="va">RRaw</span><span class="op">,</span> <span class="va">GRaw</span><span class="op">,</span> <span class="va">BRaw</span>)</span></code></pre></div>
+<p><code>R, G, B</code> are the filtered channels being combined;
+<code>RRaw, GRaw, BRaw</code> exist solely to supply a physically
+meaningful mean, as covered in Part 0.</p>
+<h3 id="normalization">Normalization</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">meanRRaw</span> <span class="op">=</span> <span class="va">mean</span>(<span class="va">RRaw</span>)<span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="va">meanGRaw</span> <span class="op">=</span> <span class="va">mean</span>(<span class="va">GRaw</span>)<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="va">meanBRaw</span> <span class="op">=</span> <span class="va">mean</span>(<span class="va">BRaw</span>)<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="va">Rn</span> <span class="op">=</span> <span class="va">R</span> <span class="op">/</span> <span class="va">meanRRaw</span><span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="va">Gn</span> <span class="op">=</span> <span class="va">G</span> <span class="op">/</span> <span class="va">meanGRaw</span><span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="va">Bn</span> <span class="op">=</span> <span class="va">B</span> <span class="op">/</span> <span class="va">meanBRaw</span><span class="op">;</span></span></code></pre></div>
+<p>Three scalar means, computed once from the raw traces, then used to
+scale the filtered traces. Note <code>R / meanRRaw</code> divides an
+entire vector by a scalar — ordinary MATLAB scalar division, applied
+element-wise automatically, exactly matching the way the formula was
+given in the task brief
+(<code>Rn = R_filtered / mean(R_filtered)</code>, just with a different,
+valid mean substituted in).</p>
+<h3 id="the-chrominance-combination-itself">The chrominance combination
+itself</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="va">Xs</span> <span class="op">=</span> <span class="fl">3</span><span class="op">*</span><span class="va">Rn</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">Gn</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">Ys</span> <span class="op">=</span> <span class="fl">1.5</span><span class="op">*</span><span class="va">Rn</span> <span class="op">+</span> <span class="va">Gn</span> <span class="op">-</span> <span class="fl">1.5</span><span class="op">*</span><span class="va">Bn</span><span class="op">;</span></span></code></pre></div>
+<p><code>Xs</code> and <code>Ys</code> are two different fixed linear
+combinations of the normalized channels. These particular coefficients
+(3, -2, 1.5, 1, -1.5) come from the published CHROM algorithm (de Haan
+&amp; Jeanne, 2013) — they are derived from a model of how human skin
+reflects light and how a blood-volume pulse modulates that reflection
+differently in each color channel. The intuition, not just the algebra:
+as blood volume rises and falls with each heartbeat, it changes the red,
+green, and blue channels by <em>different relative amounts</em>, because
+oxygenated blood absorbs red and green light differently than it absorbs
+blue light. <code>Xs</code> and <code>Ys</code> are two specific
+combinations chosen so that ambient-lighting changes and motion
+artifacts affect both <code>Xs</code> and <code>Ys</code> in a highly
+correlated way, while the genuine pulse signal affects them differently
+— which is exactly what the next step exploits.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Picture the skin’s color as a
+moving point in 3D RGB space. Most of what moves that point around from
+frame to frame — someone shifting slightly, a lighting flicker, camera
+auto-exposure — is motion along one particular direction (the “skin-tone
+vector”): the color changes, but the ratio of R, G, B roughly holds.
+<code>Xs</code> and <code>Ys</code> are built to look nearly identical
+to each other along exactly that motion direction, so it cancels out
+when you compare them. The blood pulse, by contrast, moves the color
+point along a <em>different</em> direction — because it affects each
+channel by different physical amounts. That difference in direction is
+what CHROM is designed to isolate.</p>
+</div>
+<h3 id="combining-xs-and-ys-into-one-signal">Combining <code>Xs</code>
+and <code>Ys</code> into one signal</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="va">alpha</span> <span class="op">=</span> <span class="va">std</span>(<span class="va">Xs</span>) <span class="op">/</span> <span class="va">std</span>(<span class="va">Ys</span>)<span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="va">pulseSignal</span> <span class="op">=</span> <span class="va">Xs</span> <span class="op">-</span> <span class="va">alpha</span><span class="op">*</span><span class="va">Ys</span><span class="op">;</span></span></code></pre></div>
+<p>If <code>Xs</code> and <code>Ys</code> were combined with equal
+weight (<code>Xs - Ys</code>), any leftover motion/lighting artifact
+still present in both (in different amounts) wouldn’t fully cancel.
+<code>alpha</code> rescales <code>Ys</code> so its <em>overall
+variability</em> (standard deviation) matches <code>Xs</code>‘s before
+subtracting — this is a data-driven way of balancing the two signals’
+amplitudes without needing to know the exact lighting/motion conditions
+in advance. Subtracting the rescaled <code>Ys</code> from
+<code>Xs</code> cancels the shared (motion/lighting) component and
+leaves mostly the pulse-driven difference between the two.</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> If a recording had
+unusually large motion artifacts throughout (not just a brief bump),
+would you expect <code>alpha</code> to come out larger or smaller than
+for a nearly still recording, and why does that make sense given what
+<code>alpha</code> is trying to balance?</p>
+</div>
+<hr />
+<h2 id="part-2-poscombine.m">Part 2 — <code>posCombine.m</code></h2>
+<h3 id="signature-1">Signature</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">pulseSignal</span> <span class="op">=</span> <span class="va">posCombine</span>(<span class="va">R</span><span class="op">,</span> <span class="va">G</span><span class="op">,</span> <span class="va">B</span><span class="op">,</span> <span class="va">frameRate</span><span class="op">,</span> <span class="va">RRaw</span><span class="op">,</span> <span class="va">GRaw</span><span class="op">,</span> <span class="va">BRaw</span>)</span></code></pre></div>
+<p>Same <code>R/G/B</code> and <code>RRaw/GRaw/BRaw</code> roles as
+CHROM. <code>frameRate</code> is carried over from the original stub
+(the published POS algorithm normally runs this whole combination over a
+short sliding window, e.g. ~1.6 seconds, sized from the frame rate, and
+repeats it as the window slides across the recording). <strong>This
+project’s Segment 4 brief specifies the simpler whole-signal formula
+below instead</strong> — the same non-windowed approach CHROM uses — so
+<code>frameRate</code> is accepted for signature compatibility and
+possible future windowed extension, but the current implementation does
+not use it. This is a deliberate simplification, not an oversight — see
+the Guideline PDF for the pitfall this could later cause on a much
+longer recording.</p>
+<h3 id="normalization-1">Normalization</h3>
+<p>Identical in structure to CHROM’s — same reasoning from Part 0
+applies here without repeating it:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">meanRRaw</span> <span class="op">=</span> <span class="va">mean</span>(<span class="va">RRaw</span>)<span class="op">;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="va">meanGRaw</span> <span class="op">=</span> <span class="va">mean</span>(<span class="va">GRaw</span>)<span class="op">;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="va">meanBRaw</span> <span class="op">=</span> <span class="va">mean</span>(<span class="va">BRaw</span>)<span class="op">;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="va">Rn</span> <span class="op">=</span> <span class="va">R</span> <span class="op">/</span> <span class="va">meanRRaw</span><span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="va">Gn</span> <span class="op">=</span> <span class="va">G</span> <span class="op">/</span> <span class="va">meanGRaw</span><span class="op">;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="va">Bn</span> <span class="op">=</span> <span class="va">B</span> <span class="op">/</span> <span class="va">meanBRaw</span><span class="op">;</span></span></code></pre></div>
+<h3 id="the-pos-combination-itself">The POS combination itself</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="va">S1</span> <span class="op">=</span> <span class="va">Gn</span> <span class="op">-</span> <span class="va">Bn</span><span class="op">;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="va">S2</span> <span class="op">=</span> <span class="va">Gn</span> <span class="op">+</span> <span class="va">Bn</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">Rn</span><span class="op">;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="va">pulseSignal</span> <span class="op">=</span> <span class="va">S1</span> <span class="op">+</span> (<span class="va">std</span>(<span class="va">S1</span>)<span class="op">/</span><span class="va">std</span>(<span class="va">S2</span>))<span class="op">*</span><span class="va">S2</span><span class="op">;</span></span></code></pre></div>
+<p>POS (Wang et al., 2017) takes a different pair of projection
+directions than CHROM (<code>S1</code>, <code>S2</code> instead of
+<code>Xs</code>, <code>Ys</code>), derived from a more general analysis
+of how skin-tone variation is constrained to a plane in RGB space, with
+the pulse direction orthogonal to it within that plane.
+<code>S1 = Gn - Bn</code> and <code>S2 = Gn + Bn - 2*Rn</code> are the
+two specific directions POS’s derivation identifies as spanning that
+plane in a way that isolates the pulse component well.</p>
+<p><code>std(S1)/std(S2)</code> plays exactly the same role as CHROM’s
+<code>alpha</code> — scale <code>S2</code> to match <code>S1</code>’s
+variability before combining, so the combination isn’t dominated by
+whichever of the two happens to have larger raw amplitude for reasons
+unrelated to the pulse.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Both CHROM and POS follow the same
+two-step recipe: (1) build two different fixed linear combinations of
+the normalized channels, each designed so that non-pulse variation
+(motion, lighting) shows up in both combinations in a correlated way
+while the pulse doesn’t; (2) rescale one combination to match the
+other’s overall energy, then subtract (CHROM) or add (POS) them to
+cancel the shared part. They differ in exactly which two combinations
+they use and the algebraic sign of the final step — but the underlying
+strategy, and the reason both usually beat a single raw channel, is the
+same.</p>
+</div>
+<p>Why does this project run <em>both</em> CHROM and POS on every
+subject, rather than picking one? Because on real (imperfect,
+motion-affected) UBFC-rPPG footage, neither algorithm dominates the
+other in every case — having two independent HR estimates, plus the raw
+green-channel estimate, gives Segment 6’s validation stage more evidence
+for which approach actually performs best on this project’s specific
+data, rather than assuming it from the literature alone.</p>
+<hr />
+<h2 id="part-3-fftheartrate.m">Part 3 — <code>fftHeartRate.m</code></h2>
+<h3 id="signature-2">Signature</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> [<span class="va">hrBpm</span><span class="op">,</span> <span class="va">freqSpectrum</span><span class="op">,</span> <span class="va">powerSpectrum</span>] <span class="op">=</span> <span class="va">fftHeartRate</span>(<span class="va">pulseSignal</span><span class="op">,</span> <span class="va">frameRate</span>)</span></code></pre></div>
+<p>Works on any 1-D signal — the re-filtered CHROM output, the
+re-filtered POS output, or <code>G_filtered</code> directly (no
+combination at all), which is exactly how
+<code>run_segment4_heartrate_batch.m</code> uses it three times per
+subject.</p>
+<h3 id="taking-the-fft-and-keeping-only-the-useful-half">Taking the FFT
+and keeping only the useful half</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="va">signalLength</span> <span class="op">=</span> <span class="va">length</span>(<span class="va">pulseSignal</span>)<span class="op">;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="va">fftResult</span> <span class="op">=</span> <span class="va">fft</span>(<span class="va">pulseSignal</span>)<span class="op">;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="va">numPositiveBins</span> <span class="op">=</span> <span class="va">floor</span>(<span class="va">signalLength</span> <span class="op">/</span> <span class="fl">2</span>) <span class="op">+</span> <span class="fl">1</span><span class="op">;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="va">fftPositive</span> <span class="op">=</span> <span class="va">fftResult</span>(<span class="fl">1</span><span class="op">:</span><span class="va">numPositiveBins</span>)<span class="op">;</span></span></code></pre></div>
+<p><code>fft()</code> of a real-valued signal is symmetric: the second
+half of its output is just a mirror image (complex conjugate) of the
+first half and carries no extra information for a real input. Keeping
+only <code>1:numPositiveBins</code> (from 0 Hz up to the Nyquist
+frequency) discards exactly that redundant mirrored half — nothing about
+the signal is lost, it’s just not duplicated.</p>
+<h3
+id="turning-bin-indices-into-real-frequencies-never-a-hardcoded-number">Turning
+bin indices into real frequencies — never a hardcoded number</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="va">freqResolution</span> <span class="op">=</span> <span class="va">frameRate</span> <span class="op">/</span> <span class="va">signalLength</span><span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="va">freqSpectrum</span> <span class="op">=</span> (<span class="fl">0</span><span class="op">:</span><span class="va">numPositiveBins</span> <span class="op">-</span> <span class="fl">1</span>) <span class="op">*</span> <span class="va">freqResolution</span><span class="op">;</span></span></code></pre></div>
+<p>This is the single most important pair of lines in this file, for the
+same reason <code>bandpassClean.m</code>’s Nyquist calculation was the
+most important lines in Segment 3: <strong>frequency resolution depends
+on both the sampling rate and the number of samples</strong>, and both
+of those vary per subject (UBFC frame rates aren’t a clean 30 fps, and
+clip lengths differ). <code>bin k</code> corresponds to
+<code>k * (frameRate / signalLength)</code> Hz — hardcoding a resolution
+assumed from “a typical 30 fps, 2000-ish-frame clip” would put every
+bin’s frequency label very slightly wrong for any subject whose actual
+<code>fs</code>/length differs, with no error to signal it.</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="va">powerSpectrum</span> <span class="op">=</span> <span class="va">abs</span>(<span class="va">fftPositive</span>)<span class="op">;</span></span></code></pre></div>
+<p><code>fft()</code> returns complex numbers (magnitude and phase).
+Heart-rate estimation only cares about <em>how much</em> energy is at
+each frequency, not its phase, so <code>abs()</code> reduces each
+complex bin to a single magnitude value. (Despite the variable being
+named <code>powerSpectrum</code> — inherited from the original stub’s
+naming — this holds the FFT <em>magnitude</em>, <code>|FFT|</code>, not
+squared power; that’s what the mandatory sanity plot in Step 6 of the
+batch script needs directly, and squaring vs. not squaring doesn’t
+change <em>where</em> the peak is, which is all that matters for
+peak-picking below.)</p>
+<h3
+id="restricting-the-search-to-the-physiological-band-before-peak-picking">Restricting
+the search to the physiological band <em>before</em> peak-picking</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="va">lowBandHz</span> <span class="op">=</span> <span class="fl">0.7</span><span class="op">;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="va">highBandHz</span> <span class="op">=</span> <span class="fl">4.0</span><span class="op">;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="va">bandMask</span> <span class="op">=</span> <span class="va">freqSpectrum</span> <span class="op">&gt;=</span> <span class="va">lowBandHz</span> <span class="op">&amp;</span> <span class="va">freqSpectrum</span> <span class="op">&lt;=</span> <span class="va">highBandHz</span><span class="op">;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="va">freqInBand</span> <span class="op">=</span> <span class="va">freqSpectrum</span>(<span class="va">bandMask</span>)<span class="op">;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="va">powerInBand</span> <span class="op">=</span> <span class="va">powerSpectrum</span>(<span class="va">bandMask</span>)<span class="op">;</span></span></code></pre></div>
+<p>This is the step the task brief specifically warned about:
+<strong>find the global peak and hope it’s in range</strong> is not what
+this code does. <code>bandMask</code> is built and applied
+<em>before</em> any peak search happens, so a strong noise spike at,
+say, 6 Hz (outside any physiologically possible heart rate) can never
+win. This matters even though the input has already been through
+<code>bandpassClean.m</code> — a Butterworth filter attenuates
+out-of-band content heavily but not to literally zero, and combining
+channels (CHROM/POS) can reintroduce a small amount of out-of-band
+energy too (which is exactly why Step 3 of the pipeline re-filters after
+combination, before this function ever sees the signal). Masking the
+search band is a second, independent safety net on top of that
+filtering, not a replacement for it.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Writing
+<code>[peakPower, peakIndex] = max(powerSpectrum)</code> on the
+<em>full</em> spectrum, then converting that index to a frequency, and
+only afterward checking whether it happens to land in 0.7-4 Hz. On a
+noisy or short recording, the strongest peak in the whole spectrum is
+not guaranteed to be inside the valid band — a residual near-0 Hz drift
+component or a burst of high-frequency noise can easily out-muscle the
+real (and often comparatively modest) pulse peak if the band restriction
+is applied as an afterthought instead of a mask on the search
+itself.</p>
+</div>
+<h3 id="from-the-masked-spectrum-to-a-heart-rate-in-bpm">From the masked
+spectrum to a heart rate in bpm</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="va">peakPower</span> <span class="op">=</span> <span class="va">max</span>(<span class="va">powerInBand</span>)<span class="op">;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="va">peakIndex</span> <span class="op">=</span> <span class="va">find</span>(<span class="va">powerInBand</span> <span class="op">==</span> <span class="va">peakPower</span><span class="op">,</span> <span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="va">peakFreqHz</span> <span class="op">=</span> <span class="va">freqInBand</span>(<span class="va">peakIndex</span>)<span class="op">;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="va">hrBpm</span> <span class="op">=</span> <span class="va">peakFreqHz</span> <span class="op">*</span> <span class="fl">60</span><span class="op">;</span></span></code></pre></div>
+<p><code>max(powerInBand)</code> finds the largest magnitude
+<em>within</em> the already-masked band; <code>find(..., 1)</code>
+locates the first bin matching that value (relevant only in the rare
+case of an exact tie); <code>freqInBand(peakIndex)</code> converts that
+bin position back to a frequency in Hz. The final <code>* 60</code>
+converts Hz to bpm (60 seconds per minute) — the same conversion Segment
+3’s Guideline PDF used going the other direction (bpm to Hz, to pick the
+0.7-4 Hz cutoffs in the first place).</p>
+<h3
+id="the-frequency-resolution-tradeoff-in-concrete-numbers-for-this-dataset">The
+frequency-resolution tradeoff, in concrete numbers for this dataset</h3>
+<p>This is the STFT-adjacent tradeoff flagged in the Orientation
+Lecture: <strong>a longer signal gives finer frequency resolution, a
+shorter signal gives coarser resolution</strong> — the same
+window-length-vs-resolution tradeoff that applies to any windowed
+spectral estimate, FFT included, since a single FFT over the whole clip
+is really just a one-window STFT.</p>
+<p><code>freqResolution = frameRate / signalLength</code> is the size of
+one FFT bin in Hz. For the three DATASET_1 subjects used to verify this
+segment (<code>fs ≈ 28.67</code> fps, clip lengths 2362-2409 frames,
+i.e. ~82-84 second recordings):</p>
+<pre><code>freqResolution ≈ 28.67 / 2400 ≈ 0.0119 Hz  →  0.0119 * 60 ≈ 0.71 bpm per bin</code></pre>
+<p>In other words, for a UBFC-rPPG-length clip, the FFT can only report
+a heart rate to about <strong>the nearest 0.7 bpm</strong> —
+finer-looking decimal output (like <code>76.4105</code>) is real in the
+sense that it’s exactly which bin won, but the true achievable
+<em>precision</em> of this method on this data is closer to “plus or
+minus a bin or so,” not a fraction of a bpm.</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> If a teammate ran this
+same code on a much shorter, 10-second self-collected test clip instead
+of an 80-second UBFC clip (same ~29 fps), roughly how much would the bpm
+resolution get worse, and would you still trust individual bpm estimates
+to one decimal place?</p>
+</div>
+<p><strong>Why CHROM and POS report the exact same bpm on the subjects
+tested here.</strong> Running the batch script on <code>5-gt</code>,
+<code>6-gt</code>, <code>7-gt</code> produces
+<code>HR_chrom == HR_pos</code> to four decimal places for all three.
+This looks suspicious at first glance but is not a bug — it was checked
+directly by comparing the two combined signals sample-by-sample: they
+are <em>not</em> identical
+(<code>max(abs(chromSignal - posSignal))</code> is small but nonzero),
+they are just very strongly correlated (both are linear combinations of
+the same three highly-correlated color channels, both specifically
+designed to isolate the same underlying cardiac frequency). With a bin
+resolution of ~0.7 bpm, two signals that both have their true dominant
+frequency sitting well inside the same bin will report identical
+<code>hrBpm</code>, even though the full-precision continuous-frequency
+answer would differ slightly between them. This is expected behavior
+given the resolution ceiling above, not evidence the two algorithms
+collapsed into the same computation.</p>
+<hr />
+<h2 id="how-this-segment-feeds-into-segment-6">How This Segment Feeds
+Into Segment 6</h2>
+<p>Every subject processed by
+<code>run_segment4_heartrate_batch.m</code> produces three independent
+bpm estimates — <code>HR_chrom</code>, <code>HR_pos</code>,
+<code>HR_green</code> — saved both per-subject
+(<code>data/processed/&lt;subjectID&gt;_hr_estimates.mat</code>) and as
+one row in the shared
+<code>results/metrics/segment4_hr_summary.csv</code>. Segment 6’s formal
+leave-one-subject-out validation (<code>validation/runLOSO.m</code>,
+<code>validation/computeMetrics.m</code>, both still untouched stubs) is
+where these three estimates get systematically compared against ground
+truth across every available subject, with proper MAE/RMSE/correlation
+statistics. What this segment provides is the raw material for that
+comparison — not the comparison itself. The <code>abs_error_*</code>
+columns in this segment’s CSV are a quick eyeball check for individual
+subjects, not a substitute for Segment 6’s formal metrics pipeline.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 4 (CHROM/POS pulse extraction + FFT heart rate) docs — BUET EEE 312.
+  Source markdown lives in <code>segment4_heartrate/</code>; the actual code lives under <code>matlab/src/pulseextraction/</code> and <code>matlab/src/heartrate/</code>.
+</footer>
+</body>
+</html>
