@@ -1,4 +1,4 @@
-function signalDetrended = detrendSignal(signalRaw)
+function [signalDetrended, detrendOrder] = detrendSignal(signalRaw)
 % DETRENDSIGNAL Remove slow drift/trend from a raw ROI color-channel signal.
 %
 % Pipeline stage: Stage 2 (detrend + bandpass filter) — runs before
@@ -11,7 +11,13 @@ function signalDetrended = detrendSignal(signalRaw)
 %
 % Outputs:
 %   signalDetrended - 1 x N vector, same length, with slow trend removed.
+%   detrendOrder    - scalar, the polynomial order used to fit and remove
+%                     the trend. Returned (not just used internally) so
+%                     callers such as scripts/run_segment3_filtering_batch.m
+%                     can record it alongside the filtered signal for
+%                     later auditing, without needing to re-read this file.
 
-error('Not implemented yet — see docs/');
+detrendOrder = 3;
+signalDetrended = detrend(signalRaw, detrendOrder);
 
 end

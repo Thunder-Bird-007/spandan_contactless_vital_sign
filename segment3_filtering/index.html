@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Segment 2 — Face Detection &amp; ROI Extraction</title>
+<title>Segment 3 — Detrending &amp; Bandpass Filtering</title>
 <style>
   :root {
     --bg: #ffffff;
@@ -73,11 +73,9 @@
     padding: 0.15rem 0.1rem;
   }
   nav.site-nav a:hover { text-decoration: underline; }
-  nav.site-nav a.active {
+  nav.site-nav span.active {
     color: var(--fg);
     font-weight: 700;
-    text-decoration: none;
-    pointer-events: none;
   }
   nav.site-nav span.sep { color: var(--border); }
   h1, h2, h3 { line-height: 1.3; font-weight: 700; }
@@ -203,117 +201,129 @@
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 2 &middot; Spandan</span>
+<span class="brand">Segment 3 &middot; Spandan</span>
 <span class="active">Home</span>
 <span class="sep">&middot;</span>
-<a href="Segment2_Face_ROI_Guideline.html">Guideline</a>
+<a href="Segment3_Filtering_Guideline.html">Guideline</a>
 <span class="sep">&middot;</span>
-<a href="Segment2_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<a href="Segment3_LineByLine_Explanation.html">Line-by-Line Explanation</a>
 <span class="sep">&middot;</span>
-<a href="Segment2_Team_README.html">Team README</a>
+<a href="Segment3_Team_README.html">Team README</a>
 <span class="sep">&middot;</span>
-<a href="Segment2_Face_ROI_Guideline.pdf">PDF</a>
+<a href="Segment3_Filtering_Guideline.pdf">PDF</a>
 <span class="sep">&middot;</span>
-<a href="../segment3_filtering/index.html">Segment 3 &rarr;</a>
+<a href="../segment2_face_roi/index.html">&larr; Segment 2</a>
+<span class="sep">&middot;</span>
+<a href="../segment4_heartrate/index.html">Segment 4 &rarr;</a>
 </nav>
 
-<h1>Segment 2: Face Detection &amp; ROI Extraction</h1>
+<h1>Segment 3: Detrending &amp; Bandpass Filtering</h1>
 
 <p>
-This is the documentation site for <strong>Segment 2</strong> of the
+This is the documentation site for <strong>Segment 3</strong> of the
 <strong>Spandan</strong> project (contactless heart-rate &amp; SpO2 estimation
-from ordinary video — EEE 312 DSP Lab, BUET). Segment 2 covers exactly one
-job: detect the face in each video frame, crop a forehead skin patch, and
-turn it into three raw signals — R(t), G(t), B(t) — plus the true sampling
-rate f<sub>s</sub>. Nothing here does filtering, CHROM/POS, FFT heart rate,
-or SpO2 — those are later segments.
+from ordinary video — EEE 312 DSP Lab, BUET). Segment 3 takes the raw
+R(t), G(t), B(t) traces that Segment 2 produced and cleans them up:
+removes slow illumination drift, then bandpass-filters each channel down
+to the 0.7-4 Hz physiological pulse band. Nothing here does CHROM/POS
+combination, FFT heart rate, or SpO2 — those are later segments.
 </p>
 
 <div class="pill-row">
-  <span class="pill">Viola-Jones face detection</span>
-  <span class="pill">Forehead ROI cropping</span>
-  <span class="pill">Spatial averaging (choir effect)</span>
-  <span class="pill">UBFC-rPPG dataset</span>
+  <span class="pill">Polynomial detrending</span>
+  <span class="pill">Butterworth bandpass</span>
+  <span class="pill">filtfilt (zero-phase)</span>
+  <span class="pill">0.7&ndash;4 Hz pulse band</span>
   <span class="pill">MATLAB</span>
 </div>
 
 <h2>Where to start</h2>
 
 <div class="card-grid">
-  <a class="card" href="Segment2_Face_ROI_Guideline.html">
+  <a class="card" href="Segment3_Filtering_Guideline.html">
     <div class="card-icon">📘</div>
     <h3>Guideline</h3>
-    <p>Start here if you're new to this segment. The theory: why forehead
-    skin specifically, Viola-Jones intuition, the "choir effect" analogy for
-    spatial averaging, why the sampling rate must be read from the file, and
-    the common pitfalls (lighting, motion, detection dropouts). Includes
-    "Intuition First", "Common Beginner Mistake", and "Pause and Check
-    Yourself" call-outs throughout.</p>
+    <p>Start here if you're new to this segment. The theory: why raw
+    R/G/B has drift and out-of-band noise, polynomial detrending
+    intuition, Butterworth bandpass intuition, why <code>filtfilt</code>
+    over <code>filter</code> matters for the SpO2 stage later, and the
+    common pitfalls. Includes "Intuition First", "Common Beginner
+    Mistake", and "Pause and Check Yourself" call-outs throughout.</p>
   </a>
-  <a class="card" href="Segment2_LineByLine_Explanation.html">
+  <a class="card" href="Segment3_LineByLine_Explanation.html">
     <div class="card-icon">🔍</div>
     <h3>Line-by-Line Explanation</h3>
     <p>A block-by-block walkthrough of the actual MATLAB implementation
-    (<code>loadUBFCVideo.m</code> and <code>extractROISignals.m</code>) —
-    what each part does and why, including the real false-positive
-    face-detection bug found and fixed while testing this segment.</p>
+    (<code>detrendSignal.m</code> and <code>bandpassClean.m</code>) —
+    what each part does, why it's written that way, and the reasoning
+    behind every parameter choice (polynomial order, filter order, why
+    the cutoffs are computed from <code>fs</code> instead of fixed).</p>
   </a>
-  <a class="card" href="Segment2_Team_README.html">
+  <a class="card" href="Segment3_Team_README.html">
     <div class="card-icon">👥</div>
     <h3>Team README</h3>
-    <p>Practical instructions for the other team members: where to put your
-    assigned subject videos, how to edit the subject list in the batch
-    script, how to run it, and where your output lands so everyone's
-    results merge cleanly.</p>
+    <p>Practical instructions for the other team members: confirming
+    your Segment 2 output exists, how to edit the subject list in the
+    batch script, how to run it, and where your filtered output lands
+    so everyone's results merge cleanly.</p>
   </a>
-  <a class="card" href="Segment2_Face_ROI_Guideline.pdf">
+  <a class="card" href="Segment3_Filtering_Guideline.pdf">
     <div class="card-icon">📄</div>
     <h3>Guideline (PDF)</h3>
-    <p>The same guideline content as a printable/shareable PDF, built with
-    pandoc + xelatex + tcolorbox, styled call-out boxes included.</p>
+    <p>The same guideline content as a printable/shareable PDF, built
+    with pandoc + xelatex + tcolorbox, styled call-out boxes included.</p>
   </a>
 </div>
 
 <h2>The code</h2>
 
 <p>
-The actual implementation lives in the main project scaffold, not in this
-docs folder:
+The actual implementation lives in the main project scaffold, not in
+this docs folder:
 </p>
 
 <ul>
-  <li><code><a href="../matlab/src/io/loadUBFCVideo.m">matlab/src/io/loadUBFCVideo.m</a></code> — opens a subject's video, reads the true frame rate.</li>
-  <li><code><a href="../matlab/src/roi/extractROISignals.m">matlab/src/roi/extractROISignals.m</a></code> — face detection, ROI cropping, per-frame R/G/B averaging.</li>
-  <li><code><a href="../matlab/scripts/run_segment2_roi_batch.m">matlab/scripts/run_segment2_roi_batch.m</a></code> — batch driver the team runs over their assigned subjects.</li>
+  <li><code><a href="../matlab/src/filtering/detrendSignal.m">matlab/src/filtering/detrendSignal.m</a></code> — polynomial detrend, removes slow illumination drift.</li>
+  <li><code><a href="../matlab/src/filtering/bandpassClean.m">matlab/src/filtering/bandpassClean.m</a></code> — Butterworth bandpass over 0.7&ndash;4 Hz, applied with <code>filtfilt</code>.</li>
+  <li><code><a href="../matlab/scripts/run_segment3_filtering_batch.m">matlab/scripts/run_segment3_filtering_batch.m</a></code> — batch driver the team runs over their filtered subjects.</li>
 </ul>
 
 <h2>What comes out of this segment</h2>
 
 <p>
-For every subject processed: <code>data/processed/&lt;subjectID&gt;_rgb_traces.mat</code>
-(fields <code>R</code>, <code>G</code>, <code>B</code>, <code>fs</code>,
-<code>subjectID</code>, <code>numDroppedFrames</code>) and
-<code>results/figures/&lt;subjectID&gt;_roi_sanity.png</code> — a sanity-check
-image with the detected face box and the final ROI box drawn on it. Always
-look at the PNG before trusting the <code>.mat</code> output — that's the
-whole point of it.
+For every subject processed: <code>data/processed/&lt;subjectID&gt;_filtered_traces.mat</code>
+(fields <code>R_filtered</code>, <code>G_filtered</code>,
+<code>B_filtered</code>, <code>fs</code>, <code>subjectID</code>,
+<code>detrendOrder</code>, <code>filterOrder</code>) and
+<code>results/figures/&lt;subjectID&gt;_filtering_sanity.png</code> — three
+stacked plots of the green channel (raw, detrended, detrended +
+filtered) on the same time axis. Always look at the PNG before trusting
+the <code>.mat</code> output — the drift should visibly be gone and the
+final plot should look like a repeating pulse wave, not a flat line or
+residual noise.
 </p>
 
 <h2>Other segments</h2>
 
 <div class="card-grid">
-  <a class="card" href="../segment3_filtering/index.html">
+  <a class="card" href="../segment2_face_roi/index.html">
+    <div class="card-icon">⬅️</div>
+    <h3>Segment 2 — Face &amp; ROI Extraction</h3>
+    <p>The previous stage: face detection and forehead ROI cropping,
+    producing the raw R(t), G(t), B(t) traces this segment consumes.</p>
+  </a>
+  <a class="card" href="../segment4_heartrate/index.html">
     <div class="card-icon">➡️</div>
-    <h3>Segment 3 — Detrending &amp; Bandpass Filtering</h3>
-    <p>The next stage: cleans up these raw R(t), G(t), B(t) traces with
-    polynomial detrending and a Butterworth bandpass filter before
-    CHROM/POS combination.</p>
+    <h3>Segment 4 — CHROM/POS &amp; FFT Heart Rate</h3>
+    <p>The next stage: combining the filtered R(t), G(t), B(t) traces this
+    segment produces into a single pulse signal via CHROM/POS, then
+    estimating heart rate via FFT.</p>
   </a>
 </div>
 
 <footer class="page-footer">
-  Part of the <strong>Spandan</strong> project's Segment 2 (face detection + ROI extraction) docs — BUET EEE 312.
-  Source markdown lives in <code>segment2_face_roi/</code>; the actual code lives under <code>matlab/src/</code>.
+  Part of the <strong>Spandan</strong> project's Segment 3 (detrending + bandpass filtering) docs — BUET EEE 312.
+  Source markdown lives in <code>segment3_filtering/</code>; the actual code lives under <code>matlab/src/filtering/</code>.
 </footer>
 
 </body>

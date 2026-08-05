@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Team Spandan" />
+  <title>Segment 3 — Filtering Guideline</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      font-size: 11pt;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav span.active {
+      color: var(--fg);
+      font-weight: 700;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 3 &middot; Spandan</span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<span class="active">Guideline</span>
+<span class="sep">&middot;</span>
+<a href="Segment3_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<a href="Segment3_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment3_Filtering_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../segment2_face_roi/index.html">&larr; Segment 2</a>
+<span class="sep">&middot;</span>
+<a href="../segment4_heartrate/index.html">Segment 4 &rarr;</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 3 — Filtering Guideline</h1>
+<p class="subtitle">Spandan: Contactless Vital Sign Monitoring — EEE 312
+DSP Project, BUET</p>
+<p class="author">Team Spandan</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#why-this-segment-exists"
+id="toc-why-this-segment-exists">Why This Segment Exists</a></li>
+<li><a
+href="#why-raw-rgb-has-drift-and-out-of-band-noise-in-the-first-place"
+id="toc-why-raw-rgb-has-drift-and-out-of-band-noise-in-the-first-place">Why
+Raw R/G/B Has Drift and Out-of-Band Noise in the First Place</a></li>
+<li><a href="#polynomial-detrending-intuition"
+id="toc-polynomial-detrending-intuition">Polynomial Detrending,
+Intuition</a></li>
+<li><a
+href="#butterworth-bandpass-intuition-why-0.7-4-hz-maps-to-40-240-bpm"
+id="toc-butterworth-bandpass-intuition-why-0.7-4-hz-maps-to-40-240-bpm">Butterworth
+Bandpass Intuition — Why 0.7-4 Hz Maps to 40-240 bpm</a></li>
+<li><a
+href="#filtfilt-vs-filter-why-phase-distortion-specifically-matters-here"
+id="toc-filtfilt-vs-filter-why-phase-distortion-specifically-matters-here"><code>filtfilt</code>
+vs <code>filter</code> — Why Phase Distortion Specifically Matters
+Here</a></li>
+<li><a href="#why-the-cutoffs-must-be-computed-from-the-subjects-own-fs"
+id="toc-why-the-cutoffs-must-be-computed-from-the-subjects-own-fs">Why
+the Cutoffs Must Be Computed From the Subject’s Own
+<code>fs</code></a></li>
+<li><a href="#common-pitfalls-in-this-segment"
+id="toc-common-pitfalls-in-this-segment">Common Pitfalls in This
+Segment</a></li>
+<li><a href="#how-this-segment-feeds-into-segment-4"
+id="toc-how-this-segment-feeds-into-segment-4">How This Segment Feeds
+Into Segment 4</a></li>
+</ul>
+</nav>
+<h1 id="why-this-segment-exists">Why This Segment Exists</h1>
+<p>Segment 2 gave us three raw signals — <em>R</em>(<em>t</em>),
+<em>G</em>(<em>t</em>), <em>B</em>(<em>t</em>) — one spatially-averaged
+pixel value per video frame, per color channel. If you plot one of these
+raw traces, it does <strong>not</strong> look like a heartbeat. It looks
+like a slowly wandering curve with a faint, fast ripple riding on top of
+it, half-buried in noise. Segment 3’s whole job is classical DSP
+housekeeping: strip away everything that isn’t the 0.7-4 Hz pulse band,
+so that Segment 4 (CHROM/POS combination) and Segment 5 (FFT heart rate,
+SpO2) have something clean to actually work with.</p>
+<p>Nothing in this segment does anything clever or algorithm-specific to
+rPPG. It’s two textbook DSP operations — detrending and bandpass
+filtering — applied carefully, with parameters that are justified rather
+than guessed.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Imagine trying to hear a metronome
+ticking softly in a room where someone is also slowly turning a dimmer
+switch up and down, and there’s a low hum from an air conditioner in the
+background. The metronome tick is the pulse signal. The dimmer switch is
+the slow illumination drift — it changes the <em>overall loudness</em>
+of everything over many seconds, but it isn’t the tick. The AC hum is
+out-of-band noise, sensor noise, tiny motion jitter — real, but not the
+tick either. Segment 3 is the pair of noise-cancelling headphones tuned
+specifically to let the metronome’s tempo through and cut everything
+above and below it.</p>
+</div>
+<h1
+id="why-raw-rgb-has-drift-and-out-of-band-noise-in-the-first-place">Why
+Raw R/G/B Has Drift and Out-of-Band Noise in the First Place</h1>
+<p>The raw traces coming out of Segment 2 carry several things mixed
+together, at very different timescales:</p>
+<ol type="1">
+<li><strong>The pulse itself</strong> — blood volume under the forehead
+skin rising and falling with each heartbeat, at roughly 0.7-4 Hz (42-240
+bpm). This is the signal of interest, and it is a genuinely small
+fraction of the total brightness variation.</li>
+<li><strong>Slow illumination drift</strong> — ambient light changing
+over many seconds (a cloud, a flickering fixture, the camera’s
+auto-exposure settling in), or the subject’s overall skin tone/position
+shifting slightly. This happens on the order of the whole recording’s
+length, far below 0.7 Hz.</li>
+<li><strong>High-frequency noise</strong> — camera sensor noise, small
+unavoidable motion jitter, anything faster than a heart physically can
+beat. This sits above 4 Hz.</li>
+</ol>
+<p>A raw trace is the sum of all three. Detrending removes (2). Bandpass
+filtering removes both (2) and (3) more precisely, keeping only the band
+where (1) actually lives.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> It’s tempting to assume the
+raw signal <em>is</em> basically the pulse already, just “a bit noisy,”
+and to skip straight to an FFT or a peak-counting algorithm. In practice
+the drift component is usually much larger in amplitude than the pulse
+ripple itself — an FFT run on the raw, undetrended signal will often
+show almost all its energy crammed into a huge near-0 Hz peak from the
+drift, with the actual pulse peak barely visible by comparison.
+Detrending and bandpass filtering aren’t optional cleanup steps here —
+without them, later frequency-domain analysis is looking at the wrong
+thing entirely.</p>
+</div>
+<h1 id="polynomial-detrending-intuition">Polynomial Detrending,
+Intuition</h1>
+<p><code>filtering/detrendSignal.m</code> fits a smooth polynomial curve
+to the whole raw signal and subtracts it, using MATLAB’s built-in
+<code>detrend(x, n)</code>, where <code>n</code> is the polynomial’s
+degree.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Think of detrending as asking: “if
+I ignore the fast wiggles entirely, what’s the big, slow-moving shape
+this signal is following?” A least-squares polynomial fit answers
+exactly that — it finds the smooth curve of degree <code>n</code> that
+best follows the overall shape of the data, ignoring the fast stuff
+(which averages out across the fit because it wiggles too quickly to
+influence a smooth low-degree curve). Subtracting that curve leaves
+behind whatever the fit <em>couldn’t</em> explain — which, if the degree
+is chosen well, is mostly the fast pulse ripple plus noise.</p>
+</div>
+<p>This project uses a <strong>cubic (3rd-order) polynomial</strong>.
+The reasoning:</p>
+<ul>
+<li>Order 0 or 1 (mean removal, or mean + straight-line removal) can’t
+bend to follow a curved drift — real illumination drift over a 60-90
+second recording usually isn’t perfectly linear.</li>
+<li>Order 3 gives enough flexibility to follow a smooth, gently curving
+drift without having enough wiggle room to start tracking the pulse
+ripple itself.</li>
+<li>The frequency argument makes this precise: a degree-3 polynomial fit
+to an 80-second recording has almost all its energy at frequencies
+around 1/<em>T</em> ≈ 0.01–0.04 Hz — more than an order of magnitude
+below the 0.7 Hz pulse band floor. It physically cannot oscillate fast
+enough to remove real pulse content.</li>
+</ul>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> If someone suggested using
+a degree-15 polynomial for detrending “to get an even better fit,” what
+would actually go wrong with the output signal, and why?</p>
+</div>
+<h1
+id="butterworth-bandpass-intuition-why-0.7-4-hz-maps-to-40-240-bpm">Butterworth
+Bandpass Intuition — Why 0.7-4 Hz Maps to 40-240 bpm</h1>
+<p>A heart rate in beats per minute converts to a frequency in Hz by
+dividing by 60 (60 seconds per minute): 40 bpm is 40/60 ≈ 0.67 Hz, and
+240 bpm is 240/60 = 4 Hz. This project rounds the lower edge up slightly
+to 0.7 Hz as a small safety margin (filters don’t cut off perfectly
+sharply, and resting heart rates in this dataset never come close to 40
+bpm anyway), giving the working band <strong>0.7-4 Hz</strong>.</p>
+<p><code>filtering/bandpassClean.m</code> designs a Butterworth bandpass
+filter over exactly that range using <code>butter()</code>, then applies
+it. A Butterworth filter is chosen specifically because it has a
+<strong>maximally flat passband</strong> — within the band you want to
+keep, it distorts the relative amplitude of different frequencies as
+little as possible, compared to filter families (like Chebyshev) that
+trade passband flatness for a steeper cutoff. Since later stages care
+about waveform shape, not just “is there energy somewhere in this band,”
+passband flatness matters more here than an aggressively steep rolloff
+would.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> A low-order Butterworth bandpass is
+like a gentle bouncer at a club door checking IDs at a glance — fast,
+doesn’t hassle anyone who’s clearly fine, lets borderline cases through
+without overthinking it. A very high-order filter is like a bouncer who
+pat-searches everyone at length — technically more thorough at rejecting
+anyone outside the age range, but slows down and distorts the experience
+of everyone passing through, including the people who were supposed to
+get in cleanly.</p>
+</div>
+<p><strong>Why a low order (2, giving an effective 4th-order
+bandpass).</strong> <code>butter(N, ..., 'bandpass')</code> internally
+doubles the order — asking for <code>N = 2</code> produces a filter with
+the equivalent of 4 poles. Going higher (order 4, 6…) would reject
+out-of-band content more aggressively, but at the cost of more ringing
+and overshoot near sharp features in the passband, and more numerical
+sensitivity for a narrow band like this one relative to the ~15 Hz
+Nyquist frequency of a ~29-30 fps video. A low order that does a clean
+job is the right trade-off, not a shortcut.</p>
+<h1
+id="filtfilt-vs-filter-why-phase-distortion-specifically-matters-here"><code>filtfilt</code>
+vs <code>filter</code> — Why Phase Distortion Specifically Matters
+Here</h1>
+<p><code>butter()</code> only produces filter <em>coefficients</em> —
+numbers describing the filter, not an action. Applying them is a
+separate step, and MATLAB offers two very different ways to do it:</p>
+<ul>
+<li><strong><code>filter(b, a, x)</code></strong> applies the filter
+once, moving forward through the signal. Every real digital filter
+delays different frequencies by different amounts as a side effect —
+this is called phase distortion, and a single <code>filter()</code> pass
+always has it.</li>
+<li><strong><code>filtfilt(b, a, x)</code></strong> applies the same
+filter twice: once forward, then again backward over the result. Running
+the filter backward exactly reverses the timing distortion the forward
+pass introduced — a delay followed by an equal-and-opposite “undelay”
+cancels to zero net phase shift. What’s left is a pure magnitude-only
+filtering effect, perfectly time-aligned to the original signal.</li>
+</ul>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> For FFT-based heart rate
+alone, a plain <code>filter()</code> call would honestly work fine — a
+phase shift doesn’t change <em>which</em> frequency has the most energy,
+only <em>when</em> in time that energy appears, and an FFT throws away
+timing information anyway. It’s easy to conclude from that fact that
+<code>filter()</code> is good enough everywhere in this project. It is
+not. This project’s SpO2 stage needs the AC (pulsatile)
+<em>amplitude</em> of the waveform in each color channel, compared
+against each other with correct relative timing. A phase-shifted signal
+doesn’t just look “shifted” — because different channels or different
+filter implementations can shift by slightly different amounts, using
+<code>filter()</code> risks quietly distorting exactly the
+waveform-shape information the SpO2 ratio-of-ratios calculation depends
+on later. Using <code>filtfilt()</code> everywhere in this segment, even
+in the places where it isn’t strictly required yet, means Segment 3’s
+output is safe to feed into <em>every</em> downstream stage without
+having to remember which ones can tolerate a phase shift and which
+can’t.</p>
+</div>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> If <code>filtfilt()</code>
+runs the filter twice (forward, then backward), why doesn’t that make
+the filter’s effective order twice as aggressive as intended? (Hint:
+think about what “twice as aggressive” would actually mean for the
+rolloff steepness versus what running backward specifically undoes.)</p>
+</div>
+<h1 id="why-the-cutoffs-must-be-computed-from-the-subjects-own-fs">Why
+the Cutoffs Must Be Computed From the Subject’s Own <code>fs</code></h1>
+<p><code>butter()</code> doesn’t take cutoff frequencies in Hz — it
+wants them normalized to the Nyquist frequency (half the sampling rate),
+as a fraction between 0 and 1. <code>bandpassClean.m</code> computes
+this fresh, every call, from the <code>frameRate</code> argument it’s
+given:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">nyquistHz</span> <span class="op">=</span> <span class="va">frameRate</span> <span class="op">/</span> <span class="fl">2</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="va">lowCutoffNormalized</span> <span class="op">=</span> <span class="va">lowCutoffHz</span> <span class="op">/</span> <span class="va">nyquistHz</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="va">highCutoffNormalized</span> <span class="op">=</span> <span class="va">highCutoffHz</span> <span class="op">/</span> <span class="va">nyquistHz</span><span class="op">;</span></span></code></pre></div>
+<p><code>docs/DATA_FORMAT.md</code> confirms UBFC-rPPG videos run
+anywhere from about 28.6 to 29.8 fps, differing per subject — not a
+clean, uniform 30 fps. If this function hardcoded a Nyquist frequency
+based on an assumed 30 fps, the normalized cutoffs would put the
+<em>actual</em> filtered band at a very slightly different place in Hz
+than 0.7-4 Hz for every subject whose true fs isn’t exactly 30.
+Critically, this would produce <strong>no error and no warning</strong>
+— the filter still runs, still returns a plausible-looking output, it’s
+just filtering marginally the wrong band. That’s precisely the kind of
+small, silent, believable-looking bug that undermines an
+otherwise-correct DSP pipeline. Reading <code>frameRate</code> fresh
+from the argument (which itself traces back to
+<code>VideoReader.FrameRate</code>, read directly from each subject’s
+own video file) closes that gap completely, for free.</p>
+<h1 id="common-pitfalls-in-this-segment">Common Pitfalls in This
+Segment</h1>
+<p><strong>Over-filtering flattens real pulse features.</strong> Both
+the detrend order and the filter order/bandwidth choices in this segment
+were deliberately kept conservative. It’s tempting to think “more
+aggressive filtering = cleaner signal,” but every filter operation risks
+removing not just noise but also genuine variation in pulse
+<em>shape</em> (dicrotic notch shape, amplitude modulation from
+breathing, etc.) that later stages — especially SpO2’s AC amplitude
+extraction — may actually need. Filtering exactly as much as is
+justified, and no more, is the goal, not filtering as aggressively as
+possible.</p>
+<p><strong>Using a global <code>fs</code> instead of the subject’s
+actual <code>fs</code>.</strong> Covered in detail above — worth
+repeating as its own pitfall because it’s the single easiest mistake to
+make silently. Always pass each subject’s own <code>fs</code> (loaded
+from their <code>_rgb_traces.mat</code> file, which itself came from
+their own video’s <code>VideoReader.FrameRate</code>) into
+<code>bandpassClean.m</code>. Never substitute a constant, even “just
+for a quick test.”</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Trusting a filtered
+<code>.mat</code> file just because the code ran without an error. A
+bandpass filter given the wrong cutoffs, or a detrend order high enough
+to eat into the pulse band, will still produce a <code>1 x N</code>
+output vector with no complaint — it just won’t be the signal you think
+it is. This is exactly why this segment mandates a sanity-check PNG for
+every subject, showing raw, detrended, and filtered versions of the same
+channel stacked on the same time axis: a human can tell at a glance
+whether the drift is actually gone and whether what’s left looks like a
+plausible repeating pulse waveform, in a way that “the script didn’t
+crash” never can.</p>
+</div>
+<h1 id="how-this-segment-feeds-into-segment-4">How This Segment Feeds
+Into Segment 4</h1>
+<p>The output of this segment —
+<code>data/processed/&lt;subjectID&gt;_filtered_traces.mat</code>,
+containing <code>R_filtered</code>, <code>G_filtered</code>,
+<code>B_filtered</code>, <code>fs</code>, <code>subjectID</code>,
+<code>detrendOrder</code>, and <code>filterOrder</code> — is the entire
+input Segment 4 needs. Segment 4
+(<code>pulseextraction/chromCombine.m</code> and
+<code>pulseextraction/posCombine.m</code>) takes these three cleaned,
+bandpassed channels and combines them using the published CHROM and POS
+algorithms into a single pulse signal — a motion-robust combination that
+does meaningfully better than just picking the green channel alone,
+which is what a naive single-channel approach would do.</p>
+<p>Everything downstream of Segment 3 assumes its input channels are
+already detrended, bandpassed, and phase-preserved. That assumption is
+exactly what this segment is responsible for delivering. If a subject’s
+sanity PNG still shows visible drift, or the filtered plot looks flat or
+still noisy rather than like a repeating wave, that is the moment to
+investigate — before, not after, that subject’s data is combined and
+analyzed three more stages down the line.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 3 (detrending + bandpass filtering) docs — BUET EEE 312.
+  Source markdown lives in <code>segment3_filtering/</code>; the actual code lives under <code>matlab/src/filtering/</code>.
+</footer>
+</body>
+</html>

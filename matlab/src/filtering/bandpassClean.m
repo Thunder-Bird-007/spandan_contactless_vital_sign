@@ -1,4 +1,4 @@
-function signalFiltered = bandpassClean(signalDetrended, frameRate)
+function [signalFiltered, filterOrder] = bandpassClean(signalDetrended, frameRate)
 % BANDPASSCLEAN Bandpass-filter a detrended signal to the physiological HR band.
 %
 % Pipeline stage: Stage 2 (detrend + bandpass filter) — runs after
@@ -13,7 +13,19 @@ function signalFiltered = bandpassClean(signalDetrended, frameRate)
 %
 % Outputs:
 %   signalFiltered - 1 x N vector, bandpassed to approximately 0.7-4 Hz.
+%   filterOrder    - scalar, the Butterworth order passed to butter() (the
+%                     effective bandpass filter order is twice this — see
+%                     the explanation doc). Returned so callers such as
+%                     scripts/run_segment3_filtering_batch.m can record it
+%                     alongside the filtered signal for later auditing.
 
-error('Not implemented yet — see docs/');
+filterOrder = 2;
+lowCutoffHz = 0.7;
+highCutoffHz = 4.0;
+nyquistHz = frameRate / 2;
+lowCutoffNormalized = lowCutoffHz / nyquistHz;
+highCutoffNormalized = highCutoffHz / nyquistHz;
+[filterCoeffB, filterCoeffA] = butter(filterOrder, [lowCutoffNormalized, highCutoffNormalized], 'bandpass');
+signalFiltered = filtfilt(filterCoeffB, filterCoeffA, signalDetrended);
 
 end

@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Segment 2 — Team README</title>
+  <title>Segment 3 — Team README</title>
   <style>
     /* Default styles provided by pandoc.
     ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -308,11 +308,9 @@
       padding: 0.15rem 0.1rem;
     }
     nav.site-nav a:hover { text-decoration: underline; }
-    nav.site-nav a.active {
+    nav.site-nav span.active {
       color: var(--fg);
       font-weight: 700;
-      text-decoration: none;
-      pointer-events: none;
     }
     nav.site-nav span.sep { color: var(--border); }
     h1, h2, h3 { line-height: 1.3; font-weight: 700; }
@@ -437,164 +435,140 @@
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 2 &middot; Spandan</span>
+<span class="brand">Segment 3 &middot; Spandan</span>
 <a href="index.html">Home</a>
 <span class="sep">&middot;</span>
-<a href="Segment2_Face_ROI_Guideline.html">Guideline</a>
+<a href="Segment3_Filtering_Guideline.html">Guideline</a>
 <span class="sep">&middot;</span>
-<a href="Segment2_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<a href="Segment3_LineByLine_Explanation.html">Line-by-Line Explanation</a>
 <span class="sep">&middot;</span>
 <span class="active">Team README</span>
 <span class="sep">&middot;</span>
-<a href="Segment2_Face_ROI_Guideline.pdf">PDF</a>
+<a href="Segment3_Filtering_Guideline.pdf">PDF</a>
 <span class="sep">&middot;</span>
-<a href="../segment3_filtering/index.html">Segment 3 &rarr;</a>
+<a href="../segment2_face_roi/index.html">&larr; Segment 2</a>
+<span class="sep">&middot;</span>
+<a href="../segment4_heartrate/index.html">Segment 4 &rarr;</a>
 </nav>
 <header id="title-block-header">
-<h1 class="title">Segment 2 — Team README</h1>
+<h1 class="title">Segment 3 — Team README</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#segment-2-face-detection-roi-extraction-team-instructions"
-id="toc-segment-2-face-detection-roi-extraction-team-instructions">Segment
-2 (Face Detection + ROI Extraction) — Team Instructions</a>
+<li><a href="#segment-3-detrending-bandpass-filtering-team-instructions"
+id="toc-segment-3-detrending-bandpass-filtering-team-instructions">Segment
+3 (Detrending + Bandpass Filtering) — Team Instructions</a>
 <ul>
-<li><a href="#where-to-put-your-subject-videos"
-id="toc-where-to-put-your-subject-videos">1. Where to put your subject
-videos</a></li>
+<li><a href="#before-you-start-confirm-your-segment-2-output-exists"
+id="toc-before-you-start-confirm-your-segment-2-output-exists">1. Before
+you start: confirm your Segment 2 output exists</a></li>
 <li><a href="#editing-the-subject-list"
 id="toc-editing-the-subject-list">2. Editing the subject list</a></li>
 <li><a href="#running-it" id="toc-running-it">3. Running it</a></li>
 <li><a href="#where-your-output-lands-and-how-we-merge-it-later"
 id="toc-where-your-output-lands-and-how-we-merge-it-later">4. Where your
 output lands (and how we merge it later)</a></li>
-<li><a href="#a-note-on-subject-27" id="toc-a-note-on-subject-27">5. A
-note on subject 27</a></li>
 </ul></li>
 </ul>
 </nav>
 <h1
-id="segment-2-face-detection-roi-extraction-team-instructions">Segment 2
-(Face Detection + ROI Extraction) — Team Instructions</h1>
-<p>This covers only Segment 2 of the pipeline: turning each subject’s
-raw video into raw <code>R(t), G(t), B(t)</code> traces plus the true
-sampling rate <code>fs</code>. It does <strong>not</strong> cover
-filtering, CHROM/POS, FFT heart rate, or SpO2 — those are later segments
-and are still stubs.</p>
+id="segment-3-detrending-bandpass-filtering-team-instructions">Segment 3
+(Detrending + Bandpass Filtering) — Team Instructions</h1>
+<p>This covers only Segment 3 of the pipeline: taking each subject’s raw
+<code>R(t), G(t), B(t)</code> traces from Segment 2 and cleaning them up
+into detrended, bandpass-filtered traces ready for CHROM/POS
+combination. It does <strong>not</strong> cover CHROM/POS, FFT heart
+rate, or SpO2 — those are later segments and are still stubs.</p>
 <p>The actual code lives in the main scaffold, not in this folder:</p>
 <ul>
 <li><a
-href="../matlab/src/io/loadUBFCVideo.m"><code>matlab/src/io/loadUBFCVideo.m</code></a></li>
+href="../matlab/src/filtering/detrendSignal.m"><code>matlab/src/filtering/detrendSignal.m</code></a></li>
 <li><a
-href="../matlab/src/roi/extractROISignals.m"><code>matlab/src/roi/extractROISignals.m</code></a></li>
+href="../matlab/src/filtering/bandpassClean.m"><code>matlab/src/filtering/bandpassClean.m</code></a></li>
 <li><a
-href="../matlab/scripts/run_segment2_roi_batch.m"><code>matlab/scripts/run_segment2_roi_batch.m</code></a></li>
+href="../matlab/scripts/run_segment3_filtering_batch.m"><code>matlab/scripts/run_segment3_filtering_batch.m</code></a></li>
 </ul>
-<p>This <code>segment2_face_roi/</code> folder is docs only:</p>
+<p>This <code>segment3_filtering/</code> folder is docs only:</p>
 <ul>
-<li><code>Segment2_Face_ROI_Guideline.pdf</code> — theory background
-(why forehead skin, Viola-Jones intuition, the choir-effect averaging
-analogy, why <code>fs</code> must be read from the file, common
-pitfalls).</li>
-<li><code>Segment2_LineByLine_Explanation.md</code> — a plain-language
+<li><code>Segment3_Filtering_Guideline.pdf</code> — theory background
+(why raw R/G/B has drift and out-of-band noise, polynomial detrending
+intuition, Butterworth bandpass intuition, <code>filtfilt</code> vs
+<code>filter</code>, common pitfalls).</li>
+<li><code>Segment3_LineByLine_Explanation.md</code> — a plain-language
 walkthrough of every block of the two implementation files, including
-the reasoning behind each design choice.</li>
+the reasoning behind every parameter choice.</li>
 <li>This README.</li>
 </ul>
-<h2 id="where-to-put-your-subject-videos">1. Where to put your subject
-videos</h2>
-<p>Each of the 4 team members is processing a different 5-subject subset
-of the shared 42-subject <strong>DATASET_2</strong> pool. Put your
-assigned subjects here, one folder per subject, matching the existing
-convention:</p>
-<pre><code>data/raw/UBFC-rPPG/DATASET_2/subject9/vid.avi
-data/raw/UBFC-rPPG/DATASET_2/subject9/ground_truth.txt
-data/raw/UBFC-rPPG/DATASET_2/subject10/vid.avi
-data/raw/UBFC-rPPG/DATASET_2/subject10/ground_truth.txt
-...</code></pre>
-<p><code>data/raw/UBFC-rPPG/DATASET_2/</code> is the path relative to
-the <code>spandan/</code> project root — i.e. it’s a sibling of
-<code>matlab/</code>, not inside it. See
-<code>docs/DATA_FORMAT.md</code> for the full breakdown of what’s in the
-dataset and <code>README.md</code> for the overall folder layout.
-<code>data/raw/</code> is git-ignored, so your videos won’t get
-committed or pushed — everyone keeps their own copy locally.</p>
-<p>If any of your subjects only have DATASET_1-style ground truth
-(<code>gtdump.xmp</code> instead of <code>ground_truth.txt</code>), put
-those under <code>data/raw/UBFC-rPPG/DATASET_1/&lt;subjectID&gt;/</code>
-instead. The batch script below works with either — it doesn’t assume a
-fixed video filename, it just looks for the one <code>.avi</code> file
-in your subject’s folder, so it doesn’t matter whether your video is
-called <code>vid.avi</code>, <code>vid-001.avi</code>, or something
-else.</p>
+<h2 id="before-you-start-confirm-your-segment-2-output-exists">1. Before
+you start: confirm your Segment 2 output exists</h2>
+<p>This segment reads, for each subject, a file already produced by
+Segment 2:</p>
+<pre><code>data/processed/&lt;subjectID&gt;_rgb_traces.mat</code></pre>
+<p>containing <code>R</code>, <code>G</code>, <code>B</code>,
+<code>fs</code>, <code>subjectID</code>, <code>numDroppedFrames</code>.
+If you haven’t run <code>run_segment2_roi_batch.m</code> on your
+assigned subjects yet (or don’t see their <code>*_rgb_traces.mat</code>
+files in <code>data/processed/</code>), do that first — Segment 3 has
+nothing to work on without it. See
+<code>segment2_face_roi/Segment2_Team_README.md</code> if you need a
+refresher on that step.</p>
 <h2 id="editing-the-subject-list">2. Editing the subject list</h2>
-<p>Open <code>matlab/scripts/run_segment2_roi_batch.m</code>. Right at
-the top there are two variables to edit — nothing else in the file needs
-to change:</p>
+<p>Open <code>matlab/scripts/run_segment3_filtering_batch.m</code>.
+Right at the top there is one variable to edit:</p>
 <div class="sourceCode" id="cb2"><pre
-class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">datasetName</span> <span class="op">=</span> <span class="ss">&#39;DATASET_1&#39;</span><span class="op">;</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">subjectList</span> <span class="op">=</span> {<span class="ss">&#39;5-gt&#39;</span><span class="op">,</span> <span class="ss">&#39;6-gt&#39;</span><span class="op">,</span> <span class="ss">&#39;7-gt&#39;</span>}<span class="op">;</span></span></code></pre></div>
-<p>Change <code>datasetName</code> to <code>'DATASET_2'</code> and
-<code>subjectList</code> to your own assigned subject IDs, e.g.:</p>
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">subjectList</span> <span class="op">=</span> {<span class="ss">&#39;5-gt&#39;</span><span class="op">,</span> <span class="ss">&#39;6-gt&#39;</span><span class="op">,</span> <span class="ss">&#39;7-gt&#39;</span>}<span class="op">;</span></span></code></pre></div>
+<p>Change it to your own subject IDs — the same ones you already used
+for Segment 2, since this script reads their
+<code>_rgb_traces.mat</code> files by that exact ID:</p>
 <div class="sourceCode" id="cb3"><pre
-class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">datasetName</span> <span class="op">=</span> <span class="ss">&#39;DATASET_2&#39;</span><span class="op">;</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="va">subjectList</span> <span class="op">=</span> {<span class="ss">&#39;subject9&#39;</span><span class="op">,</span> <span class="ss">&#39;subject10&#39;</span><span class="op">,</span> <span class="ss">&#39;subject11&#39;</span><span class="op">,</span> <span class="ss">&#39;subject12&#39;</span><span class="op">,</span> <span class="ss">&#39;subject13&#39;</span>}<span class="op">;</span></span></code></pre></div>
-<p>Each ID in <code>subjectList</code> must match one of your folder
-names under <code>data/raw/UBFC-rPPG/&lt;datasetName&gt;/</code>
-exactly.</p>
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">subjectList</span> <span class="op">=</span> {<span class="ss">&#39;subject9&#39;</span><span class="op">,</span> <span class="ss">&#39;subject10&#39;</span><span class="op">,</span> <span class="ss">&#39;subject11&#39;</span><span class="op">,</span> <span class="ss">&#39;subject12&#39;</span><span class="op">,</span> <span class="ss">&#39;subject13&#39;</span>}<span class="op">;</span></span></code></pre></div>
 <h2 id="running-it">3. Running it</h2>
 <ol type="1">
 <li>Open MATLAB, <code>cd</code> into <code>spandan/matlab/</code>.</li>
 <li>Run <code>startup</code> (adds <code>src/</code> to the path).</li>
 <li>Either <code>cd scripts</code> and run
-<code>run_segment2_roi_batch</code>, or add <code>matlab/scripts</code>
-to the path first (<code>addpath('scripts')</code>) and run it from
+<code>run_segment3_filtering_batch</code>, or add
+<code>matlab/scripts</code> to the path first
+(<code>addpath('scripts')</code>) and run it from
 <code>matlab/</code>.</li>
 </ol>
-<p>It prints progress per subject as it goes — how many frames, the
-actual frame rate it read from the file, how many frames needed a
-fallback bounding box, and where each output file was saved. If one of
-your subjects errors out (corrupt file, wrong folder name, etc.) it will
-say so and continue to the next subject rather than stopping the whole
-batch — check the summary printed at the very end for anything that
-failed.</p>
+<p>It prints progress per subject as it goes — the frame rate and frame
+count it read from your Segment 2 output, and the detrend/filter orders
+used. If one of your subjects is missing its
+<code>_rgb_traces.mat</code> file (or it fails to load), it will say so
+and continue to the next subject rather than stopping the whole batch —
+check the summary printed at the very end for anything that failed.</p>
 <h2 id="where-your-output-lands-and-how-we-merge-it-later">4. Where your
 output lands (and how we merge it later)</h2>
 <p>For every subject in your list, two files are produced, both named
 after that subject’s own ID so there are no collisions when we combine
 everyone’s results into one shared folder:</p>
 <ul>
-<li><code>data/processed/&lt;subjectID&gt;_rgb_traces.mat</code> —
-contains <code>R</code>, <code>G</code>, <code>B</code> (the raw
-per-frame color traces), <code>fs</code> (the true frame rate read from
-that subject’s video), <code>subjectID</code>, and
-<code>numDroppedFrames</code>.</li>
-<li><code>results/figures/&lt;subjectID&gt;_roi_sanity.png</code> — one
-frame from that subject’s video with the detected face box (yellow) and
-the final ROI box (green) drawn on it. <strong>Look at this before
-trusting the <code>.mat</code> output for that subject</strong> — it’s
-the whole point of this step. If the green box is sitting on hair,
-background, or an eye instead of forehead skin, something’s wrong (wrong
-subject folder, an unusual video, etc.) and it’s worth flagging before
-that subject’s data feeds into filtering/CHROM/POS later.</li>
+<li><code>data/processed/&lt;subjectID&gt;_filtered_traces.mat</code> —
+contains <code>R_filtered</code>, <code>G_filtered</code>,
+<code>B_filtered</code> (the detrended and bandpass-filtered traces),
+<code>fs</code>, <code>subjectID</code>, <code>detrendOrder</code>, and
+<code>filterOrder</code> (the exact parameters used, so anyone can audit
+the choices later without re-reading the code).</li>
+<li><code>results/figures/&lt;subjectID&gt;_filtering_sanity.png</code>
+— three stacked plots of the green channel for that subject: raw, after
+detrending only, and after detrending + bandpass filtering, all on the
+same time axis. <strong>Look at this before trusting the
+<code>.mat</code> output for that subject</strong> — the slow drift
+should visibly be gone by the second plot, and the third plot should
+look like a repeating, roughly periodic wave, not a flat line and not
+still-noisy random wiggling. If it doesn’t, something’s worth flagging
+before that subject’s data moves on to CHROM/POS combination.</li>
 </ul>
-<p>Once everyone’s done, we can just copy all
-<code>*_rgb_traces.mat</code> files into one shared
-<code>data/processed/</code> folder and all
-<code>*_roi_sanity.png</code> files into one shared
+<p>Once everyone’s done, copy all <code>*_filtered_traces.mat</code>
+files into one shared <code>data/processed/</code> folder and all
+<code>*_filtering_sanity.png</code> files into one shared
 <code>results/figures/</code> folder — since every filename is tagged
 with its own subject ID, nobody’s files will overwrite anyone
 else’s.</p>
-<h2 id="a-note-on-subject-27">5. A note on subject 27</h2>
-<p>Per the official UBFC-rPPG readme: <strong>subject 21 and subject
-27’s facial images must not be included in any publication,
-presentation, or report.</strong> If subject 27 ends up in your subset,
-it’s fine to process it for the <code>.mat</code> traces, but don’t
-include its sanity PNG (or any other frame from it) in slides, the
-report, or anywhere else the face would be shown.</p>
 <footer class="page-footer">
-  Part of the <strong>Spandan</strong> project's Segment 2 (face detection + ROI extraction) docs — BUET EEE 312.
-  Source markdown lives in <code>segment2_face_roi/</code>; the actual code lives under <code>matlab/src/</code>.
+  Part of the <strong>Spandan</strong> project's Segment 3 (detrending + bandpass filtering) docs — BUET EEE 312.
+  Source markdown lives in <code>segment3_filtering/</code>; the actual code lives under <code>matlab/src/filtering/</code>.
 </footer>
 </body>
 </html>
