@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Segment5_Team_README</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav span.active {
+      color: var(--fg);
+      font-weight: 700;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 5 &middot; Spandan</span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<a href="Segment5_SpO2_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<a href="Segment5_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<span class="active">Team README</span>
+<span class="sep">&middot;</span>
+<a href="Segment5_SpO2_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../segment4_heartrate/index.html">&larr; Segment 4</a>
+</nav>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a
+href="#segment-5-spo2-ratio-of-ratios-calibration-team-instructions"
+id="toc-segment-5-spo2-ratio-of-ratios-calibration-team-instructions">Segment
+5 (SpO2 Ratio-of-Ratios + Calibration) — Team Instructions</a>
+<ul>
+<li><a
+href="#why-this-segment-doesnt-need-splitting-across-4-people-the-way-segments-2-4-did"
+id="toc-why-this-segment-doesnt-need-splitting-across-4-people-the-way-segments-2-4-did">Why
+this segment doesn’t need splitting across 4 people the way Segments 2-4
+did</a>
+<ul>
+<li><a
+href="#a-run-the-hoffman-sanity-check-on-different-subject-subsets"
+id="toc-a-run-the-hoffman-sanity-check-on-different-subject-subsets">(a)
+Run the Hoffman sanity check on different subject subsets</a></li>
+<li><a
+href="#b-make-sure-your-assigned-dataset_2-subjects-have-segments-2-4-done"
+id="toc-b-make-sure-your-assigned-dataset_2-subjects-have-segments-2-4-done">(b)
+Make sure your assigned DATASET_2 subjects have Segments 2-4
+done</a></li>
+</ul></li>
+<li><a
+href="#before-you-start-confirm-your-segment-23-output-exists-for-dataset_1"
+id="toc-before-you-start-confirm-your-segment-23-output-exists-for-dataset_1">1.
+Before you start: confirm your Segment 2/3 output exists for
+DATASET_1</a></li>
+<li><a href="#running-the-dataset_1-calibration"
+id="toc-running-the-dataset_1-calibration">2. Running the DATASET_1
+calibration</a></li>
+<li><a href="#running-the-hoffman-sanity-check"
+id="toc-running-the-hoffman-sanity-check">3. Running the Hoffman sanity
+check</a></li>
+<li><a href="#how-this-segments-outputs-feed-into-segment-6"
+id="toc-how-this-segments-outputs-feed-into-segment-6">4. How this
+segment’s outputs feed into Segment 6</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1
+id="segment-5-spo2-ratio-of-ratios-calibration-team-instructions">Segment
+5 (SpO2 Ratio-of-Ratios + Calibration) — Team Instructions</h1>
+<p>This covers only Segment 5 of the pipeline: computing each subject’s
+AC/DC ratio-of-ratios from Segment 2/3 output, fitting a linear
+calibration from R to SpO2%, a leave-one-out calibration attempt on
+DATASET_1’s 5 subjects with facial SpO2 ground truth, and a separate
+code-correctness sanity check against the Hoffman finger-camera dataset.
+It does <strong>not</strong> cover LOSO cross-validation,
+MAE/RMSE/correlation metrics, or Bland-Altman plots — those are Segment
+6 and are still stubs (<code>validation/runLOSO.m</code>,
+<code>validation/computeMetrics.m</code>,
+<code>validation/blandAltman.m</code>).</p>
+<p>The actual code lives in the main scaffold, not in this folder:</p>
+<ul>
+<li><a
+href="../matlab/src/spo2/ratioOfRatios.m"><code>matlab/src/spo2/ratioOfRatios.m</code></a></li>
+<li><a
+href="../matlab/src/spo2/calibrateSpO2.m"><code>matlab/src/spo2/calibrateSpO2.m</code></a></li>
+<li><a
+href="../matlab/src/io/loadGroundTruth.m"><code>matlab/src/io/loadGroundTruth.m</code></a>
+(implemented as part of this segment, since Step 3 below needs it — see
+the Line-by-Line doc’s Part 0 for why)</li>
+<li><a
+href="../matlab/scripts/run_segment5_dataset1_calibration_batch.m"><code>matlab/scripts/run_segment5_dataset1_calibration_batch.m</code></a></li>
+<li><a
+href="../matlab/scripts/run_segment5_hoffman_sanity_check.m"><code>matlab/scripts/run_segment5_hoffman_sanity_check.m</code></a></li>
+</ul>
+<p>This <code>segment5_spo2/</code> folder is docs only (no code):</p>
+<ul>
+<li><code>Segment5_SpO2_Guideline.pdf</code> — theory background (why
+AC/DC per channel encodes oxygenation, why Blue substitutes for
+Infrared, why the R-to- SpO2 relationship must be fit empirically, the
+leakage risk on thin data, what the Hoffman check does and doesn’t
+prove).</li>
+<li><code>Segment5_LineByLine_Explanation.md</code> — a plain-language
+walkthrough of every block of <code>ratioOfRatios.m</code>,
+<code>calibrateSpO2.m</code>, and both batch scripts, including the
+actual results obtained.</li>
+<li>This README.</li>
+</ul>
+<h2
+id="why-this-segment-doesnt-need-splitting-across-4-people-the-way-segments-2-4-did">Why
+this segment doesn’t need splitting across 4 people the way Segments 2-4
+did</h2>
+<p>Segments 2-4 split a <strong>42-subject</strong> pool across 4 team
+members, each processing their own subset. Segment 5’s primary
+calibration task
+(<code>run_segment5_dataset1_calibration_batch.m</code>) runs against
+<strong>DATASET_1’s 5 subjects total</strong>
+(<code>5-gt, 6-gt, 7-gt, 12-gt, after-exercise</code>) — there is no
+meaningful way to split 5 subjects across 4 people, and the leave-
+one-out loop needs all 5 loaded together in a single run anyway (each
+fold’s fit depends on having every other subject’s data available at
+once, unlike Segment 2-4’s fully independent per-subject processing).
+<strong>One person running this script end-to-end is both sufficient and
+necessary</strong> — there’s no parallelizable version of this
+particular step.</p>
+<p>That doesn’t mean the other 3 people have nothing to do this segment.
+Two genuinely useful things to split instead:</p>
+<h3 id="a-run-the-hoffman-sanity-check-on-different-subject-subsets">(a)
+Run the Hoffman sanity check on different subject subsets</h3>
+<p><code>run_segment5_hoffman_sanity_check.m</code> currently trains on
+subjects <code>100001-100004</code> and tests on
+<code>100005-100006</code> (see the script’s top variables). Different
+team members can re-run it with a different train/test split
+(e.g. rotate which 2 subjects are held out) to see whether the fitted
+<code>A</code>/<code>B</code> and the test-set error are stable across
+different splits, or whether they swing around a lot — useful evidence
+either way, and something one person alone doing a single split wouldn’t
+catch. This needs the Hoffman dataset cloned/copied into
+<code>data/raw/Hoffman/data/</code> (see
+<code>docs/HOFFMAN_DATA_FORMAT.md</code> for exactly what should be
+there) — small enough (a few MB of CSVs, no multi-GB videos) to do
+independently of whichever DATASET_1 subjects you personally have on
+disk.</p>
+<h3
+id="b-make-sure-your-assigned-dataset_2-subjects-have-segments-2-4-done">(b)
+Make sure your assigned DATASET_2 subjects have Segments 2-4 done</h3>
+<p>DATASET_2’s 42 subjects have <strong>no SpO2 ground truth at
+all</strong> (confirmed in <code>docs/DATA_FORMAT.md</code>) — they’re
+irrelevant to this segment’s SpO2 work. But they still matter a lot for
+<strong>Segment 6</strong>, which will run its formal LOSO validation on
+the <strong>HR side</strong> across every subject with HR ground truth,
+DATASET_2 included, not just the 5 DATASET_1 subjects. If your assigned
+DATASET_2 subjects don’t have <code>run_segment2_roi_batch.m</code> and
+<code>run_segment3_filtering_batch.m</code> (and ideally
+<code>run_segment4_heartrate_ batch.m</code>) run on them yet, doing
+that now is directly useful groundwork for Segment 6, even though it has
+nothing to do with SpO2.</p>
+<h2
+id="before-you-start-confirm-your-segment-23-output-exists-for-dataset_1">1.
+Before you start: confirm your Segment 2/3 output exists for
+DATASET_1</h2>
+<p><code>run_segment5_dataset1_calibration_batch.m</code> needs, for
+<strong>all 5</strong> DATASET_1 subjects:</p>
+<pre><code>data/processed/&lt;subjectID&gt;_rgb_traces.mat        (Segment 2 output)
+data/processed/&lt;subjectID&gt;_filtered_traces.mat   (Segment 3 output)</code></pre>
+<p>As of this segment’s own verification run, all 5 subjects
+(<code>5-gt, 6-gt, 7-gt, 12-gt, after-exercise</code>) already have both
+files — <code>5-gt/6-gt/7-gt</code> were done as part of Segment 4’s
+work, and <code>12-gt</code>/ <code>after-exercise</code> were run as
+part of finishing this segment (their raw video+ground-truth junctions
+didn’t exist under <code>data/raw/UBFC-rPPG/ DATASET_1/</code> before).
+If you’re re-running this fresh and a subject’s files are missing, the
+script prints exactly which subject and which segment’s batch script to
+run first, then continues with whichever subjects it <em>can</em> find
+rather than stopping entirely.</p>
+<h2 id="running-the-dataset_1-calibration">2. Running the DATASET_1
+calibration</h2>
+<ol type="1">
+<li>Open MATLAB, <code>cd</code> into <code>spandan/matlab/</code>.</li>
+<li>Run <code>startup</code> (adds <code>src/</code> to the path).</li>
+<li><code>addpath('scripts')</code> (or <code>cd scripts</code>), then
+run <code>run_segment5_dataset1_calibration_batch</code>.</li>
+</ol>
+<p>No subject list to edit — it always runs all 5 DATASET_1 subjects,
+since the leave-one-out loop needs all of them together. It prints each
+subject’s <code>R</code> value and windowed ground-truth SpO2 as it
+loads, then each leave-one-out fold’s fitted
+<code>A</code>/<code>B</code> and prediction as it runs.</p>
+<p>Output: -
+<code>results/metrics/segment5_dataset1_calibration.csv</code> — one row
+per subject
+(<code>subjectID, R_value, SpO2_true, SpO2_predicted, abs_error</code>).
+- <code>results/figures/segment5_dataset1_calibration_scatter.png</code>
+— predicted vs. actual SpO2, all 5 subjects labeled, with a y=x
+reference line. <strong>Look at this before trusting the
+numbers</strong> — with only 5 points and a ~3-percentage-point
+true-SpO2 spread, don’t expect (or present) this as a validated
+calibration; see the Guideline PDF for why.</p>
+<h2 id="running-the-hoffman-sanity-check">3. Running the Hoffman sanity
+check</h2>
+<ol type="1">
+<li>Confirm <code>data/raw/Hoffman/data/</code> exists with
+<code>ppg-csv/</code> and <code>gt/</code> subfolders (see
+<code>docs/HOFFMAN_DATA_FORMAT.md</code> — clone
+<code>github.com/ubicomplab/oximetry-phone-cam-data</code> and copy its
+<code>data/</code> folder in, if you don’t have it yet).</li>
+<li>From <code>spandan/matlab/</code> (with <code>startup</code> and
+<code>addpath('scripts')</code> already done), run
+<code>run_segment5_hoffman_sanity_check</code>.</li>
+</ol>
+<p>Output: -
+<code>results/metrics/segment5_hoffman_sanity_check.csv</code> — one row
+per <strong>held-out test window</strong> (many rows per subject, not
+one; see the Line-by-Line doc for why this dataset is windowed instead
+of whole-clip). -
+<code>results/figures/segment5_hoffman_sanity_scatter.png</code> — R
+vs. true SpO2 for every window, with the fitted line overlaid.</p>
+<p><strong>Remember what this does and doesn’t prove.</strong> A
+sensible-looking trend here means
+<code>ratioOfRatios.m</code>/<code>calibrateSpO2.m</code> are
+implemented correctly and respond to real SpO2 variation the way they
+should — it says nothing about facial-video accuracy, since this is
+finger-on-camera data, a completely different signal path. Don’t cite
+this dataset’s numbers as evidence for how well the actual facial
+pipeline will do on DATASET_1 or DATASET_2.</p>
+<h2 id="how-this-segments-outputs-feed-into-segment-6">4. How this
+segment’s outputs feed into Segment 6</h2>
+<p>Both CSVs here are raw material for Segment 6’s job, not a substitute
+for it — same relationship Segment 4’s
+<code>segment4_hr_summary.csv</code> has to Segment 6.
+<code>validation/runLOSO.m</code>,
+<code>validation/computeMetrics.m</code>, and
+<code>validation/blandAltman.m</code> (all still untouched stubs) will
+eventually run the actual statistically meaningful leave-one-subject-out
+validation, for both HR (across DATASET_1 + DATASET_2) and SpO2 (across
+DATASET_1 only, since that’s the only source of SpO2 ground truth), with
+proper MAE/RMSE/correlation/Bland-Altman reporting. This segment’s job
+was to get <code>ratioOfRatios.m</code>/<code>calibrateSpO2.m</code>
+implemented and demonstrably working on real data — not to answer “is
+this method good enough,” which is Segment 6’s call to make.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 5 (SpO2 ratio-of-ratios + empirical calibration) docs — BUET EEE 312.
+  Source markdown lives in <code>segment5_spo2/</code>; the actual code lives under <code>matlab/src/spo2/</code>.
+</footer>
+</body>
+</html>

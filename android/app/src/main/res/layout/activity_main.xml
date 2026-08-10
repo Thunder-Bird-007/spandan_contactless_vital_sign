@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Single-screen layout: camera preview + overlays on top, live raw-signal
+  chart, then HR/SpO2 readouts. HR and SpO2 carry INDEPENDENT real/placeholder
+  status chips (see hrStatusText / spo2StatusText below) instead of one uniform
+  banner: HR is now a real CHROM/POS+FFT pipeline, SpO2 is still fake, and a
+  single shared banner would misrepresent one or the other. Deliberately
+  simple: functional skeleton, not defense-day polish.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/previewView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:scaleType="fitCenter" />
+
+        <!-- Draws the live face-box + ROI-box overlay on top of the preview. -->
+        <com.spandan.app.ui.OverlayView
+            android:id="@+id/overlayView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Shown only when camera permission is denied; see MainActivity. -->
+        <LinearLayout
+            android:id="@+id/permissionDeniedView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="#CC000000"
+            android:visibility="gone"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:text="@string/permission_rationale" />
+
+            <Button
+                android:id="@+id/grantPermissionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/grant_permission" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- Live scrolling raw green-channel signal: genuinely useful even
+         before real filtering exists (see ui/SignalChartView.kt). -->
+    <com.spandan.app.ui.SignalChartView
+        android:id="@+id/chartView"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_marginTop="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/hrText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:text="@string/hr_placeholder_default" />
+
+            <TextView
+                android:id="@+id/hrStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#4CAF50"
+                android:textStyle="bold"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:text="@string/hr_status_real" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/spo2Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:text="@string/spo2_placeholder_default" />
+
+            <TextView
+                android:id="@+id/spo2StatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#FF5252"
+                android:textStyle="bold"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:text="@string/spo2_status_placeholder" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

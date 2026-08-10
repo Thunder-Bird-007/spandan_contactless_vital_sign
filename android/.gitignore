@@ -1,0 +1,19 @@
+*.iml
+.gradle/
+/local.properties
+.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+app/build/
+app/release/
+*.apk
+*.aab
+
+# Gradle wrapper jar is intentionally not committed yet -- see android/README.md.
+# Android Studio (or `gradle wrapper` if you have a system Gradle) regenerates it.
+gradle/wrapper/gradle-wrapper.jar
+gradlew
+gradlew.bat

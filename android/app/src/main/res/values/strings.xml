@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Spandan</string>
+
+    <string name="permission_rationale">Camera access is needed to capture your face for the vital-sign pipeline (HR is real; SpO2 is still a placeholder -- see below). No video is stored or sent anywhere.</string>
+    <string name="grant_permission">Grant camera permission</string>
+
+    <!-- HR is a real CHROM/POS+FFT pipeline now (signal/RealHeartRateEstimator.kt),
+         see hr_status_real below, shown next to the reading, not a shared banner. -->
+    <string name="hr_format">HR: %.0f bpm</string>
+    <string name="hr_placeholder_default">HR: -- bpm</string>
+    <string name="hr_status_real">● LIVE — CHROM/POS + FFT</string>
+
+    <!-- SpO2 is still fake (PlaceholderVitalsEstimator.computeSpo2Placeholder),
+         its own status chip says so independently of HR's. -->
+    <string name="spo2_format">SpO2: %.1f%%</string>
+    <string name="spo2_placeholder_default">SpO2: -- %</string>
+    <string name="spo2_status_placeholder">● PLACEHOLDER — not real</string>
+</resources>

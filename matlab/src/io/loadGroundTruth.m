@@ -32,6 +32,24 @@ function gt = loadGroundTruth(gtPath, datasetFormat)
 %                         sanity-checking only)
 %          gt.spo2      - vector, percent (dataset1 only)
 
-error('Not implemented yet — see docs/');
+gt = struct();
+
+if strcmp(datasetFormat, 'dataset1')
+    rawData = readmatrix(gtPath, 'Delimiter', ',', 'FileType', 'text');
+
+    gt.timestamp = rawData(:, 1) / 1000;
+    gt.hr = rawData(:, 2);
+    gt.spo2 = rawData(:, 3);
+    gt.ppg = rawData(:, 4);
+elseif strcmp(datasetFormat, 'dataset2')
+    rawData = readmatrix(gtPath, 'FileType', 'text');
+
+    gt.ppg = rawData(1, :);
+    gt.hr = rawData(2, :);
+    gt.timestamp = rawData(3, :);
+    gt.spo2 = [];
+else
+    error('loadGroundTruth:badFormat', 'Unknown datasetFormat "%s", expected ''dataset1'' or ''dataset2''.', datasetFormat);
+end
 
 end

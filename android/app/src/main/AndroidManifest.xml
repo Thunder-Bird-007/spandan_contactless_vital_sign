@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Front camera is what this app actually uses (facial capture). -->
+    <uses-feature android:name="android.hardware.camera.front" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Spandan"
+        android:supportsRtl="true">
+        <!--
+          No android:icon set on purpose: this is a functional skeleton, not a
+          polished release, and shipping a placeholder launcher icon file
+          seemed like more clutter than value. The system falls back to a
+          default icon. Add a real one later via Android Studio's Image Asset
+          tool whenever the team wants app branding.
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

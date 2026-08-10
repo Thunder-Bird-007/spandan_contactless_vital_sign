@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Segment 4 — CHROM/POS Pulse Extraction &amp; FFT Heart Rate</title>
+<title>Segment 5 — SpO2 Ratio-of-Ratios &amp; Empirical Calibration</title>
 <style>
   :root {
     --bg: #ffffff;
@@ -201,78 +201,80 @@
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 4 &middot; Spandan</span>
+<span class="brand">Segment 5 &middot; Spandan</span>
 <span class="active">Home</span>
 <span class="sep">&middot;</span>
-<a href="Segment4_HeartRate_Guideline.html">Guideline</a>
+<a href="Segment5_SpO2_Guideline.html">Guideline</a>
 <span class="sep">&middot;</span>
-<a href="Segment4_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<a href="Segment5_LineByLine_Explanation.html">Line-by-Line Explanation</a>
 <span class="sep">&middot;</span>
-<a href="Segment4_Team_README.html">Team README</a>
+<a href="Segment5_Team_README.html">Team README</a>
 <span class="sep">&middot;</span>
-<a href="Segment4_HeartRate_Guideline.pdf">PDF</a>
+<a href="Segment5_SpO2_Guideline.pdf">PDF</a>
 <span class="sep">&middot;</span>
-<a href="../segment3_filtering/index.html">&larr; Segment 3</a>
-<span class="sep">&middot;</span>
-<a href="../segment5_spo2/index.html">Segment 5 &rarr;</a>
+<a href="../segment4_heartrate/index.html">&larr; Segment 4</a>
 </nav>
 
-<h1>Segment 4: CHROM/POS Pulse Extraction &amp; FFT Heart Rate</h1>
+<h1>Segment 5: SpO2 Ratio-of-Ratios &amp; Empirical Calibration</h1>
 
 <p>
-This is the documentation site for <strong>Segment 4</strong> of the
+This is the documentation site for <strong>Segment 5</strong> of the
 <strong>Spandan</strong> project (contactless heart-rate &amp; SpO2 estimation
-from ordinary video — EEE 312 DSP Lab, BUET). Segment 4 takes the cleaned,
-bandpass-filtered R(t), G(t), B(t) traces that Segment 3 produced and
-combines them into a single pulse signal using the published CHROM and POS
-algorithms, then estimates heart rate via FFT peak-picking — run on the
-CHROM signal, the POS signal, and the raw green channel alone, so the team
-has three independent estimates to compare. Nothing here does SpO2
-ratio-of-ratios/calibration or LOSO validation — those are later segments.
+from ordinary video — EEE 312 DSP Lab, BUET). Segment 5 takes the raw and
+bandpass-filtered R(t), G(t), B(t) traces Segments 2&ndash;3 produced,
+computes an AC/DC ratio-of-ratios per subject, and empirically calibrates
+that ratio against real ground-truth SpO2 &mdash; first on DATASET_1's 5
+subjects (a genuine but thin calibration attempt), then as a wider
+code-correctness sanity check against the Hoffman et al. finger-camera
+oximetry dataset. Nothing here does LOSO cross-validation, MAE/RMSE/
+correlation metrics, or Bland-Altman plots &mdash; those are Segment 6.
 </p>
 
 <div class="pill-row">
-  <span class="pill">CHROM (de Haan &amp; Jeanne, 2013)</span>
-  <span class="pill">POS (Wang et al., 2017)</span>
-  <span class="pill">FFT peak-picking</span>
-  <span class="pill">0.7&ndash;4 Hz search band</span>
+  <span class="pill">AC/DC ratio-of-ratios</span>
+  <span class="pill">Blue substitutes for Infrared</span>
+  <span class="pill">Empirical linear calibration</span>
+  <span class="pill">Leave-one-out (5 subjects)</span>
+  <span class="pill">Hoffman finger-camera sanity check</span>
   <span class="pill">MATLAB</span>
 </div>
 
 <h2>Where to start</h2>
 
 <div class="card-grid">
-  <a class="card" href="Segment4_HeartRate_Guideline.html">
+  <a class="card" href="Segment5_SpO2_Guideline.html">
     <div class="card-icon">📘</div>
     <h3>Guideline</h3>
-    <p>Start here if you're new to this segment. The theory: why raw-green
-    FFT alone is motion-fragile, what CHROM/POS physically do differently
-    (skin-tone-vector intuition, not just the algebra), why re-filtering
-    after combination matters, the FFT window-length vs. frequency-resolution
-    tradeoff in concrete bpm terms for this dataset, and the common
-    pitfalls. Includes "Intuition First", "Common Beginner Mistake", and
-    "Pause and Check Yourself" call-outs throughout.</p>
+    <p>Start here if you're new to this segment. The theory: why AC/DC per
+    channel physically encodes oxygenation, why Blue substitutes for
+    Infrared, why the R-to-SpO2 relationship must be fit empirically, the
+    leakage risk on thin data (and why DATASET_1's 5 subjects make it
+    acute), and what the Hoffman sanity check does and does not prove.
+    Includes "Intuition First", "Common Beginner Mistake", and "Pause and
+    Check Yourself" call-outs throughout.</p>
   </a>
-  <a class="card" href="Segment4_LineByLine_Explanation.html">
+  <a class="card" href="Segment5_LineByLine_Explanation.html">
     <div class="card-icon">🔍</div>
     <h3>Line-by-Line Explanation</h3>
     <p>A block-by-block walkthrough of the actual MATLAB implementation
-    (<code>chromCombine.m</code>, <code>posCombine.m</code>,
-    <code>fftHeartRate.m</code>) — what each part does, why it's written
-    that way, and the reasoning behind every judgment call, including the
-    Rn/Gn/Bn normalization-source decision and why the function signatures
-    grew beyond the original stubs.</p>
+    (<code>ratioOfRatios.m</code>, <code>calibrateSpO2.m</code>,
+    <code>loadGroundTruth.m</code>, and both batch scripts) &mdash; what
+    each part does, why, the whole-clip-vs-windowed granularity judgment
+    call, and the real per-subject-vs-pooled correlation anomaly that was
+    investigated (not silently accepted) during verification, with the
+    actual numbers obtained.</p>
   </a>
-  <a class="card" href="Segment4_Team_README.html">
+  <a class="card" href="Segment5_Team_README.html">
     <div class="card-icon">👥</div>
     <h3>Team README</h3>
-    <p>Practical instructions for the other team members: confirming your
-    Segment 3 output exists, how to edit the subject list in the batch
-    script, how to run it, where your HR estimates land, and how the
-    shared CSV append behavior works so nobody overwrites a teammate's
-    rows.</p>
+    <p>Practical instructions for the other team members: why this
+    segment's primary calibration task doesn't need splitting across 4
+    people the way Segments 2&ndash;4 did, and what to do instead &mdash;
+    running the Hoffman sanity check on different subject splits, and
+    making sure your DATASET_2 subjects have Segments 2&ndash;4 done for
+    Segment 6's HR-side validation.</p>
   </a>
-  <a class="card" href="Segment4_HeartRate_Guideline.pdf">
+  <a class="card" href="Segment5_SpO2_Guideline.pdf">
     <div class="card-icon">📄</div>
     <h3>Guideline (PDF)</h3>
     <p>The same guideline content as a printable/shareable PDF, built
@@ -288,50 +290,49 @@ this docs folder:
 </p>
 
 <ul>
-  <li><code><a href="../matlab/src/pulseextraction/chromCombine.m">matlab/src/pulseextraction/chromCombine.m</a></code> — CHROM channel combination.</li>
-  <li><code><a href="../matlab/src/pulseextraction/posCombine.m">matlab/src/pulseextraction/posCombine.m</a></code> — POS channel combination.</li>
-  <li><code><a href="../matlab/src/heartrate/fftHeartRate.m">matlab/src/heartrate/fftHeartRate.m</a></code> — FFT peak-picking in the 0.7&ndash;4 Hz band, converted to bpm.</li>
-  <li><code><a href="../matlab/scripts/run_segment4_heartrate_batch.m">matlab/scripts/run_segment4_heartrate_batch.m</a></code> — batch driver the team runs over their filtered subjects.</li>
+  <li><code><a href="../matlab/src/spo2/ratioOfRatios.m">matlab/src/spo2/ratioOfRatios.m</a></code> — AC/DC ratio-of-ratios computation.</li>
+  <li><code><a href="../matlab/src/spo2/calibrateSpO2.m">matlab/src/spo2/calibrateSpO2.m</a></code> — linear SpO2 = A &minus; B&times;R fit/apply.</li>
+  <li><code><a href="../matlab/src/io/loadGroundTruth.m">matlab/src/io/loadGroundTruth.m</a></code> — DATASET_1/DATASET_2 ground-truth parsing (implemented as part of this segment, since the DATASET_1 calibration needs timestamp-based SpO2 alignment).</li>
+  <li><code><a href="../matlab/scripts/run_segment5_dataset1_calibration_batch.m">matlab/scripts/run_segment5_dataset1_calibration_batch.m</a></code> — DATASET_1 leave-one-out calibration driver.</li>
+  <li><code><a href="../matlab/scripts/run_segment5_hoffman_sanity_check.m">matlab/scripts/run_segment5_hoffman_sanity_check.m</a></code> — Hoffman dataset code-correctness sanity check.</li>
 </ul>
 
 <h2>What comes out of this segment</h2>
 
 <p>
-For every subject processed: <code>data/processed/&lt;subjectID&gt;_hr_estimates.mat</code>
-(fields <code>HR_chrom</code>, <code>HR_pos</code>, <code>HR_green</code>,
-<code>HR_groundtruth</code>, <code>subjectID</code>, <code>fs</code>), one
-appended row in the shared
-<code>results/metrics/segment4_hr_summary.csv</code>, and
-<code>results/figures/&lt;subjectID&gt;_heartrate_sanity.png</code> — three
-stacked FFT spectra (CHROM, POS, green-only), each restricted to 0&ndash;5 Hz
-with the valid 0.7&ndash;4 Hz band shaded and the detected peak marked.
-Always look at the PNG before trusting a subject's numbers — you want one
-clean, obvious peak inside the shaded band for CHROM and POS, not
-scattered, ambiguous energy.
+<code>results/metrics/segment5_dataset1_calibration.csv</code> &mdash; 5
+leave-one-out rows (<code>subjectID, R_value, SpO2_true, SpO2_predicted,
+abs_error</code>), mean absolute error 1.97 percentage points across a
+narrow ~96&ndash;99% true-SpO2 range. <code>results/metrics/
+segment5_hoffman_sanity_check.csv</code> &mdash; 351 held-out test-window
+rows from the Hoffman dataset, test MAE 8.56 percentage points across a
+genuinely wide ~65&ndash;100% range. Two sanity PNGs in
+<code>results/figures/</code>: <code>segment5_dataset1_calibration_
+scatter.png</code> (predicted vs. actual, labeled by subject, y=x
+reference line) and <code>segment5_hoffman_sanity_scatter.png</code> (a
+two-panel figure &mdash; pooled R vs. SpO2 with the fitted line, and the
+same points colored per subject, since the pooled trend alone understates
+the real per-subject relationship). Always look at these before trusting
+the numbers &mdash; see the Line-by-Line document for exactly what to look
+for and why the per-subject panel exists.
 </p>
 
 <h2>Other segments</h2>
 
 <div class="card-grid">
-  <a class="card" href="../segment3_filtering/index.html">
+  <a class="card" href="../segment4_heartrate/index.html">
     <div class="card-icon">⬅️</div>
-    <h3>Segment 3 — Detrending &amp; Bandpass Filtering</h3>
-    <p>The previous stage: polynomial detrending and Butterworth bandpass
-    filtering, producing the cleaned R(t), G(t), B(t) traces this segment
-    combines.</p>
-  </a>
-  <a class="card" href="../segment5_spo2/index.html">
-    <div class="card-icon">➡️</div>
-    <h3>Segment 5 — SpO2 Ratio-of-Ratios &amp; Calibration</h3>
-    <p>The next stage: computing an AC/DC ratio-of-ratios from this
-    segment's filtered traces and empirically calibrating it against
-    ground-truth SpO2.</p>
+    <h3>Segment 4 — CHROM/POS &amp; FFT Heart Rate</h3>
+    <p>The previous stage: combining the filtered R(t), G(t), B(t) traces
+    into a pulse signal via CHROM/POS and estimating heart rate via FFT
+    &mdash; this segment's filtered traces feed Segment 5's AC computation
+    directly.</p>
   </a>
 </div>
 
 <footer class="page-footer">
-  Part of the <strong>Spandan</strong> project's Segment 4 (CHROM/POS pulse extraction + FFT heart rate) docs — BUET EEE 312.
-  Source markdown lives in <code>segment4_heartrate/</code>; the actual code lives under <code>matlab/src/pulseextraction/</code> and <code>matlab/src/heartrate/</code>.
+  Part of the <strong>Spandan</strong> project's Segment 5 (SpO2 ratio-of-ratios + empirical calibration) docs — BUET EEE 312.
+  Source markdown lives in <code>segment5_spo2/</code>; the actual code lives under <code>matlab/src/spo2/</code>.
 </footer>
 
 </body>
