@@ -23,7 +23,6 @@ import androidx.core.view.WindowInsetsCompat
 import com.spandan.app.camera.CoordinateMapper
 import com.spandan.app.camera.FaceAnalysisResult
 import com.spandan.app.camera.FaceAnalyzer
-import com.spandan.app.signal.PlaceholderVitalsEstimator
 import com.spandan.app.signal.RealHeartRateEstimator
 import com.spandan.app.signal.SignalBuffer
 import com.spandan.app.ui.OverlayView
@@ -33,8 +32,12 @@ import java.util.concurrent.Executors
 
 /**
  * Single-screen glue: camera lifecycle, permission handling, and wiring the
- * (real) analysis pipeline into the (real) UI, calling out to the (fake)
- * PlaceholderVitalsEstimator only for the two numbers that aren't real yet.
+ * real analysis pipeline into the UI. HR is a real, validated CHROM/POS+FFT
+ * port (see signal/RealHeartRateEstimator.kt). SpO2 is intentionally absent
+ * from this build -- no validated calibration exists to ship (see
+ * ../../../../../../matlab/docs/SpO2_Final_Report_Section.md), so there is
+ * no SpO2 view, string, or placeholder math left anywhere in this app --
+ * removed outright rather than left as a fake number.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -42,7 +45,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var overlayView: OverlayView
     private lateinit var chartView: SignalChartView
     private lateinit var hrText: TextView
-    private lateinit var spo2Text: TextView
     private lateinit var permissionDeniedView: View
 
     private val signalBuffer = SignalBuffer(windowSeconds = SignalBuffer.WINDOW_DURATION_SECONDS)
@@ -50,10 +52,15 @@ class MainActivity : AppCompatActivity() {
     private var cameraProvider: ProcessCameraProvider? = null
     private val analysisExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val uiHandler = Handler(Looper.getMainLooper())
-    private val startTimeMs = System.currentTimeMillis()
+
+    // Tracks the permission state as of the last time we actually acted on it
+    // (onCreate or a resume), so onResume can tell "still the same state" apart
+    // from "changed while backgrounded" -- see onResume() below.
+    private var permissionGrantedLastKnown = false
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            permissionGrantedLastKnown = granted
             if (granted) startCamera() else showPermissionDenied()
         }
 
@@ -65,14 +72,13 @@ class MainActivity : AppCompatActivity() {
         overlayView = findViewById(R.id.overlayView)
         chartView = findViewById(R.id.chartView)
         hrText = findViewById(R.id.hrText)
-        spo2Text = findViewById(R.id.spo2Text)
         permissionDeniedView = findViewById(R.id.permissionDeniedView)
 
         // App targets SDK 35, where edge-to-edge is enforced -- content draws
-        // behind system bars by default. Without this, the bottom HR/SpO2 status
-        // chips get clipped by the device's nav bar (found via on-device
-        // screenshot during this task's verification, same "check the real
-        // device, don't assume" discipline as the earlier CoordinateMapper bugs).
+        // behind system bars by default. Without this, the bottom HR status
+        // chip gets clipped by the device's nav bar (found via on-device
+        // screenshot during an earlier task's verification, same "check the
+        // real device, don't assume" discipline as the CoordinateMapper bugs).
         val rootLayout = findViewById<View>(R.id.rootLayout)
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -84,13 +90,42 @@ class MainActivity : AppCompatActivity() {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
 
-        if (hasCameraPermission()) {
+        permissionGrantedLastKnown = hasCameraPermission()
+        if (permissionGrantedLastKnown) {
             startCamera()
         } else {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA)
         }
 
         startUiRefreshLoop()
+    }
+
+    /**
+     * Re-checks camera permission every time the activity resumes, not just at
+     * onCreate. Without this, a user who denies the permission, backgrounds the
+     * app, grants it via system Settings, and returns would stay stuck on the
+     * "permission denied" screen -- onCreate's one-time check never re-runs on
+     * a plain resume (only on activity re-creation). Compares against
+     * [permissionGrantedLastKnown] rather than unconditionally acting every
+     * resume, so this is a no-op on the very first resume right after onCreate
+     * (before the initial permission dialog has even been answered) and on
+     * every ordinary resume where nothing changed.
+     */
+    override fun onResume() {
+        super.onResume()
+        val granted = hasCameraPermission()
+        if (granted == permissionGrantedLastKnown) return
+        permissionGrantedLastKnown = granted
+
+        if (granted) {
+            // Denied earlier, granted since (e.g. via system Settings) while backgrounded.
+            startCamera()
+        } else {
+            // Was granted, revoked since (e.g. via system Settings) while backgrounded.
+            cameraProvider?.unbindAll()
+            cameraProvider = null
+            showPermissionDenied()
+        }
     }
 
     private fun hasCameraPermission(): Boolean =
@@ -167,8 +202,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /** Periodically refreshes the chart + placeholder HR/SpO2 text, decoupled
-     *  from the camera analysis frame rate. */
+    /** Periodically refreshes the chart + HR text, decoupled from the camera
+     *  analysis frame rate. */
     private fun startUiRefreshLoop() {
         val refreshIntervalMs = 200L
         val runnable = object : Runnable {
@@ -184,8 +219,6 @@ class MainActivity : AppCompatActivity() {
         val samples = signalBuffer.snapshot()
         chartView.updateValues(samples.map { it.green })
 
-        val elapsedSeconds = (System.currentTimeMillis() - startTimeMs) / 1000.0
-
         // HR: real pipeline (detrend -> bandpass -> CHROM/POS -> FFT), see
         // signal/RealHeartRateEstimator.kt. Null until enough of the buffer window
         // has filled.
@@ -195,11 +228,6 @@ class MainActivity : AppCompatActivity() {
         } else {
             getString(R.string.hr_placeholder_default)
         }
-
-        // SpO2: still PLACEHOLDER math, untouched -- see
-        // signal/PlaceholderVitalsEstimator.kt.
-        val spo2 = PlaceholderVitalsEstimator.computeSpo2Placeholder(elapsedSeconds)
-        spo2Text.text = getString(R.string.spo2_format, spo2)
     }
 
     override fun onDestroy() {

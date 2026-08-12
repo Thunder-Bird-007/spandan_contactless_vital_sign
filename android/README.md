@@ -4,15 +4,25 @@ This is the Android half of the Spandan project (see the [repo-root
 README](../README.md) for the overall project: HR/SpO2 from facial video via
 classical DSP, currently being developed in MATLAB under `../matlab/`).
 
-**This build is a functional skeleton with a real HR pipeline; SpO2 is still
-fake.** The camera → face detection → ROI → signal pipeline is fully wired
-end to end. HR is now a real port of the validated MATLAB CHROM/POS+FFT
-pipeline (see [What's real vs. placeholder](#whats-real-vs-placeholder) and
-[Verification: the HR port](#verification-the-hr-port-segment-4) below) --
-but its on-device accuracy has **not** been shown to match MATLAB's
-validated r=0.957 result, for reasons explained in that section. SpO2 is
-still pure placeholder math. Read both verification sections below before
-anyone mistakes a build screenshot for a fully validated result.
+**This build ships a real HR pipeline; SpO2 has no UI at all.** The camera →
+face detection → ROI → signal pipeline is fully wired end to end. HR is a
+real port of the validated MATLAB CHROM/POS+FFT pipeline (see [What's real
+vs. placeholder](#whats-real-vs-placeholder) and [Verification: the HR
+port](#verification-the-hr-port-segment-4) below) -- but its on-device
+accuracy has **not** been shown to match MATLAB's validated r=0.957 result,
+for reasons explained in that section. SpO2 is not a placeholder anymore
+either -- it was removed outright (view, strings, and
+`PlaceholderVitalsEstimator.kt` all deleted), because no validated SpO2
+calibration exists to ship (see `../matlab/docs/SpO2_Final_Report_Section.md`,
+whose own standing decision is "not approved for Android display"). Read the
+verification sections below before anyone mistakes a build screenshot for a
+fully validated result.
+
+**Defense-readiness status, standing decision, and the current stability-run
+result live in
+[`docs/Defense_Readiness_Checklist.md`](docs/Defense_Readiness_Checklist.md)
+-- read that first for "is this ready to demo," this file is the detailed
+build log/history behind it.**
 
 ## Why this exists / how it fits the timeline
 
@@ -29,10 +39,26 @@ been validated -- r=0.957, MAE ~3.8bpm, pooled across UBFC and VIPL subjects
 -- and has now been ported for real; see
 [Verification: the HR port](#verification-the-hr-port-segment-4) below.
 SpO2 calibration is explicitly **still unresolved** on the MATLAB side (the
-pooled calibration doesn't beat a trivial "guess the mean" baseline yet), so
-[`PlaceholderVitalsEstimator.kt`](app/src/main/java/com/spandan/app/signal/PlaceholderVitalsEstimator.kt)'s
-`computeSpo2Placeholder()` is untouched and still fake -- it'll be replaced
-the same way HR just was, once MATLAB has a real calibration to port.
+pooled calibration doesn't beat a trivial "guess the mean" baseline yet) --
+see `../matlab/docs/SpO2_Final_Report_Section.md`, whose own standing
+decision is "not approved for Android display." **Superseded:** the
+paragraph below originally said `PlaceholderVitalsEstimator.kt`'s
+`computeSpo2Placeholder()` would stay untouched until a real calibration
+landed. That plan changed for defense readiness: rather than ship a fake
+number a demo audience could mistake for real, SpO2 was removed from the
+app outright -- `PlaceholderVitalsEstimator.kt` is deleted, and there is no
+SpO2 view/string anywhere in the UI. It will be added back for real, not
+restored as a placeholder, once MATLAB has a validated calibration to port.
+
+**MATLAB-side Tasks L/N/O/P were investigated but deliberately not
+ported.** Segment 6 explored on-device evaluation (L), multi-region ROI
+(N), detrend/adaptive-bandpass refinement (O), and windowed harmonic
+continuity (P) as possible accuracy improvements. None of that logic is in
+this Android build -- the app ships the original validated pipeline
+(single forehead ROI, whole-clip FFT, no windowing/continuity/multi-region
+logic) as a deliberate, evidence-based call: porting late-stage MATLAB
+experiments this close to defense was judged higher regression risk than
+the runway available to re-verify them on-device.
 
 ## What's real vs. placeholder
 
@@ -42,7 +68,7 @@ the same way HR just was, once MATLAB has a real calibration to port.
 |---|---|
 | `MainActivity.kt` | Camera lifecycle, permission handling, UI wiring, window-inset padding |
 | `camera/FaceAnalyzer.kt` | Runs ML Kit face detection per frame via CameraX `ImageAnalysis` (no naive per-frame Bitmap conversion for detection) |
-| `camera/RoiCalculator.kt` | Derives the forehead ROI as a fractional sub-crop of the face box — **fractions are a placeholder, see below** |
+| `camera/RoiCalculator.kt` | Derives the forehead ROI as a fractional sub-crop of the face box — fractions now reconciled against MATLAB's validated geometry, see below |
 | `camera/CoordinateMapper.kt` | Geometry: sensor-buffer ↔ ML-Kit-rotated ↔ on-screen-view coordinate conversions |
 | `camera/RoiPixelAverager.kt` | Spatially averages R/G/B pixel intensities inside the ROI, sampled directly from the YUV planes |
 | `signal/SignalBuffer.kt`, `signal/RgbSample.kt` | Rolling time-windowed buffer of RGB samples |
@@ -52,32 +78,42 @@ the same way HR just was, once MATLAB has a real calibration to port.
 | `signal/HeartRateFft.kt` | Real port of `heartrate/fftHeartRate.m` (FFT peak-picking in the 0.7-4Hz band), via JTransforms |
 | `signal/RealHeartRateEstimator.kt` | Wires the above into one pipeline against `SignalBuffer`'s window; displayed bpm is chosen per-reading by the CHROM/POS switching rule (see [switching estimator port](#chrompos-switching-estimator-port-segment-4-follow-up-4) below), CHROM/POS raw values still logged alongside for comparison |
 
-**Placeholder, will be replaced when MATLAB's SpO2 calibration lands:**
+**Placeholder/removed:**
 
-| File | What it fakes |
+| File | Status |
 |---|---|
-| `signal/PlaceholderVitalsEstimator.kt` | `computeSpo2Placeholder()` only now — pure time-based sine oscillation, not derived from the signal at all. (Its `computeHeartRatePlaceholder()` still exists in the file but is no longer called from `MainActivity`; HR now comes from `RealHeartRateEstimator`.) |
+| ~~`signal/PlaceholderVitalsEstimator.kt`~~ | **Superseded -- deleted.** Used to hold `computeSpo2Placeholder()` (a fake sine oscillation) and an already-unused `computeHeartRatePlaceholder()`. Both are gone: SpO2 has no code path in this app anymore (see below), and HR has come from `RealHeartRateEstimator` since the HR port. |
 
-`computeSpo2Placeholder()` does no ratio-of-ratios or calibration -- **do
-not treat the SpO2 number from this build as real**, the on-screen
-"● PLACEHOLDER — not real" chip next to it says so too. HR now has a real
-DSP pipeline behind it (see the "● LIVE" chip next to it), but read
-[Verification: the HR port](#verification-the-hr-port-segment-4) before
-trusting its on-device *accuracy* -- the pipeline is a faithful port, but
-this build's buffer window (now **25s**, raised from the original 10s --
+**Superseded -- SpO2 is no longer a placeholder number, it's absent
+entirely.** The paragraph that used to live here described a
+"● PLACEHOLDER — not real" SpO2 chip next to a fake SpO2 reading. For
+defense readiness that was judged worse than showing nothing: a demo
+audience glancing at the screen could mistake a labeled-but-still-numeric
+placeholder for a real reading. `activity_main.xml` now has no SpO2 view at
+all, just a small note (`spo2_omitted_note`) under the HR reading explaining
+why. HR still has a real DSP pipeline behind it (see the "● LIVE" chip), but
+read [Verification: the HR port](#verification-the-hr-port-segment-4)
+before trusting its on-device *accuracy* -- the pipeline is a faithful port,
+but this build's buffer window (**25s**, raised from the original 10s --
 see
 [Window-length change: 10s → 25s](#window-length-change-10s--25s-segment-4-follow-up-2)
 below) means its instantaneous readings are still noisier than MATLAB's
 validated offline result.
 
-### The ROI fraction placeholder
+### The ROI fraction placeholder (superseded -- reconciled against MATLAB)
 
 `RoiCalculator.foreheadRoiFrom()` crops a forehead band using four hardcoded
-fractions of the face box (top 8–30%, horizontally centered 25–75%), chosen
-by eye. This is the same *concept* as the MATLAB side (a fixed fractional
-crop, not a learned one) but **not reconciled against it**. Once
-`matlab/src/roi/extractROISignals.m` is finalized, update the four constants
-at the top of that file — nothing else needs to change.
+fractions of the face box. This section used to say those fractions (top
+8–30%, horizontally centered 25–75%) were chosen by eye and **not
+reconciled** against MATLAB. That reconciliation has now been done directly
+against `matlab/src/roi/extractROISignals.m`'s `computeRegionBBoxes`
+(default/original `forehead` mode): MATLAB uses `xFracLo=0.30, xFracHi=0.70,
+yFracLo=0.10, yFracHi=0.30` -- the exact geometry Segment 6's validated
+r=0.957 HR result was computed against. The by-eye fractions genuinely did
+not match (25–75%/8–30% vs. the real 30–70%/10–30%), so this was a real gap,
+not stale documentation -- `RoiCalculator.kt`'s four constants are now
+`TOP_FRACTION=0.10f, BOTTOM_FRACTION=0.30f, LEFT_FRACTION=0.30f,
+RIGHT_FRACTION=0.70f`, matching MATLAB exactly.
 
 ### No orientation/bridge document found
 
@@ -132,7 +168,7 @@ android/
       java/com/spandan/app/
         MainActivity.kt
         camera/              - real: detection, ROI, coordinate mapping, pixel averaging
-        signal/              - real buffer/model classes + the one placeholder file
+        signal/              - real: buffer/model classes + the HR pipeline (no placeholder files remain)
         ui/                  - real: overlay + chart custom Views
       res/                   - layout, strings, theme
   settings.gradle.kts / build.gradle.kts / gradle.properties
@@ -237,14 +273,18 @@ extraction itself was unaffected throughout.
   the real dialog or externally, simulating Settings) and returning to the
   app starts the camera correctly — full recovery confirmed, no crash at
   any point in the cycle. ✅
-  - Minor note for a future pass: `MainActivity` only checks permission in
-    `onCreate`, with no `onResume` re-check. In practice this wasn't
-    observed to matter (recovery worked when tested, likely because the
-    activity was recreated rather than merely resumed), but if a user
-    denies with "don't ask again" (Android sets `USER_FIXED`), the retry
-    button will keep silently re-requesting without ever showing a dialog
-    again or pointing the user at system Settings. Not a crash risk, just
-    a UX dead end worth a follow-up.
+  - **Superseded -- fixed.** This used to flag that `MainActivity` only
+    checked permission in `onCreate`, with no `onResume` re-check, so a user
+    who granted the permission via system Settings while the app was
+    backgrounded (rather than through the in-app dialog) could get stuck on
+    the denied screen. `MainActivity.onResume()` now re-checks
+    `hasCameraPermission()` against the last-known state every time the
+    activity resumes and starts/stops the camera accordingly in both
+    directions (denied→granted and granted→revoked), not just at `onCreate`.
+    The original "don't ask again"/`USER_FIXED` caveat still applies -- this
+    fix re-checks permission *state*, it doesn't add a deep link to system
+    Settings for that specific case -- but the core stuck-on-denied-screen
+    gap this note flagged is closed.
   - Aside, unrelated to app code: on this device, a system "Android App
     Compatibility" dialog appears on launch warning that
     `libface_detector_v2_jni.so` (ML Kit) and
@@ -271,6 +311,16 @@ extraction itself was unaffected throughout.
   across the same window recorded zero `AndroidRuntime`/`FATAL` entries
   and zero log lines from the app at all beyond the (already-removed)
   diagnostic logging — no crashes, no exceptions. ✅
+  - **Important scope note, stated plainly:** this ~5 minute run was against
+    `PlaceholderVitalsEstimator.kt` -- **before `RealHeartRateEstimator.kt`
+    existed.** It is evidence the camera/UI/permission skeleton doesn't
+    crash, not evidence about the real DSP pipeline's stability. The real
+    pipeline has its own, separate on-device runs documented in
+    [Verification: the HR port](#verification-the-hr-port-segment-4) and
+    its follow-ups below (13+ min combined, 5m15s, ~2.5 min, all
+    crash-free) -- and a dedicated 15+ minute continuous defense-readiness
+    run in
+    [`docs/Defense_Readiness_Checklist.md`](docs/Defense_Readiness_Checklist.md).
 - **"PLACEHOLDER VALUES" banner**: visible at all times across every state
   tested (camera running, permission denied, no-face). ✅
   (**Superseded** by the HR port below: the single uniform banner has since
