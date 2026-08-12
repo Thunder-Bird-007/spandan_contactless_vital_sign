@@ -77,6 +77,12 @@ jobs:
             -destination "id=${{ steps.sim.outputs.udid }}" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
+      - name: Debug - dump the built app's Info.plist
+        run: |
+          PLIST=$(find ~/Library/Developer/Xcode/DerivedData -path "*Debug-iphonesimulator/Spandan.app/Info.plist" | head -n1)
+          echo "Found: $PLIST"
+          plutil -p "$PLIST" || true
+
       - name: Run unit tests
         run: |
           xcodebuild test \
