@@ -4,6 +4,24 @@ This is the Android half of the Spandan project (see the [repo-root
 README](../README.md) for the overall project: HR/SpO2 from facial video via
 classical DSP, currently being developed in MATLAB under `../matlab/`).
 
+## Download & Install
+
+Don't want to build it yourself? Grab the latest debug APK from the
+[Releases page](https://github.com/Thunder-Bird-007/spandan_contactless_vital_sign/releases/latest)
+(always points to the newest build).
+
+1. On an **Android 7.0+** phone (minSdk 24), open the release page above and
+   download `app-debug.apk`.
+2. If prompted, allow **"install from unknown sources"** for your browser/
+   file manager (Android will ask automatically the first time).
+3. Open the downloaded APK and install it.
+4. Launch the app and grant the **camera permission** when asked -- it's
+   required for the HR/SpO2 pipeline to run.
+
+This is a debug build for demo/sideload purposes, not a Play Store release --
+see [What's real vs. placeholder](#whats-real-vs-placeholder) below before
+treating an on-screen reading as a validated medical measurement.
+
 **This build ships both a real HR pipeline and a real, live SpO2 estimate.**
 The camera → face detection → ROI → signal pipeline is fully wired end to
 end. HR is a real port of the validated MATLAB CHROM/POS+FFT pipeline (see

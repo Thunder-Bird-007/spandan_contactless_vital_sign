@@ -19,6 +19,17 @@ physical hardware. See
 [`android/docs/Defense_Readiness_Checklist.md`](android/docs/Defense_Readiness_Checklist.md)
 for the current defense-readiness snapshot.
 
+## Download & Install (Android app)
+
+Want to try the Android app without building it? Grab the latest debug APK
+from the
+[Releases page](https://github.com/Thunder-Bird-007/spandan_contactless_vital_sign/releases/latest)
+(always points to the newest build) and sideload it on an Android 7.0+
+phone -- allow "install from unknown sources" if prompted, install, then
+grant the camera permission on first launch. See
+[`android/README.md`](android/README.md#download--install) for full steps
+and what's validated vs. not before trusting an on-screen reading.
+
 ## Goal
 
 Estimate heart rate (HR) and blood oxygen saturation (SpO2) from ordinary
