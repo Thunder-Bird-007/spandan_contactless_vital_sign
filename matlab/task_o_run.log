@@ -1,0 +1,153 @@
+[Warning: Unable to load Toolbox Path Cache C:\Users\Abrar Jawad\AppData\Local\MathWorks\MATLAB\R2024b\toolbox_cache-24.2.0-323430490-win64.xml. The cache file is not in the
+correct format. It will be regenerated upon quitting MATLAB.] 
+Spandan: added H:\EEE 312 project\Contactless Vital Sign\spandan\matlab\src (and subfolders) to the MATLAB path.
+Spandan: added H:\EEE 312 project\Contactless Vital Sign\spandan\matlab\src (and subfolders) to the MATLAB path.
+=== Segment 6 Task O, Action 1: loaded 107 subjects from H:\EEE 312 project\Contactless Vital Sign\spandan\results\metrics\segment4_hr_summary_vipl.csv ===
+--- Part 1: regression check on 3 subjects ---
+VIPL_p1_v1_source1: default vs explicit-order-3 byte-identical = 1, default vs builtin detrend(R,3) byte-identical = 1, detrendOrder reported = 3
+VIPL_p2_v1_source1: default vs explicit-order-3 byte-identical = 1, default vs builtin detrend(R,3) byte-identical = 1, detrendOrder reported = 3
+VIPL_p3_v1_source1: default vs explicit-order-3 byte-identical = 1, default vs builtin detrend(R,3) byte-identical = 1, detrendOrder reported = 3
+Regression check across 3 subjects: all byte-identical = 1
+--- Part 2: detrend-order sweep (polyOrder = 2, 3, 4, 5) ---
+--- polyOrder = 2 ---
+polyOrder 2: subjects succeeded = 107, failed = 0
+polyOrder 2 CHROM: MAE = 9.3458, RMSE = 18.3724, r = 0.27755, N = 107
+polyOrder 2 POS: MAE = 8.9089, RMSE = 16.7811, r = 0.21745, N = 107
+polyOrder 2 Green: MAE = 15.0965, RMSE = 19.5177, r = 0.034432, N = 107
+--- polyOrder = 3 ---
+polyOrder 3: subjects succeeded = 107, failed = 0
+polyOrder 3 CHROM: MAE = 9.3458, RMSE = 18.3724, r = 0.27755, N = 107
+polyOrder 3 POS: MAE = 8.9089, RMSE = 16.7811, r = 0.21745, N = 107
+polyOrder 3 Green: MAE = 15.0965, RMSE = 19.5177, r = 0.034432, N = 107
+--- polyOrder = 4 ---
+polyOrder 4: subjects succeeded = 107, failed = 0
+polyOrder 4 CHROM: MAE = 9.3458, RMSE = 18.3724, r = 0.27755, N = 107
+polyOrder 4 POS: MAE = 8.9089, RMSE = 16.7811, r = 0.21745, N = 107
+polyOrder 4 Green: MAE = 15.0965, RMSE = 19.5177, r = 0.034432, N = 107
+--- polyOrder = 5 ---
+polyOrder 5: subjects succeeded = 107, failed = 0
+polyOrder 5 CHROM: MAE = 9.1321, RMSE = 18.2122, r = 0.27751, N = 107
+polyOrder 5 POS: MAE = 8.9089, RMSE = 16.7811, r = 0.21745, N = 107
+polyOrder 5 Green: MAE = 15.0965, RMSE = 19.5177, r = 0.034432, N = 107
+--- Segment 6 Task O, Action 1 sweep complete ---
+Saved H:\EEE 312 project\Contactless Vital Sign\spandan\results\metrics\segment6_task_o_detrend_sweep_metrics.csv
+Saved H:\EEE 312 project\Contactless Vital Sign\spandan\results\metrics\segment6_task_o_detrend_sweep_details.csv
+=== Segment 6 Task O, Action 2: loaded 107 subjects from H:\EEE 312 project\Contactless Vital Sign\spandan\results\metrics\segment4_hr_summary_vipl.csv ===
+VIPL_p1_v1_source1: green 81.1054 -> 81.1054 bpm, chrom 62.1233 -> 62.1233 bpm, pos 62.1233 -> 62.1233 bpm (GT 63.0556 bpm)
+VIPL_p2_v1_source1: green 76.1447 -> 76.1447 bpm, chrom 76.1447 -> 76.1447 bpm, pos 76.1447 -> 76.1447 bpm (GT 81.9643 bpm)
+VIPL_p3_v1_source1: green 47.6063 -> 47.6063 bpm, chrom 69.4258 -> 69.4258 bpm, pos 69.4258 -> 69.4258 bpm (GT 74.4839 bpm)
+VIPL_p4_v1_source1: green 53.4805 -> 53.4805 bpm, chrom 65.9593 -> 65.9593 bpm, pos 73.09 -> 73.09 bpm (GT 74.3714 bpm)
+VIPL_p5_v1_source1: green 114.5257 -> 114.5257 bpm, chrom 73.7623 -> 73.7623 bpm, pos 73.7623 -> 73.7623 bpm (GT 86.9677 bpm)
+VIPL_p6_v1_source1: green 68.623 -> 68.623 bpm, chrom 64.7017 -> 64.7017 bpm, pos 64.7017 -> 64.7017 bpm (GT 65.6452 bpm)
+VIPL_p7_v1_source1: green 72.4201 -> 72.4201 bpm, chrom 93.3838 -> 93.3838 bpm, pos 93.3838 -> 93.3838 bpm (GT 84.8438 bpm)
+VIPL_p8_v1_source1: green 54.2005 -> 46.4576 bpm, chrom 83.2365 -> 83.2365 bpm, pos 83.2365 -> 83.2365 bpm (GT 83.7742 bpm)
+VIPL_p9_v1_source1: green 89.259 -> 89.259 bpm, chrom 101.7552 -> 101.7552 bpm, pos 101.7552 -> 101.7552 bpm (GT 100.4412 bpm)
+VIPL_p10_v1_source1: green 62.3053 -> 62.3053 bpm, chrom 72.9863 -> 72.9863 bpm, pos 122.8305 -> 122.8305 bpm (GT 83.6571 bpm)
+VIPL_p11_v1_source1: green 100.2465 -> 100.2465 bpm, chrom 66.831 -> 66.831 bpm, pos 64.7425 -> 64.7425 bpm (GT 70.5 bpm)
+VIPL_p12_v1_source1: green 59.7669 -> 59.7669 bpm, chrom 61.8278 -> 61.8278 bpm, pos 61.8278 -> 61.8278 bpm (GT 89.0333 bpm)
+VIPL_p13_v1_source1: green 92.3564 -> 92.3564 bpm, chrom 65.6757 -> 65.6757 bpm, pos 65.6757 -> 65.6757 bpm (GT 66.4667 bpm)
+VIPL_p14_v1_source1: green 82.1997 -> 82.1997 bpm, chrom 92.2241 -> 92.2241 bpm, pos 88.2143 -> 88.2143 bpm (GT 90.5806 bpm)
+VIPL_p15_v1_source1: green 93.791 -> 93.791 bpm, chrom 60.5734 -> 60.5734 bpm, pos 60.5734 -> 60.5734 bpm (GT 62.5312 bpm)
+VIPL_p16_v1_source1: green 71.7018 -> 71.7018 bpm, chrom 77.5154 -> 77.5154 bpm, pos 65.8881 -> 65.8881 bpm (GT 78.6875 bpm)
+VIPL_p17_v1_source1: green 52.83 -> 52.83 bpm, chrom 66.0375 -> 66.0375 bpm, pos 67.9243 -> 69.8111 bpm (GT 76.2727 bpm)
+VIPL_p18_v1_source1: green 44.849 -> 44.849 bpm, chrom 73.3893 -> 73.3893 bpm, pos 73.3893 -> 73.3893 bpm (GT 76.6667 bpm)
+VIPL_p19_v1_source1: green 69.1577 -> 69.1577 bpm, chrom 92.817 -> 92.817 bpm, pos 92.817 -> 92.817 bpm (GT 94.0588 bpm)
+VIPL_p20_v1_source1: green 72.0827 -> 72.0827 bpm, chrom 60.3936 -> 60.3936 bpm, pos 62.3418 -> 62.3418 bpm (GT 63.7812 bpm)
+VIPL_p21_v1_source1: green 62.8523 -> 62.8523 bpm, chrom 127.2012 -> 127.2012 bpm, pos 68.8383 -> 68.8383 bpm (GT 68 bpm)
+VIPL_p22_v1_source1: green 54.3233 -> 54.3233 bpm, chrom 112.5268 -> 112.5268 bpm, pos 112.5268 -> 112.5268 bpm (GT 47 bpm)
+VIPL_p23_v1_source1: green 55.2517 -> 55.2517 bpm, chrom 57.225 -> 57.225 bpm, pos 57.225 -> 57.225 bpm (GT 59.1935 bpm)
+VIPL_p24_v1_source1: green 83.8261 -> 83.8261 bpm, chrom 93.8054 -> 93.8054 bpm, pos 69.8551 -> 69.8551 bpm (GT 87.1613 bpm)
+VIPL_p25_v1_source1: green 55.2087 -> 55.2087 bpm, chrom 65.0674 -> 65.0674 bpm, pos 65.0674 -> 65.0674 bpm (GT 68.2903 bpm)
+VIPL_p26_v1_source1: green 69.9032 -> 63.7352 bpm, chrom 82.239 -> 82.239 bpm, pos 80.1831 -> 80.1831 bpm (GT 85.5333 bpm)
+VIPL_p27_v1_source1: green 73.743 -> 73.743 bpm, chrom 68.9337 -> 68.9337 bpm, pos 68.9337 -> 68.9337 bpm (GT 75.2105 bpm)
+VIPL_p28_v1_source1: green 51.7002 -> 51.7002 bpm, chrom 75.5618 -> 75.5618 bpm, pos 75.5618 -> 75.5618 bpm (GT 67.75 bpm)
+VIPL_p29_v1_source1: green 76.8838 -> 76.8838 bpm, chrom 99.9489 -> 99.9489 bpm, pos 63.4291 -> 57.6629 bpm (GT 69 bpm)
+VIPL_p30_v1_source1: green 57.9132 -> 47.9282 bpm, chrom 63.9043 -> 63.9043 bpm, pos 63.9043 -> 63.9043 bpm (GT 73.6129 bpm)
+VIPL_p31_v1_source1: green 73.6917 -> 73.6917 bpm, chrom 93.9569 -> 93.9569 bpm, pos 84.7455 -> 84.7455 bpm (GT 94.6061 bpm)
+VIPL_p32_v1_source1: green 75.2926 -> 75.2926 bpm, chrom 85.5598 -> 85.5598 bpm, pos 85.5598 -> 85.5598 bpm (GT 86.75 bpm)
+VIPL_p33_v1_source1: green 53.3806 -> 53.3806 bpm, chrom 75.1283 -> 75.1283 bpm, pos 75.1283 -> 75.1283 bpm (GT 81.25 bpm)
+VIPL_p34_v1_source1: green 139.32 -> 139.32 bpm, chrom 60.0148 -> 60.0148 bpm, pos 55.728 -> 51.4412 bpm (GT 59.1786 bpm)
+VIPL_p35_v1_source1: green 61.3403 -> 57.732 bpm, chrom 133.5053 -> 133.5053 bpm, pos 133.5053 -> 133.5053 bpm (GT 77.6765 bpm)
+VIPL_p36_v1_source1: green 85.0293 -> 85.0293 bpm, chrom 86.9618 -> 86.9618 bpm, pos 86.9618 -> 86.9618 bpm (GT 85.875 bpm)
+VIPL_p37_v1_source1: green 66.7526 -> 66.7526 bpm, chrom 81.1856 -> 81.1856 bpm, pos 81.1856 -> 81.1856 bpm (GT 81.8529 bpm)
+VIPL_p38_v1_source1: green 77.5599 -> 77.5599 bpm, chrom 77.5599 -> 77.5599 bpm, pos 77.5599 -> 77.5599 bpm (GT 78.0968 bpm)
+VIPL_p39_v1_source1: green 60.58 -> 60.58 bpm, chrom 77.1018 -> 77.1018 bpm, pos 77.1018 -> 77.1018 bpm (GT 78.8182 bpm)
+VIPL_p40_v1_source1: green 93.4638 -> 93.4638 bpm, chrom 93.4638 -> 93.4638 bpm, pos 93.4638 -> 93.4638 bpm (GT 93.129 bpm)
+VIPL_p41_v1_source1: green 93.9713 -> 93.9713 bpm, chrom 79.9755 -> 79.9755 bpm, pos 79.9755 -> 79.9755 bpm (GT 80.6774 bpm)
+VIPL_p42_v1_source1: green 99.8665 -> 99.8665 bpm, chrom 61.9172 -> 61.9172 bpm, pos 61.9172 -> 61.9172 bpm (GT 65.129 bpm)
+VIPL_p43_v1_source1: green 77.4386 -> 77.4386 bpm, chrom 64.2174 -> 64.2174 bpm, pos 64.2174 -> 64.2174 bpm (GT 68.3438 bpm)
+VIPL_p44_v1_source1: green 50.8473 -> 50.8473 bpm, chrom 64.5369 -> 64.5369 bpm, pos 70.4039 -> 64.5369 bpm (GT 67.9688 bpm)
+VIPL_p45_v1_source1: green 72.8843 -> 72.8843 bpm, chrom 78.958 -> 78.958 bpm, pos 78.958 -> 78.958 bpm (GT 81.0323 bpm)
+VIPL_p46_v1_source1: green 51.0405 -> 51.0405 bpm, chrom 76.5607 -> 76.5607 bpm, pos 76.5607 -> 76.5607 bpm (GT 76.9375 bpm)
+VIPL_p47_v1_source1: green 65.8484 -> 65.8484 bpm, chrom 65.8484 -> 65.8484 bpm, pos 65.8484 -> 65.8484 bpm (GT 66.68 bpm)
+VIPL_p48_v1_source1: green 83.3389 -> 83.3389 bpm, chrom 182.552 -> 182.552 bpm, pos 123.0242 -> 123.0242 bpm (GT 80.9688 bpm)
+VIPL_p49_v1_source1: green 52.1632 -> 50.629 bpm, chrom 73.6422 -> 73.6422 bpm, pos 73.6422 -> 73.6422 bpm (GT 74.8 bpm)
+VIPL_p50_v1_source1: green 44.0079 -> 45.9213 bpm, chrom 72.7088 -> 72.7088 bpm, pos 72.7088 -> 72.7088 bpm (GT 72.8125 bpm)
+VIPL_p51_v1_source1: green 60.0036 -> 60.0036 bpm, chrom 72.7317 -> 72.7317 bpm, pos 67.2768 -> 67.2768 bpm (GT 81.9118 bpm)
+VIPL_p52_v1_source1: green 103.6747 -> 103.6747 bpm, chrom 65.6607 -> 65.6607 bpm, pos 72.5723 -> 72.5723 bpm (GT 69.9444 bpm)
+VIPL_p53_v1_source1: green 60.8679 -> 60.8679 bpm, chrom 70.6853 -> 70.6853 bpm, pos 70.6853 -> 70.6853 bpm (GT 70.0625 bpm)
+VIPL_p54_v1_source1: green 62.3397 -> 62.3397 bpm, chrom 89.6134 -> 89.6134 bpm, pos 54.5473 -> 54.5473 bpm (GT 79.9677 bpm)
+VIPL_p55_v1_source1: green 81.5245 -> 81.5245 bpm, chrom 77.5477 -> 77.5477 bpm, pos 77.5477 -> 77.5477 bpm (GT 80.6774 bpm)
+VIPL_p56_v1_source1: green 79.9109 -> 79.9109 bpm, chrom 68.7605 -> 68.7605 bpm, pos 68.7605 -> 68.7605 bpm (GT 73.303 bpm)
+VIPL_p57_v1_source1: green 79.4001 -> 79.4001 bpm, chrom 67.049 -> 67.049 bpm, pos 67.049 -> 67.049 bpm (GT 56.0588 bpm)
+VIPL_p58_v1_source1: green 73.0611 -> 73.0611 bpm, chrom 74.9345 -> 74.9345 bpm, pos 74.9345 -> 74.9345 bpm (GT 63.6667 bpm)
+VIPL_p59_v1_source1: green 64.6446 -> 64.6446 bpm, chrom 101.8642 -> 101.8642 bpm, pos 78.3571 -> 78.3571 bpm (GT 76.7188 bpm)
+VIPL_p60_v1_source1: green 69.5884 -> 69.5884 bpm, chrom 69.5884 -> 69.5884 bpm, pos 69.5884 -> 69.5884 bpm (GT 72.6897 bpm)
+VIPL_p61_v1_source1: green 79.3704 -> 79.3704 bpm, chrom 73.4176 -> 73.4176 bpm, pos 73.4176 -> 73.4176 bpm (GT 77.871 bpm)
+VIPL_p62_v1_source1: green 47.9058 -> 47.9058 bpm, chrom 69.8626 -> 69.8626 bpm, pos 71.8587 -> 71.8587 bpm (GT 73.6774 bpm)
+VIPL_p63_v1_source1: green 73.5097 -> 73.5097 bpm, chrom 75.3026 -> 75.3026 bpm, pos 75.3026 -> 75.3026 bpm (GT 78.0588 bpm)
+VIPL_p64_v1_source1: green 59.9904 -> 55.1263 bpm, chrom 74.5827 -> 74.5827 bpm, pos 74.5827 -> 74.5827 bpm (GT 87.2895 bpm)
+VIPL_p65_v1_source1: green 53.0418 -> 53.0418 bpm, chrom 70.7224 -> 70.7224 bpm, pos 58.9353 -> 58.9353 bpm (GT 72.4688 bpm)
+VIPL_p66_v1_source1: green 51.1281 -> 51.1281 bpm, chrom 55.9974 -> 55.9974 bpm, pos 55.9974 -> 55.9974 bpm (GT 67 bpm)
+VIPL_p67_v1_source1: green 74.0531 -> 74.0531 bpm, chrom 79.7495 -> 79.7495 bpm, pos 79.7495 -> 79.7495 bpm (GT 80.1515 bpm)
+VIPL_p68_v1_source1: green 58.7813 -> 58.7813 bpm, chrom 68.5782 -> 68.5782 bpm, pos 68.5782 -> 68.5782 bpm (GT 65.3871 bpm)
+VIPL_p69_v1_source1: green 59.5258 -> 59.5258 bpm, chrom 59.5258 -> 59.5258 bpm, pos 59.5258 -> 59.5258 bpm (GT 64.4375 bpm)
+VIPL_p70_v1_source1: green 99.6085 -> 99.6085 bpm, chrom 77.0556 -> 77.0556 bpm, pos 77.0556 -> 77.0556 bpm (GT 76.9697 bpm)
+VIPL_p71_v1_source1: green 68.6586 -> 68.6586 bpm, chrom 74.3802 -> 74.3802 bpm, pos 68.6586 -> 68.6586 bpm (GT 62 bpm)
+VIPL_p72_v1_source1: green 62.2126 -> 62.2126 bpm, chrom 87.7357 -> 87.7357 bpm, pos 87.7357 -> 87.7357 bpm (GT 87.8205 bpm)
+VIPL_p73_v1_source1: green 71.4154 -> 71.4154 bpm, chrom 71.4154 -> 71.4154 bpm, pos 71.4154 -> 71.4154 bpm (GT 71.9697 bpm)
+VIPL_p74_v1_source1: green 72.0049 -> 72.0049 bpm, chrom 68.0046 -> 68.0046 bpm, pos 68.0046 -> 68.0046 bpm (GT 70.4667 bpm)
+VIPL_p75_v1_source1: green 64.6954 -> 64.6954 bpm, chrom 78.4187 -> 78.4187 bpm, pos 78.4187 -> 78.4187 bpm (GT 79.6129 bpm)
+VIPL_p76_v1_source1: green 81.3587 -> 81.3587 bpm, chrom 75.5474 -> 75.5474 bpm, pos 75.5474 -> 75.5474 bpm (GT 77.0968 bpm)
+VIPL_p77_v1_source1: green 50.2496 -> 50.2496 bpm, chrom 106.2973 -> 106.2973 bpm, pos 106.2973 -> 106.2973 bpm (GT 81.25 bpm)
+VIPL_p78_v1_source1: green 78.0235 -> 78.0235 bpm, chrom 74.477 -> 74.477 bpm, pos 74.477 -> 74.477 bpm (GT 77.4706 bpm)
+VIPL_p79_v1_source1: green 82.8064 -> 82.8064 bpm, chrom 61.6234 -> 61.6234 bpm, pos 61.6234 -> 61.6234 bpm (GT 62.6875 bpm)
+VIPL_p80_v1_source1: green 54.8913 -> 54.8913 bpm, chrom 78.4161 -> 78.4161 bpm, pos 78.4161 -> 78.4161 bpm (GT 78.7188 bpm)
+VIPL_p81_v1_source1: green 81.3574 -> 81.3574 bpm, chrom 71.4358 -> 71.4358 bpm, pos 71.4358 -> 71.4358 bpm (GT 71.4839 bpm)
+VIPL_p82_v1_source1: green 57.7553 -> 48.1294 bpm, chrom 77.0071 -> 77.0071 bpm, pos 94.3337 -> 94.3337 bpm (GT 59.8438 bpm)
+VIPL_p83_v1_source1: green 55.0295 -> 55.0295 bpm, chrom 76.7853 -> 76.7853 bpm, pos 76.7853 -> 76.7853 bpm (GT 74.6809 bpm)
+VIPL_p84_v1_source2: green 77.4725 -> 77.4725 bpm, chrom 85.7143 -> 85.7143 bpm, pos 85.7143 -> 85.7143 bpm (GT 80.7097 bpm)
+VIPL_p85_v1_source1: green 49.3146 -> 49.3146 bpm, chrom 74.9582 -> 74.9582 bpm, pos 74.9582 -> 74.9582 bpm (GT 74.5161 bpm)
+VIPL_p86_v1_source1: green 76.75 -> 76.75 bpm, chrom 72.6014 -> 72.6014 bpm, pos 56.0068 -> 56.0068 bpm (GT 57.5333 bpm)
+VIPL_p87_v1_source1: green 71.4712 -> 71.4712 bpm, chrom 82.7562 -> 82.7562 bpm, pos 75.2329 -> 73.3521 bpm (GT 83 bpm)
+VIPL_p88_v1_source1: green 78.1649 -> 78.1649 bpm, chrom 74.7665 -> 74.7665 bpm, pos 67.9695 -> 67.9695 bpm (GT 79.25 bpm)
+VIPL_p89_v1_source1: green 54.5933 -> 54.5933 bpm, chrom 77.9905 -> 77.9905 bpm, pos 77.9905 -> 77.9905 bpm (GT 86.9375 bpm)
+VIPL_p90_v1_source1: green 77.5529 -> 77.5529 bpm, chrom 75.5644 -> 75.5644 bpm, pos 75.5644 -> 75.5644 bpm (GT 77.9032 bpm)
+VIPL_p91_v1_source1: green 58.912 -> 47.866 bpm, chrom 75.4811 -> 75.4811 bpm, pos 75.4811 -> 75.4811 bpm (GT 64.4706 bpm)
+VIPL_p92_v1_source1: green 71.6627 -> 71.6627 bpm, chrom 71.6627 -> 71.6627 bpm, pos 71.6627 -> 71.6627 bpm (GT 71.5294 bpm)
+VIPL_p93_v1_source1: green 49.5459 -> 49.5459 bpm, chrom 62.8851 -> 62.8851 bpm, pos 62.8851 -> 62.8851 bpm (GT 70.4242 bpm)
+VIPL_p94_v1_source1: green 53.6983 -> 53.6983 bpm, chrom 67.5559 -> 67.5559 bpm, pos 67.5559 -> 67.5559 bpm (GT 70.3333 bpm)
+VIPL_p95_v1_source1: green 48.1279 -> 48.1279 bpm, chrom 75.0795 -> 75.0795 bpm, pos 75.0795 -> 75.0795 bpm (GT 74.2188 bpm)
+VIPL_p96_v1_source1: green 99.2698 -> 99.2698 bpm, chrom 84.7425 -> 84.7425 bpm, pos 154.9577 -> 154.9577 bpm (GT 56.6154 bpm)
+VIPL_p97_v1_source2: green 95.2869 -> 93.75 bpm, chrom 78.3811 -> 78.3811 bpm, pos 78.3811 -> 78.3811 bpm (GT 97.2941 bpm)
+VIPL_p98_v1_source2: green 70.6067 -> 70.6067 bpm, chrom 97.2803 -> 97.2803 bpm, pos 58.0544 -> 58.0544 bpm (GT 73.0606 bpm)
+VIPL_p99_v1_source2: green 53.681 -> 53.681 bpm, chrom 55.2147 -> 55.2147 bpm, pos 55.2147 -> 55.2147 bpm (GT 72.4118 bpm)
+VIPL_p100_v1_source2: green 62.7907 -> 62.7907 bpm, chrom 85.1163 -> 85.1163 bpm, pos 75.3488 -> 75.3488 bpm (GT 91.8919 bpm)
+VIPL_p101_v1_source2: green 48.4848 -> 48.4848 bpm, chrom 96.9697 -> 96.9697 bpm, pos 96.9697 -> 96.9697 bpm (GT 79.1176 bpm)
+VIPL_p102_v1_source2: green 64.3275 -> 64.3275 bpm, chrom 84.7953 -> 84.7953 bpm, pos 80.4094 -> 80.4094 bpm (GT 72.6 bpm)
+VIPL_p103_v1_source2: green 64.61 -> 64.61 bpm, chrom 85.5646 -> 85.5646 bpm, pos 64.61 -> 64.61 bpm (GT 65 bpm)
+VIPL_p104_v1_source2: green 58.794 -> 49.7487 bpm, chrom 73.8693 -> 73.8693 bpm, pos 69.3467 -> 69.3467 bpm (GT 88.8235 bpm)
+VIPL_p105_v1_source2: green 66.4442 -> 66.4442 bpm, chrom 82.8277 -> 88.2888 bpm, pos 96.4806 -> 96.4806 bpm (GT 63.9464 bpm)
+VIPL_p106_v1_source2: green 87.0253 -> 87.0253 bpm, chrom 150.3165 -> 150.3165 bpm, pos 56.962 -> 56.962 bpm (GT 76.0909 bpm)
+VIPL_p107_v1_source2: green 84.1751 -> 84.1751 bpm, chrom 80.8081 -> 80.8081 bpm, pos 67.3401 -> 67.3401 bpm (GT 82.9355 bpm)
+Subjects succeeded: 107, failed: 0
+Green original: MAE = 15.0965, RMSE = 19.5177, r = 0.034432, N = 107
+Green refined:  MAE = 15.6875, RMSE = 20.121, r = 0.02936, N = 107
+CHROM original: MAE = 9.3458, RMSE = 18.3724, r = 0.27755, N = 107
+CHROM refined:  MAE = 9.3968, RMSE = 18.4324, r = 0.27397, N = 107
+POS original:   MAE = 8.9089, RMSE = 16.7811, r = 0.21745, N = 107
+POS refined:    MAE = 9.0121, RMSE = 16.8246, r = 0.22386, N = 107
+--- Segment 6 Task O, Action 2 adaptive refine batch complete ---
+Saved H:\EEE 312 project\Contactless Vital Sign\spandan\results\metrics\segment6_task_o_adaptive_refine_metrics.csv
+Saved H:\EEE 312 project\Contactless Vital Sign\spandan\results\metrics\segment6_task_o_adaptive_refine_details.csv
+TASK_O_SCRIPT_ALL_OK
