@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Single-screen layout: camera preview + overlays on top, live raw-signal
-  chart, then HR/SpO2 readouts side by side. Both are real computations now
-  (signal/RealHeartRateEstimator.kt, signal/LiveSpo2Estimator.kt) with
-  INDEPENDENT subtitles under each value rather than one uniform banner: HR's
-  green "LIVE" chip signals a validated pipeline, SpO2's amber subtitle
-  signals a real-but-narrowly-validated estimate (see
-  LiveSpo2Estimator.kt's KDoc and
-  ../../../../../../matlab/docs/SpO2_Final_Report_Section.md): deliberately
-  different visual weight for a deliberately different confidence level, not
-  an oversight. Deliberately simple: functional skeleton, not defense-day
-  polish.
+  chart, then HR/SpO2 readouts side by side. Both are real computations
+  (signal/RealHeartRateEstimator.kt, signal/LiveSpo2Estimator.kt). The
+  per-field status chips/subtitles that used to sit under each value
+  ("● LIVE — CHROM/POS + FFT", "Estimate — validated against a narrow
+  reference range (87-99%)") were removed for a cleaner UI. Their
+  reasoning/caveats still live in each estimator's own KDoc and in
+  ../../../../../../matlab/docs/SpO2_Final_Report_Section.md /
+  docs/SpO2_Live_Implementation.md, just not surfaced as on-screen text
+  anymore. Deliberately simple: functional skeleton, not defense-day polish.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -95,17 +94,6 @@
                 android:textSize="20sp"
                 android:gravity="center"
                 android:text="@string/hr_placeholder_default" />
-
-            <TextView
-                android:id="@+id/hrStatusText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textColor="#4CAF50"
-                android:textStyle="bold"
-                android:textSize="11sp"
-                android:gravity="center"
-                android:text="@string/hr_status_real" />
         </LinearLayout>
 
         <LinearLayout
@@ -123,23 +111,6 @@
                 android:textSize="20sp"
                 android:gravity="center"
                 android:text="@string/spo2_placeholder_default" />
-
-            <!-- Amber, not HR's green: same visual language ("a short subtitle under
-                 the value") but a deliberately different color to signal a different
-                 confidence tier. This is a real computation (LiveSpo2Estimator.kt),
-                 but validated against a narrower reference range than HR. Not red:
-                 this isn't a fake/placeholder value anymore, so HR's old red
-                 "PLACEHOLDER" language would now be inaccurate. -->
-            <TextView
-                android:id="@+id/spo2SubtitleText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textColor="#FFA726"
-                android:textStyle="bold"
-                android:textSize="11sp"
-                android:gravity="center"
-                android:text="@string/spo2_subtitle" />
         </LinearLayout>
     </LinearLayout>
 

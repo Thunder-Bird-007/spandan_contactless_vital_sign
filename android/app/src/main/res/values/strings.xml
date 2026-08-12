@@ -5,18 +5,18 @@
     <string name="permission_rationale">Camera access is needed to capture your face for heart-rate and SpO2 estimation. No video is stored or sent anywhere.</string>
     <string name="grant_permission">Grant camera permission</string>
 
-    <!-- HR is a real CHROM/POS+FFT pipeline (signal/RealHeartRateEstimator.kt),
-         see hr_status_real below, shown next to the reading. -->
+    <!-- HR is a real CHROM/POS+FFT pipeline, see signal/RealHeartRateEstimator.kt.
+         The old per-field "● LIVE — CHROM/POS + FFT" status chip string
+         (hr_status_real) was removed along with its TextView in
+         activity_main.xml for a cleaner UI; see that layout's own top
+         comment. -->
     <string name="hr_format">HR: %.0f bpm</string>
     <string name="hr_placeholder_default">HR: -- bpm</string>
-    <string name="hr_status_real">● LIVE — CHROM/POS + FFT</string>
 
-    <!-- SpO2 is a real computation now (signal/LiveSpo2Estimator.kt: ratio-of-ratios
+    <!-- SpO2 is a real computation (signal/LiveSpo2Estimator.kt: ratio-of-ratios
          + the uncentered production linear calibration from
          matlab/docs/SpO2_Final_Calibration_Spec.md), unlike the old fake-sine
-         placeholder. The subtitle says exactly what it is: a real estimate,
-         validated against a narrow reference range, not a lab-grade
-         pulse-oximeter substitute.
+         placeholder.
 
          2 decimal places, not 1: on-device verification showed the real,
          live-tracking span (96.72-96.94% observed) is narrow enough at 1dp
@@ -25,8 +25,13 @@
          a DISPLAY-VISIBILITY fix only: it does not claim any measurement
          precision beyond what LiveSpo2Estimator.kt actually computes (see
          that file's own KDoc/docs/SpO2_Live_Implementation.md for the real
-         accuracy caveats); the underlying formula/clamp are unchanged. -->
+         accuracy caveats); the underlying formula/clamp are unchanged.
+
+         The old per-field "Estimate — validated against a narrow reference
+         range (87-99%)" subtitle string (spo2_subtitle) was removed along
+         with its TextView in activity_main.xml for a cleaner UI; same
+         caveats still documented in LiveSpo2Estimator.kt's KDoc and
+         docs/SpO2_Live_Implementation.md, just not shown on-screen anymore. -->
     <string name="spo2_format">SpO2: %.2f%%</string>
     <string name="spo2_placeholder_default">SpO2: -- %</string>
-    <string name="spo2_subtitle">Estimate — validated against a narrow reference range (87-99%)</string>
 </resources>
