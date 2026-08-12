@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Segment 6 — Team README</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav a.active {
+      color: var(--fg);
+      font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 6 &middot; <a href="../index.html">Spandan</a></span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<a href="Segment6_Validation_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<a href="Segment6_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<span class="active">Team README</span>
+<span class="sep">&middot;</span>
+<a href="Segment6_Validation_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../vipl_integration/index.html">VIPL Integration &rarr;</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 6 — Team README</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a
+href="#segment-6-formal-validation-loso-metrics-bland-altman-team-instructions"
+id="toc-segment-6-formal-validation-loso-metrics-bland-altman-team-instructions">Segment
+6 (Formal Validation: LOSO, Metrics, Bland-Altman) — Team
+Instructions</a>
+<ul>
+<li><a
+href="#why-hr-and-spo2-are-validated-differently-the-one-thing-to-internalize-before-running-anything"
+id="toc-why-hr-and-spo2-are-validated-differently-the-one-thing-to-internalize-before-running-anything">Why
+HR and SpO2 are validated differently — the one thing to internalize
+before running anything</a></li>
+<li><a href="#the-current-pooled-spo2-n-is-still-thin-say-so-every-time"
+id="toc-the-current-pooled-spo2-n-is-still-thin-say-so-every-time">The
+current pooled SpO2 N is still thin — say so, every time</a></li>
+<li><a
+href="#why-this-segment-auto-picks-up-whatever-data-currently-exists"
+id="toc-why-this-segment-auto-picks-up-whatever-data-currently-exists">Why
+this segment auto-picks-up whatever data currently exists</a></li>
+<li><a href="#before-you-run-anything"
+id="toc-before-you-run-anything">1. Before you run anything</a></li>
+<li><a href="#running-segment-6" id="toc-running-segment-6">2. Running
+Segment 6</a></li>
+<li><a href="#what-to-do-next-as-a-team"
+id="toc-what-to-do-next-as-a-team">3. What to do next as a team</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1
+id="segment-6-formal-validation-loso-metrics-bland-altman-team-instructions">Segment
+6 (Formal Validation: LOSO, Metrics, Bland-Altman) — Team
+Instructions</h1>
+<p>This covers Segment 6 of the pipeline: pooling the already-computed
+per-subject results sitting in Segment 4’s HR CSVs and Segment 5’s SpO2
+CSVs (UBFC + VIPL), running MAE/RMSE/Pearson correlation and
+Bland-Altman analysis across the full pool, and producing a genuine
+leave-one-subject-out (LOSO) SpO2 calibration refit across <strong>both
+datasets pooled together</strong>.</p>
+<p>This segment does <strong>not</strong> reprocess any video or raw
+signal trace, and does <strong>not</strong> touch
+<code>roi/extractROISignals.m</code>,
+<code>filtering/bandpassClean.m</code>,
+<code>pulseextraction/chromCombine.m</code>/<code>posCombine.m</code>,
+<code>heartrate/fftHeartRate.m</code>,
+<code>spo2/ratioOfRatios.m</code>, or any of the <code>io/</code>
+loaders — all of those are Segments 2-5’s job, already done and frozen.
+Segment 6 is a pure consumer of their CSV output.</p>
+<p>The actual code lives in the main scaffold, not in this folder:</p>
+<ul>
+<li><a
+href="../matlab/src/validation/computeMetrics.m"><code>matlab/src/validation/computeMetrics.m</code></a></li>
+<li><a
+href="../matlab/src/validation/blandAltman.m"><code>matlab/src/validation/blandAltman.m</code></a></li>
+<li><a
+href="../matlab/src/validation/runLOSO.m"><code>matlab/src/validation/runLOSO.m</code></a>
+(SpO2 only — see below for why HR doesn’t get this treatment)</li>
+<li><a
+href="../matlab/scripts/run_segment6_validation.m"><code>matlab/scripts/run_segment6_validation.m</code></a></li>
+</ul>
+<p>This <code>segment6_validation/</code> folder is docs only (no
+code):</p>
+<ul>
+<li><code>Segment6_Validation_Guideline.pdf</code> — theory background
+(what Bland-Altman actually shows vs. a plain scatter, why pooling
+UBFC+VIPL for SpO2 calibration is the right move, the
+calibrated-vs-uncalibrated distinction, and how this maps onto
+Dr. Hasan’s live defense-day comparison).</li>
+<li><code>Segment6_LineByLine_Explanation.md</code> — a plain-language
+walkthrough of every block of <code>computeMetrics.m</code>,
+<code>blandAltman.m</code>, <code>runLOSO.m</code>, and the batch
+script, including the actual results obtained.</li>
+<li>This README.</li>
+</ul>
+<h2
+id="why-hr-and-spo2-are-validated-differently-the-one-thing-to-internalize-before-running-anything">Why
+HR and SpO2 are validated differently — the one thing to internalize
+before running anything</h2>
+<p><strong>HR has no fitted parameter.</strong>
+<code>heartrate/fftHeartRate.m</code> just reads an FFT peak — nothing
+is learned from any subject’s ground truth, so there is no leakage risk,
+and HR is pooled and scored directly with <code>computeMetrics.m</code>,
+no held-out folds needed.</p>
+<p><strong>SpO2’s <code>calibrateSpO2.m</code> fits a line
+(<code>A</code>, <code>B</code>) from data.</strong> If a subject’s own
+point helped fit the line that then “predicts” that same subject, the
+result is leaked and looks better than it should. So SpO2 gets a genuine
+leave-one-subject-out refit via <code>runLOSO.m</code>: every fold fits
+fresh on every <em>other</em> subject in the <strong>entire pooled
+UBFC+VIPL set</strong>, then predicts the held-out one.</p>
+<p>See <code>Segment6_LineByLine_Explanation.md</code> Part 0 for the
+full argument, with a worked analogy.</p>
+<h2 id="the-current-pooled-spo2-n-is-still-thin-say-so-every-time">The
+current pooled SpO2 N is still thin — say so, every time</h2>
+<p>As of this segment’s own verification run:</p>
+<pre><code>SpO2 pooled: 8 total subjects with SpO2 ground truth (UBFC + VIPL combined).
+  UBFC: 5 subjects (5-gt, 6-gt, 7-gt, 12-gt, after-exercise)
+  VIPL: 3 subjects (VIPL_p1_v1_source1, VIPL_p2_v1_source1, VIPL_p3_v1_source1)</code></pre>
+<p><strong>8 subjects total is not enough to call this a validated
+calibration.</strong> The pooled MAE (1.23 percentage points) and the
+physiologically-correct- direction Pearson r (-0.755) are genuinely
+encouraging early signals — better than Segment 5’s own DATASET_1-only
+5-subject result — but 8 is still a small number for a leave-one-out
+study, and every fold’s fit is still built on only 7 training subjects.
+<strong>Do not present these numbers in the report or defense as “the
+SpO2 calibration is validated.”</strong> Present them as “early pooled
+results, N=8, improving as more VIPL subjects come in” — which is the
+honest, defensible framing.</p>
+<p>HR’s pooled N is currently even thinner and for a different, fixable
+reason: UBFC’s own <code>segment4_hr_summary.csv</code> has
+<code>HR_groundtruth = NaN</code> for all 3 of its rows (that CSV was
+written before <code>io/loadGroundTruth.m</code> was implemented — see
+the Line-by-Line doc Part 4). Today’s pooled HR metrics are effectively
+<strong>VIPL’s 3 subjects only</strong>. Re-running
+<code>run_segment4_heartrate_batch.m</code> on the UBFC subjects now
+that <code>loadGroundTruth.m</code> exists (a Segment 4 task, not this
+segment’s to do) is the fix, and once that CSV has real UBFC ground
+truth, the very next run of <code>run_segment6_validation.m</code> will
+pool it in automatically.</p>
+<h2
+id="why-this-segment-auto-picks-up-whatever-data-currently-exists">Why
+this segment auto-picks-up whatever data currently exists</h2>
+<p><code>run_segment6_validation.m</code> checks whether each of the
+four source CSVs exists with a plain <code>isfile(...)</code> before
+reading it, and pools however many rows it actually finds — there is no
+hardcoded subject count or list anywhere in this script. <strong>As more
+VIPL subjects get extracted and run through
+<code>run_vipl_integration_batch.m</code>, and as
+<code>segment5_vipl_calibration.csv</code> grows, re-running
+<code>run_segment6_validation.m</code> periodically will tighten every
+number in this segment’s output automatically, with zero code changes
+needed.</strong> This is the concrete mechanism behind the “keep
+re-running this as data comes in” instruction — there is nothing else to
+configure.</p>
+<h2 id="before-you-run-anything">1. Before you run anything</h2>
+<p>Confirm these exist (all should already be present from Segments
+4-5’s own work):</p>
+<pre><code>results/metrics/segment4_hr_summary.csv        (UBFC HR, from Segment 4)
+results/metrics/segment4_hr_summary_vipl.csv   (VIPL HR, from VIPL integration)
+results/metrics/segment5_dataset1_calibration.csv  (UBFC SpO2, from Segment 5)
+results/metrics/segment5_vipl_calibration.csv      (VIPL SpO2, from VIPL integration)</code></pre>
+<p>If any one of these is missing,
+<code>run_segment6_validation.m</code> prints which one and continues
+with whatever it can find rather than stopping — but fewer inputs means
+a smaller, weaker pool, so it’s worth running the relevant upstream
+batch script first if you can.</p>
+<h2 id="running-segment-6">2. Running Segment 6</h2>
+<ol type="1">
+<li>Open MATLAB, <code>cd</code> into <code>spandan/matlab/</code>.</li>
+<li>Run <code>startup</code> (adds <code>src/</code> to the path).</li>
+<li><code>addpath('scripts')</code> (or <code>cd scripts</code>), then
+run <code>run_segment6_validation</code>.</li>
+</ol>
+<p>No subject list to edit, no configuration — it always pools whatever
+the four source CSVs currently contain.</p>
+<p>Output:</p>
+<ul>
+<li><code>results/metrics/segment6_hr_pooled_metrics.csv</code> — one
+row per (method, scope), columns
+<code>method, scope, N, MAE, RMSE, Pearson_r</code>, scope in
+<code>{pooled, UBFC, VIPL}</code>.</li>
+<li><code>results/metrics/segment6_spo2_loso_pooled.csv</code> — one row
+per subject’s LOSO fold, columns
+<code>subjectID, dataset, R_value, SpO2_true, SpO2_predicted, abs_error</code>.</li>
+<li><code>results/metrics/segment6_spo2_loso_metrics.csv</code> — one
+row per scope, columns <code>scope, N, MAE, RMSE, Pearson_r</code>.</li>
+<li><code>results/figures/segment6_hr_bland_altman_chrom.png</code>,
+<code>segment6_hr_bland_altman_pos.png</code>,
+<code>segment6_hr_bland_altman_green.png</code> — pooled HR
+Bland-Altman, dataset-colored.</li>
+<li><code>results/figures/segment6_spo2_bland_altman_pooled.png</code> —
+pooled SpO2 LOSO Bland-Altman, dataset-colored.</li>
+<li><code>results/figures/segment6_spo2_predicted_vs_true.png</code> —
+SpO2 LOSO predicted vs. true scatter with a y=x reference line,
+dataset-colored.</li>
+</ul>
+<p>The script also prints a final plain-text summary (pooled and
+per-dataset N/MAE/RMSE/Pearson r for SpO2-LOSO and each HR method)
+straight to the console — that block is what to quote in the report or
+read from live on defense day, since it’s always freshly computed from
+whatever data exists at run time.</p>
+<p><strong>Look at the Bland-Altman and scatter plots before quoting any
+number.</strong> With this few points, a single unusual subject can
+visibly shift a bias line or a limit of agreement — the plots make that
+obvious in a way a bare MAE number does not.</p>
+<h2 id="what-to-do-next-as-a-team">3. What to do next as a team</h2>
+<ul>
+<li><strong>Whoever extracts more VIPL subjects</strong>: run
+<code>run_vipl_integration_batch.m</code> on your assigned subjects (per
+<code>vipl_integration/VIPL_Team_README.md</code>), which grows
+<code>segment4_hr_summary_vipl.csv</code> and
+<code>segment5_vipl_calibration.csv</code>. Then just re-run
+<code>run_segment6_validation.m</code> — nothing else to do.</li>
+<li><strong>Whoever owns Segment 4’s UBFC CSV</strong>: re-running
+<code>run_segment4_heartrate_batch.m</code> on
+<code>5-gt</code>/<code>6-gt</code>/<code>7-gt</code> now that
+<code>io/loadGroundTruth.m</code> is implemented will replace those
+<code>NaN</code> ground-truth rows with real values, immediately
+widening HR’s pooled N the next time Segment 6 runs.</li>
+<li><strong>Before the defense</strong>: re-run
+<code>run_segment6_validation.m</code> one more time the day before, so
+the numbers you present are the freshest ones available, and re-read
+this README’s N caveats so nobody accidentally overstates confidence in
+front of Dr. Hasan.</li>
+</ul>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 6 (formal validation: LOSO, metrics &amp; Bland-Altman) docs — BUET EEE 312.
+  Source markdown lives in <code>segment6_validation/</code>; the actual code lives under <code>matlab/src/validation/</code>.
+</footer>
+</body>
+</html>

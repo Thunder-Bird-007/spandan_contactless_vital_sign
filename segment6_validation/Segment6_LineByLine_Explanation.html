@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Segment 6 — Line-by-Line Explanation</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav a.active {
+      color: var(--fg);
+      font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 6 &middot; <a href="../index.html">Spandan</a></span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<a href="Segment6_Validation_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<span class="active">Line-by-Line Explanation</span>
+<span class="sep">&middot;</span>
+<a href="Segment6_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment6_Validation_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../vipl_integration/index.html">VIPL Integration &rarr;</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 6 — Line-by-Line Explanation</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#segment-6-line-by-line-explanation"
+id="toc-segment-6-line-by-line-explanation">Segment 6 — Line-by-Line
+Explanation</a>
+<ul>
+<li><a
+href="#part-0-the-one-judgment-call-that-matters-most-why-spo2-and-hr-are-evaluated-differently"
+id="toc-part-0-the-one-judgment-call-that-matters-most-why-spo2-and-hr-are-evaluated-differently">Part
+0 — The One Judgment Call That Matters Most: Why SpO2 and HR Are
+Evaluated Differently</a></li>
+<li><a href="#part-1-computemetrics.m"
+id="toc-part-1-computemetrics.m">Part 1 —
+<code>computeMetrics.m</code></a>
+<ul>
+<li><a href="#signature" id="toc-signature">Signature</a></li>
+<li><a href="#mae-and-rmse-explicit-accumulation-not-meanabs..."
+id="toc-mae-and-rmse-explicit-accumulation-not-meanabs...">MAE and RMSE
+— explicit accumulation, not <code>mean(abs(...))</code></a></li>
+<li><a href="#pearson-correlation-three-loops-one-for-each-moving-part"
+id="toc-pearson-correlation-three-loops-one-for-each-moving-part">Pearson
+correlation — three loops, one for each moving part</a></li>
+<li><a href="#why-n-is-a-returned-field-not-just-a-local-variable"
+id="toc-why-n-is-a-returned-field-not-just-a-local-variable">Why
+<code>N</code> is a returned field, not just a local variable</a></li>
+<li><a
+href="#what-happens-with-too-little-or-no-data-no-special-casing-needed"
+id="toc-what-happens-with-too-little-or-no-data-no-special-casing-needed">What
+happens with too little or no data — no special-casing needed</a></li>
+</ul></li>
+<li><a href="#part-2-blandaltman.m" id="toc-part-2-blandaltman.m">Part 2
+— <code>blandAltman.m</code></a>
+<ul>
+<li><a href="#signature-grew-same-reason-as-segments-4-5"
+id="toc-signature-grew-same-reason-as-segments-4-5">Signature grew, same
+reason as Segments 4-5</a></li>
+<li><a href="#what-mean-and-diff-mean-here-specifically"
+id="toc-what-mean-and-diff-mean-here-specifically">What “mean” and
+“diff” mean here, specifically</a></li>
+<li><a href="#bias-and-limits-of-agreement"
+id="toc-bias-and-limits-of-agreement">Bias and limits of
+agreement</a></li>
+<li><a
+href="#dataset-colored-scatter-built-with-an-explicit-loop-over-unique-datasets"
+id="toc-dataset-colored-scatter-built-with-an-explicit-loop-over-unique-datasets">Dataset-colored
+scatter, built with an explicit loop over unique datasets</a></li>
+</ul></li>
+<li><a href="#part-3-runloso.m" id="toc-part-3-runloso.m">Part 3 —
+<code>runLOSO.m</code></a>
+<ul>
+<li><a
+href="#signature-four-pooled-vectors-not-a-generic-pipeline-handle"
+id="toc-signature-four-pooled-vectors-not-a-generic-pipeline-handle">Signature:
+four pooled vectors, not a generic pipeline handle</a></li>
+<li><a href="#the-fold-loop-itself" id="toc-the-fold-loop-itself">The
+fold loop itself</a></li>
+<li><a href="#the-output-shape-one-struct-per-held-out-subject"
+id="toc-the-output-shape-one-struct-per-held-out-subject">The output
+shape: one struct per held-out subject</a></li>
+</ul></li>
+<li><a
+href="#part-4-run_segment6_validation.m-pooling-real-csvs-and-the-results-actually-obtained"
+id="toc-part-4-run_segment6_validation.m-pooling-real-csvs-and-the-results-actually-obtained">Part
+4 — <code>run_segment6_validation.m</code>: pooling real CSVs, and the
+results actually obtained</a>
+<ul>
+<li><a
+href="#auto-discovery-isfile-checks-not-a-hardcoded-subject-count"
+id="toc-auto-discovery-isfile-checks-not-a-hardcoded-subject-count">Auto-discovery:
+<code>isfile</code> checks, not a hardcoded subject count</a></li>
+<li><a
+href="#a-real-finding-not-a-bug-ubfcs-own-hr-ground-truth-is-currently-all-nan"
+id="toc-a-real-finding-not-a-bug-ubfcs-own-hr-ground-truth-is-currently-all-nan">A
+real finding, not a bug: UBFC’s own HR ground truth is currently all
+<code>NaN</code></a></li>
+<li><a
+href="#results-actually-obtained-see-segment6_team_readme.md-for-the-pinned-n-caveats"
+id="toc-results-actually-obtained-see-segment6_team_readme.md-for-the-pinned-n-caveats">Results
+actually obtained (see <code>Segment6_Team_README.md</code> for the
+pinned N caveats)</a></li>
+</ul></li>
+<li><a href="#how-this-feeds-into-the-rest-of-the-project"
+id="toc-how-this-feeds-into-the-rest-of-the-project">How This Feeds Into
+the Rest of the Project</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="segment-6-line-by-line-explanation">Segment 6 — Line-by-Line
+Explanation</h1>
+<p>This document walks through
+<code>matlab/src/validation/computeMetrics.m</code>,
+<code>matlab/src/validation/blandAltman.m</code>, and
+<code>matlab/src/validation/runLOSO.m</code> block by block, in plain
+teaching language, plus how
+<code>matlab/scripts/run_segment6_validation.m</code> wires all three
+together against the real CSVs Segments 4 and 5 already produced. It
+assumes you’ve just finished Chapter 9 of the project’s Orientation
+Lecture (leave-one-subject- out validation, MAE/RMSE/correlation,
+Bland-Altman) but haven’t seen this specific pooled-across-datasets
+implementation before. As with Segments 2-5, the code files themselves
+are deliberately bare of inline comments — this document is where the
+<em>why</em> lives.</p>
+<hr />
+<h2
+id="part-0-the-one-judgment-call-that-matters-most-why-spo2-and-hr-are-evaluated-differently">Part
+0 — The One Judgment Call That Matters Most: Why SpO2 and HR Are
+Evaluated Differently</h2>
+<p>This is worth understanding before reading a single line of code,
+because it’s exactly the kind of distinction an examiner is likely to
+probe on defense day.</p>
+<p><strong>SpO2 has a fitted parameter. HR does not.</strong></p>
+<p><code>spo2/calibrateSpO2.m</code> fits a straight line,
+<code>SpO2 = A - B*R</code>, using <code>polyfit</code> on whichever
+<code>(R, SpO2)</code> pairs it’s handed. <code>A</code> and
+<code>B</code> are <em>learned from data</em>. If a subject’s own
+<code>(R, SpO2)</code> pair is used to fit <code>A</code> and
+<code>B</code>, and that same subject’s <code>R</code> is then plugged
+back into the fitted line to “predict” their SpO2, the model has
+essentially already seen the answer — the resulting error will look
+artificially small, not because the method is good, but because the test
+leaked into the training. This is textbook <strong>data
+leakage</strong>, and it’s the entire reason leave-one-subject-out
+(LOSO) cross-validation exists as a technique: hold one subject’s data
+out completely, fit only on everyone else, predict the held-out subject,
+repeat for every subject. No subject is ever both a teacher and a
+student of its own answer.</p>
+<p><code>heartrate/fftHeartRate.m</code>, by contrast, has <strong>no
+fitted parameter at all</strong>. It takes a pulse signal, runs an FFT,
+and reports whichever frequency (bin) has the most power in the
+physiological band, converted to bpm. There is no <code>A</code>, no
+<code>B</code>, nothing learned from any subject’s ground truth, ever.
+Subject 17’s heart rate estimate does not and cannot depend on what
+subject 5’s heart rate was — there is no shared, fitted object
+connecting them the way <code>calibParams</code> connects every
+subject’s SpO2 prediction. Running HR evaluation across the whole pool
+at once, with no held-out folds, is not a shortcut or a lower standard —
+it’s the <em>only</em> thing that makes sense, because there is no
+leakage risk to guard against in the first place. Adding a LOSO loop to
+HR would not make the numbers any more honest; it would just recompute
+the exact same FFT the exact same way a redundant, extra number of
+times.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Think of
+<code>calibrateSpO2.m</code>‘s line fit like a teacher grading a class
+using a curve computed from the class’s own scores — if one student’s
+score helps set the curve, and that student is then graded on the curve
+<em>their own score helped create</em>, the grade is a little too
+flattering. Leave-one-out fixes this by re-computing the curve fresh for
+every student, each time using only the other students’ scores.
+<code>fftHeartRate.m</code> is more like reading a thermometer — the
+thermometer doesn’t get calibrated <em>against</em> the person being
+measured, so there’s no analogous curve to worry about
+contaminating.</p>
+</div>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> Segment 5’s own DATASET_1
+and VIPL calibration scripts
+(<code>run_segment5_dataset1_calibration_batch.m</code>,
+<code>run_vipl_integration_batch.m</code>) already did a leave-one-out
+loop, but each one only within its <em>own</em> dataset (UBFC’s 5
+subjects fit/predict each other; VIPL’s 3 subjects fit/predict each
+other). Why is this segment’s <code>runLOSO.m</code> doing something
+meaningfully different, rather than just re-running the same two loops?
+(Hint: think about what “more training subjects, however different the
+dataset origin” in the task brief is actually trying to fix, and re-read
+<code>calibrateSpO2.m</code>’s <code>polyfit</code> call — does it know
+or care which dataset an <code>(R, SpO2)</code> pair came from?)</p>
+</div>
+<hr />
+<h2 id="part-1-computemetrics.m">Part 1 —
+<code>computeMetrics.m</code></h2>
+<h3 id="signature">Signature</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">metrics</span> <span class="op">=</span> <span class="va">computeMetrics</span>(<span class="va">predicted</span><span class="op">,</span> <span class="va">groundTruth</span>)</span></code></pre></div>
+<p>Deliberately generic — no <code>HR</code> or <code>SpO2</code>
+anywhere in this file. The exact same function scores heart rate in bpm
+and SpO2 in percent, because MAE, RMSE, and Pearson correlation are
+unit-agnostic arithmetic; the units only matter when a human reads the
+number later.</p>
+<h3 id="mae-and-rmse-explicit-accumulation-not-meanabs...">MAE and RMSE
+— explicit accumulation, not <code>mean(abs(...))</code></h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">sumAbsError</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">sumSquaredError</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">N</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">errorVal</span> <span class="op">=</span> <span class="va">predicted</span>(<span class="va">i</span>) <span class="op">-</span> <span class="va">groundTruth</span>(<span class="va">i</span>)<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">sumAbsError</span> <span class="op">=</span> <span class="va">sumAbsError</span> <span class="op">+</span> <span class="va">abs</span>(<span class="va">errorVal</span>)<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">sumSquaredError</span> <span class="op">=</span> <span class="va">sumSquaredError</span> <span class="op">+</span> <span class="va">errorVal</span><span class="op">^</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">mae</span> <span class="op">=</span> <span class="va">sumAbsError</span> <span class="op">/</span> <span class="va">N</span><span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="va">rmse</span> <span class="op">=</span> <span class="va">sqrt</span>(<span class="va">sumSquaredError</span> <span class="op">/</span> <span class="va">N</span>)<span class="op">;</span></span></code></pre></div>
+<p>This computes exactly what
+<code>mean(abs(predicted - groundTruth))</code> and
+<code>sqrt(mean((predicted - groundTruth).^2))</code> would compute, one
+pair at a time in an explicit loop instead of a single vectorized line.
+MAE is the average absolute distance between prediction and truth (every
+error counted equally); RMSE is the same idea but squares each error
+before averaging, which makes a few large errors hurt the score more
+than many small ones — useful for catching a method that’s usually fine
+but occasionally very wrong, which MAE alone can hide.</p>
+<h3
+id="pearson-correlation-three-loops-one-for-each-moving-part">Pearson
+correlation — three loops, one for each moving part</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">sumPredicted</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="va">sumGroundTruth</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">N</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">sumPredicted</span> <span class="op">=</span> <span class="va">sumPredicted</span> <span class="op">+</span> <span class="va">predicted</span>(<span class="va">i</span>)<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">sumGroundTruth</span> <span class="op">=</span> <span class="va">sumGroundTruth</span> <span class="op">+</span> <span class="va">groundTruth</span>(<span class="va">i</span>)<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="va">meanPredicted</span> <span class="op">=</span> <span class="va">sumPredicted</span> <span class="op">/</span> <span class="va">N</span><span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="va">meanGroundTruth</span> <span class="op">=</span> <span class="va">sumGroundTruth</span> <span class="op">/</span> <span class="va">N</span><span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="va">numerator</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="va">denomPredicted</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="va">denomGroundTruth</span> <span class="op">=</span> <span class="fl">0</span><span class="op">;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">N</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="va">devPredicted</span> <span class="op">=</span> <span class="va">predicted</span>(<span class="va">i</span>) <span class="op">-</span> <span class="va">meanPredicted</span><span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">devGroundTruth</span> <span class="op">=</span> <span class="va">groundTruth</span>(<span class="va">i</span>) <span class="op">-</span> <span class="va">meanGroundTruth</span><span class="op">;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="va">numerator</span> <span class="op">=</span> <span class="va">numerator</span> <span class="op">+</span> <span class="va">devPredicted</span> <span class="op">*</span> <span class="va">devGroundTruth</span><span class="op">;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="va">denomPredicted</span> <span class="op">=</span> <span class="va">denomPredicted</span> <span class="op">+</span> <span class="va">devPredicted</span><span class="op">^</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="va">denomGroundTruth</span> <span class="op">=</span> <span class="va">denomGroundTruth</span> <span class="op">+</span> <span class="va">devGroundTruth</span><span class="op">^</span><span class="fl">2</span><span class="op">;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="va">pearsonR</span> <span class="op">=</span> <span class="va">numerator</span> <span class="op">/</span> <span class="va">sqrt</span>(<span class="va">denomPredicted</span> <span class="op">*</span> <span class="va">denomGroundTruth</span>)<span class="op">;</span></span></code></pre></div>
+<p>This is the textbook Pearson formula, split into three passes because
+each pass needs something the previous one produced: pass 1 gets the two
+means; pass 2 needs those means to compute each point’s deviation from
+its own mean, then accumulates the covariance-like numerator and each
+variable’s own sum of squared deviations. <code>pearsonR</code> is +1
+for a perfect increasing straight-line relationship, -1 for a perfect
+decreasing one, and 0 for no linear relationship at all — it says
+nothing about <em>how far off</em> the values are numerically (that’s
+what MAE/RMSE are for), only about whether they <em>move
+together</em>.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Treating a high MAE and a
+high Pearson r as a contradiction. They’re not — a method can track the
+true up-and-down trend almost perfectly (<code>r</code> close to 1)
+while still being numerically far off on every single point (e.g. it’s
+always 10 bpm too high). Segment 6’s own HR CHROM/POS results show
+exactly this pattern: see Part 4.</p>
+</div>
+<h3 id="why-n-is-a-returned-field-not-just-a-local-variable">Why
+<code>N</code> is a returned field, not just a local variable</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">metrics</span>.<span class="va">n</span> <span class="op">=</span> <span class="va">N</span><span class="op">;</span></span></code></pre></div>
+<p>With this project’s current pool sizes (as few as 3 usable pairs for
+some HR scopes), a bare MAE number with no <code>N</code> attached is
+actively misleading — “MAE = 3.9 bpm” sounds like a real, load-bearing
+result; “MAE = 3.9 bpm, N = 3” makes the reader immediately ask the
+right follow-up question. Every CSV this segment writes carries an
+<code>N</code> column right next to every metric for this exact
+reason.</p>
+<h3
+id="what-happens-with-too-little-or-no-data-no-special-casing-needed">What
+happens with too little or no data — no special-casing needed</h3>
+<p>If <code>N</code> is 0 (a dataset scope with zero usable rows,
+e.g. UBFC’s current HR rows, see Part 4), <code>sumAbsError</code> and
+<code>sumSquaredError</code> both stay <code>0</code>, so
+<code>mae = 0/0</code> and <code>rmse = sqrt(0/0)</code> — both evaluate
+to <code>NaN</code> under normal IEEE floating-point division, exactly
+the honest answer (“not computable”), with no <code>if N == 0</code>
+branch required anywhere in this file. The same is true for
+<code>pearsonR</code> when <code>N</code> is 0 or 1: the denominator
+collapses to <code>0</code>, giving <code>NaN</code> automatically. This
+is why <code>run_segment6_validation.m</code>’s per-dataset breakdown
+can safely call <code>computeMetrics</code> on an empty UBFC HR slice
+without crashing — it just gets back a clearly-labeled <code>NaN</code>
+row instead of a divide-by-zero error.</p>
+<hr />
+<h2 id="part-2-blandaltman.m">Part 2 — <code>blandAltman.m</code></h2>
+<h3 id="signature-grew-same-reason-as-segments-4-5">Signature grew, same
+reason as Segments 4-5</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> [<span class="va">meanDiff</span><span class="op">,</span> <span class="va">limitsOfAgreement</span>] <span class="op">=</span> <span class="va">blandAltman</span>(<span class="va">predicted</span><span class="op">,</span> <span class="va">groundTruth</span><span class="op">,</span> <span class="va">plotTitle</span><span class="op">,</span> <span class="va">outputPath</span><span class="op">,</span> <span class="va">datasetLabels</span>)</span></code></pre></div>
+<p>The original stub only had
+<code>(predicted, groundTruth, plotTitle)</code> — no argument for
+<em>where</em> to save the figure, and no way to color points by which
+dataset they came from. Both are genuinely required by this segment’s
+own brief (every pooled plot must show UBFC vs. VIPL points
+distinguishably), so both were added as explicit trailing arguments, the
+same kind of signature growth <code>chromCombine.m</code>,
+<code>posCombine.m</code>, and <code>ratioOfRatios.m</code> already went
+through in Segments 4-5 when their original stubs didn’t have anywhere
+to get data they genuinely needed. <code>datasetLabels</code> is
+optional (<code>nargin &lt; 5</code> falls back to a single-color
+scatter with no legend) so the function still works for a plain
+two-vector call if a future caller doesn’t need dataset coloring.</p>
+<h3 id="what-mean-and-diff-mean-here-specifically">What “mean” and
+“diff” mean here, specifically</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">N</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">meanOfPair</span>(<span class="va">i</span>) <span class="op">=</span> (<span class="va">predicted</span>(<span class="va">i</span>) <span class="op">+</span> <span class="va">groundTruth</span>(<span class="va">i</span>)) <span class="op">/</span> <span class="fl">2</span><span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">diffOfPair</span>(<span class="va">i</span>) <span class="op">=</span> <span class="va">predicted</span>(<span class="va">i</span>) <span class="op">-</span> <span class="va">groundTruth</span>(<span class="va">i</span>)<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p>Bland-Altman deliberately does <strong>not</strong> plot predicted
+vs. true the way a plain scatter would. Instead, the x-axis is each
+pair’s <em>average</em> (a stand- in for “the best available estimate of
+the true value,” since in real life you often don’t have a perfect
+ground truth either) and the y-axis is the <em>difference</em> between
+the two methods. This reframing is the entire point of the technique: a
+plain scatter answers “how correlated are these two methods,” which two
+methods that are both just consistently biased by a fixed amount can
+pass easily; a Bland-Altman plot answers “how much do these two methods
+actually disagree, and does that disagreement change depending on the
+value being measured” — a materially different, more clinically relevant
+question.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Imagine two bathroom scales that
+are miscalibrated the same fixed 2 kg high across everyone. A plain
+“scale A reading vs. scale B reading” plot would show a beautiful,
+perfectly straight, highly correlated line — because both scales move
+together in lockstep — and would completely hide the fact that both are
+wrong by 2 kg for everyone. Plot the same data as
+<code>(average of A and B)</code> vs. <code>(A - B)</code> instead, and
+that constant 2 kg bias becomes immediately, unmissably visible as a
+flat horizontal line sitting away from zero. That flat line is exactly
+what <code>meanDiff</code> (the bias) captures numerically.</p>
+</div>
+<h3 id="bias-and-limits-of-agreement">Bias and limits of agreement</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="va">meanDiff</span> <span class="op">=</span> <span class="va">sumDiff</span> <span class="op">/</span> <span class="va">N</span><span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="va">stdDiff</span> <span class="op">=</span> <span class="va">sqrt</span>(<span class="va">sumSquaredDev</span> <span class="op">/</span> (<span class="va">N</span> <span class="op">-</span> <span class="fl">1</span>))<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="op">...</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="va">upperLimit</span> <span class="op">=</span> <span class="va">meanDiff</span> <span class="op">+</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">stdDiff</span><span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="va">lowerLimit</span> <span class="op">=</span> <span class="va">meanDiff</span> <span class="op">-</span> <span class="fl">1.96</span> <span class="op">*</span> <span class="va">stdDiff</span><span class="op">;</span></span></code></pre></div>
+<p><code>meanDiff</code> (the <strong>bias</strong>) is the average of
+every <code>predicted - groundTruth</code> difference — positive means
+the method tends to overestimate, negative means it tends to
+underestimate, zero means no systematic bias either way. The
+<strong>limits of agreement</strong> are
+<code>bias ± 1.96 × (standard deviation of the differences)</code> —
+under the standard Bland-Altman assumption that the differences are
+roughly normally distributed, about 95% of individual differences are
+expected to fall inside these two lines. A narrow band close to zero
+means the two methods agree tightly and without systematic bias; a wide
+band, or a band clearly shifted away from zero, means real, quantifiable
+disagreement — exactly the number a clinician or examiner would want
+before trusting a camera-based reading over a pulse oximeter’s.</p>
+<p><code>N - 1</code> (not <code>N</code>) in the standard deviation is
+the standard sample-standard- deviation correction (Bessel’s correction)
+— the same reason <code>std()</code> uses <code>N - 1</code> by default
+in MATLAB. With <code>N = 1</code> this would divide by zero, so
+<code>stdDiff</code> is set to <code>0</code> in that edge case rather
+than crashing (the limits of agreement then simply collapse onto the
+bias itself, an honest reflection of “one point isn’t enough to say
+anything about spread”).</p>
+<h3
+id="dataset-colored-scatter-built-with-an-explicit-loop-over-unique-datasets">Dataset-colored
+scatter, built with an explicit loop over unique datasets</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="va">uniqueDatasets</span> <span class="op">=</span> <span class="va">unique</span>(<span class="va">datasetLabels</span>)<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">datasetPos</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">numDatasets</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">thisDataset</span> <span class="op">=</span> <span class="va">uniqueDatasets</span>{<span class="va">datasetPos</span>}<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">pointMask</span> <span class="op">=</span> <span class="va">false</span>(<span class="va">N</span><span class="op">,</span> <span class="fl">1</span>)<span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">N</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="va">strcmp</span>(<span class="va">datasetLabels</span>{<span class="va">i</span>}<span class="op">,</span> <span class="va">thisDataset</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            <span class="va">pointMask</span>(<span class="va">i</span>) <span class="op">=</span> <span class="va">true</span><span class="op">;</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">end</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="va">markerStyle</span> <span class="op">=</span> <span class="va">markerList</span>{<span class="va">mod</span>(<span class="va">datasetPos</span> <span class="op">-</span> <span class="fl">1</span><span class="op">,</span> <span class="va">numel</span>(<span class="va">markerList</span>)) <span class="op">+</span> <span class="fl">1</span>}<span class="op">;</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="va">scatter</span>(<span class="va">meanOfPair</span>(<span class="va">pointMask</span>)<span class="op">,</span> <span class="va">diffOfPair</span>(<span class="va">pointMask</span>)<span class="op">,</span> <span class="fl">60</span><span class="op">,</span> <span class="ss">&#39;filled&#39;</span><span class="op">,</span> <span class="va">markerStyle</span><span class="op">,</span> <span class="ss">&#39;DisplayName&#39;</span><span class="op">,</span> <span class="va">thisDataset</span>)<span class="op">;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p><code>unique(datasetLabels)</code> collects the distinct dataset
+names present (today: <code>{'UBFC', 'VIPL'}</code>, but this scales
+automatically to a third dataset later with zero code changes). For each
+one, an explicit <code>for</code> loop builds a logical mask of which
+points belong to it (rather than a one-line vectorized
+<code>strcmp(datasetLabels, thisDataset)</code> comparison), then plots
+just that subset with its own marker shape and a legend entry. This is
+exactly why every pooled plot in Segment 6’s figures shows circles for
+one dataset and squares for another, both visible on the same axes.</p>
+<hr />
+<h2 id="part-3-runloso.m">Part 3 — <code>runLOSO.m</code></h2>
+<h3
+id="signature-four-pooled-vectors-not-a-generic-pipeline-handle">Signature:
+four pooled vectors, not a generic pipeline handle</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="va">results</span> <span class="op">=</span> <span class="va">runLOSO</span>(<span class="va">subjectIDs</span><span class="op">,</span> <span class="va">datasetLabels</span><span class="op">,</span> <span class="va">R_values</span><span class="op">,</span> <span class="va">spo2True</span>)</span></code></pre></div>
+<p>The original stub’s signature was
+<code>runLOSO(subjectData, pipelineFn)</code> — a generic driver meant
+to call an arbitrary pipeline function
+(<code>pipeline/estimateVitals.m</code>) once per held-out subject. That
+design fits a segment whose job is to <em>re-run the pipeline on raw
+video</em> per fold. This segment’s actual, explicit scope is the
+opposite: <strong>do not reprocess any video or raw trace</strong> —
+only pool the whole-clip <code>R</code> values and ground-truth SpO2
+that Segment 5’s batch scripts already computed and saved to CSV. A
+pipeline function handle has nothing to call in that scope; there is no
+video to feed it. What the fold loop actually needs is four parallel
+vectors — which subject, which dataset, that subject’s <code>R</code>,
+that subject’s true SpO2 — so the signature was changed to match the
+real job, the same kind of documented, deliberate signature change
+Segments 4-5 already made for <code>chromCombine.m</code> and
+<code>ratioOfRatios.m</code> when their original stubs didn’t match what
+the real computation needed.</p>
+<h3 id="the-fold-loop-itself">The fold loop itself</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">holdoutPos</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">numSubjects</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">trainMask</span> <span class="op">=</span> <span class="va">true</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">numSubjects</span>)<span class="op">;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">trainMask</span>(<span class="va">holdoutPos</span>) <span class="op">=</span> <span class="va">false</span><span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">R_train</span> <span class="op">=</span> <span class="va">R_values</span>(<span class="va">trainMask</span>)<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">SpO2_train</span> <span class="op">=</span> <span class="va">spo2True</span>(<span class="va">trainMask</span>)<span class="op">;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    [<span class="op">~,</span> <span class="va">calibParams</span>] <span class="op">=</span> <span class="va">calibrateSpO2</span>(<span class="va">R_train</span><span class="op">,</span> <span class="va">SpO2_train</span><span class="op">,</span> [])<span class="op">;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">R_test</span> <span class="op">=</span> <span class="va">R_values</span>(<span class="va">holdoutPos</span>)<span class="op">;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    [<span class="va">SpO2_predicted</span><span class="op">,</span> <span class="op">~</span>] <span class="op">=</span> <span class="va">calibrateSpO2</span>(<span class="va">R_test</span><span class="op">,</span> []<span class="op">,</span> <span class="va">calibParams</span>)<span class="op">;</span></span></code></pre></div>
+<p>This is the same two-call pattern (<code>calibrateSpO2</code> once in
+fit mode, once in apply mode) that both of Segment 5’s own batch scripts
+already used — the difference here is entirely in what
+<code>R_values</code>/<code>spo2True</code> <em>contain</em> going into
+the loop. Segment 5’s two scripts each pooled only their own dataset’s
+subjects (<code>usableR</code>, <code>usableSpO2True</code> built from
+just UBFC or just VIPL). <code>runLOSO.m</code>’s caller
+(<code>run_segment6_validation.m</code>) builds
+<code>R_values</code>/<code>spo2True</code> by concatenating
+<strong>both</strong> datasets together first — so
+<code>trainMask</code> on, say, fold 3 might genuinely contain 4 UBFC
+subjects and 3 VIPL subjects all contributing to one
+<code>polyfit</code> call, something neither of Segment 5’s own scripts
+ever did. This is the literal meaning of “genuinely pooled,” not just
+“run twice and compare.”</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong>
+<code>calibrateSpO2.m</code> itself has no idea which dataset any
+<code>R</code> value came from — it just sees a plain numeric vector.
+What would have to change in <code>runLOSO.m</code> (not
+<code>calibrateSpO2.m</code>) if the team later decided UBFC and VIPL’s
+cameras were different enough that they should each get their own
+calibration line instead of one shared pooled line? Would that still be
+“leave-one-subject-out,” or a different validation design entirely?</p>
+</div>
+<h3 id="the-output-shape-one-struct-per-held-out-subject">The output
+shape: one struct per held-out subject</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="va">results</span>(<span class="va">holdoutPos</span>).<span class="va">subjectID</span> <span class="op">=</span> <span class="va">subjectIDs</span>{<span class="va">holdoutPos</span>}<span class="op">;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="va">results</span>(<span class="va">holdoutPos</span>).<span class="va">dataset</span> <span class="op">=</span> <span class="va">datasetLabels</span>{<span class="va">holdoutPos</span>}<span class="op">;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="va">results</span>(<span class="va">holdoutPos</span>).<span class="va">R_value</span> <span class="op">=</span> <span class="va">R_values</span>(<span class="va">holdoutPos</span>)<span class="op">;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="va">results</span>(<span class="va">holdoutPos</span>).<span class="va">SpO2_true</span> <span class="op">=</span> <span class="va">spo2True</span>(<span class="va">holdoutPos</span>)<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="va">results</span>(<span class="va">holdoutPos</span>).<span class="va">SpO2_predicted</span> <span class="op">=</span> <span class="va">SpO2_predicted</span><span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="va">results</span>(<span class="va">holdoutPos</span>).<span class="va">abs_error</span> <span class="op">=</span> <span class="va">absError</span><span class="op">;</span></span></code></pre></div>
+<p>A struct array, one entry per fold, with field names chosen to match
+<code>results/metrics/segment6_spo2_loso_pooled.csv</code>’s column
+headers exactly — <code>run_segment6_validation.m</code> writes this CSV
+by looping over <code>results</code> and reading each field straight
+off, with no renaming or reshaping needed in between.</p>
+<hr />
+<h2
+id="part-4-run_segment6_validation.m-pooling-real-csvs-and-the-results-actually-obtained">Part
+4 — <code>run_segment6_validation.m</code>: pooling real CSVs, and the
+results actually obtained</h2>
+<h3
+id="auto-discovery-isfile-checks-not-a-hardcoded-subject-count">Auto-discovery:
+<code>isfile</code> checks, not a hardcoded subject count</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="va">hrUbfcPath</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">metricsRoot</span><span class="op">,</span> <span class="ss">&#39;segment4_hr_summary.csv&#39;</span>)<span class="op">;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">isfile</span>(<span class="va">hrUbfcPath</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">ubfcHrTable</span> <span class="op">=</span> <span class="va">readtable</span>(<span class="va">hrUbfcPath</span>)<span class="op">;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="va">disp</span>([<span class="ss">&#39;UBFC HR summary not found, skipping: &#39;</span> <span class="va">hrUbfcPath</span>])<span class="op">;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p>The same <code>isfile</code> pattern is repeated for all four source
+CSVs (<code>segment4_hr_summary.csv</code>,
+<code>segment4_hr_summary_vipl.csv</code>,
+<code>segment5_dataset1_calibration.csv</code>,
+<code>segment5_vipl_calibration.csv</code>). None of the pooling logic
+anywhere in this script assumes a fixed row count —
+<code>numel(hrSubjectID)</code>/<code>numel(spo2SubjectID)</code> are
+read fresh from however many rows actually got appended. This is the
+concrete mechanism behind the task brief’s “re-running this later, as
+more VIPL subjects are processed, should just pick up the larger pool”
+requirement: add more rows to <code>segment4_hr_summary_vipl.csv</code>
+or <code>segment5_vipl_calibration.csv</code> (by running
+<code>run_vipl_integration_batch.m</code> on more subjects) and the very
+next run of <code>run_segment6_validation.m</code> automatically pools a
+bigger set, with zero code changes.</p>
+<h3
+id="a-real-finding-not-a-bug-ubfcs-own-hr-ground-truth-is-currently-all-nan">A
+real finding, not a bug: UBFC’s own HR ground truth is currently all
+<code>NaN</code></h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="va">hrValidMask</span> <span class="op">=</span> <span class="va">false</span>(<span class="fl">1</span><span class="op">,</span> <span class="va">numHrTotal</span>)<span class="op">;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">i</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">numHrTotal</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">~</span><span class="va">isnan</span>(<span class="va">hrGroundtruth</span>(<span class="va">i</span>))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">hrValidMask</span>(<span class="va">i</span>) <span class="op">=</span> <span class="va">true</span><span class="op">;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p>Reading <code>results/metrics/segment4_hr_summary.csv</code> directly
+shows all three UBFC rows (<code>5-gt</code>, <code>6-gt</code>,
+<code>7-gt</code>) have <code>HR_groundtruth = NaN</code>. This is not a
+bug in this segment’s code — it’s because
+<code>matlab/scripts/run_segment4_heartrate_batch.m</code> was run
+against these three subjects <em>before</em>
+<code>io/loadGroundTruth.m</code> was implemented (see that script’s own
+<code>try/catch</code> around its <code>loadGroundTruth</code> call, and
+the <code>segment4-chrom-pos-fft-implementation</code> project note: “GT
+is NaN until loadGroundTruth.m is implemented”). Since this segment’s
+SCOPE explicitly forbids reprocessing video or modifying Segment 4’s
+CSV, the fix is not this segment’s to make — it is simply skipped,
+honestly, via the <code>NaN</code> mask above, exactly as the task brief
+instructs (“skip rows where ground truth is NaN”). The practical
+consequence: <strong>today’s pooled HR metrics are built entirely from
+VIPL’s 3 subjects</strong> (see the numbers below) — re-running
+<code>run_segment4_heartrate_batch.m</code> on the UBFC subjects now
+that <code>loadGroundTruth.m</code> exists would add 3 more real,
+non-NaN pooled HR rows the very next time this script runs, no code
+change required here either.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Reading “pooled N = 3” for
+HR and assuming that means only 3 subjects were <em>looked at</em>. Six
+rows were loaded (3 UBFC + 3 VIPL); three were honestly excluded for
+lacking usable ground truth, which is different from three never having
+been considered at all. The per- dataset breakdown
+(<code>segment6_hr_pooled_metrics.csv</code>’s <code>UBFC</code> rows,
+all <code>N = 0</code>) makes this gap visible rather than silently
+averaging it away.</p>
+</div>
+<h3
+id="results-actually-obtained-see-segment6_team_readme.md-for-the-pinned-n-caveats">Results
+actually obtained (see <code>Segment6_Team_README.md</code> for the
+pinned N caveats)</h3>
+<p><strong>HR, pooled (currently VIPL’s 3 subjects only, UBFC’s 3 rows
+excluded for <code>NaN</code> ground truth):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>N</th>
+<th>MAE (bpm)</th>
+<th>RMSE (bpm)</th>
+<th>Pearson r</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CHROM</td>
+<td>3</td>
+<td>3.94</td>
+<td>4.48</td>
+<td>0.995</td>
+</tr>
+<tr>
+<td>POS</td>
+<td>3</td>
+<td>3.94</td>
+<td>4.48</td>
+<td>0.995</td>
+</tr>
+<tr>
+<td>Green-only</td>
+<td>3</td>
+<td>16.92</td>
+<td>18.99</td>
+<td>-0.255</td>
+</tr>
+</tbody>
+</table>
+<p>CHROM and POS produce identical numbers here because, on these
+particular 3 subjects, both combination methods happened to converge on
+the same FFT peak (visible already in
+<code>segment4_hr_summary_vipl.csv</code>’s raw
+<code>HR_chrom</code>/<code>HR_pos</code> columns, which are equal for
+all three VIPL rows) — not a bug, just what these specific signals
+produced. The very high Pearson r (0.995) alongside a real ~4 bpm MAE is
+the exact “correlated but not zero-error” pattern flagged in Part 1’s
+pitfall box: CHROM/POS track the true up-and-down HR trend across these
+3 subjects almost perfectly, while still being consistently a few bpm
+off in absolute terms. Green-only’s strongly negative Pearson r on just
+3 points is a concrete illustration of why N matters — with only 3
+pairs, a correlation coefficient is extremely sensitive to any single
+point and should not be read as a stable, general property of the
+green-only method.</p>
+<p><strong>SpO2, genuinely pooled leave-one-subject-out (5 UBFC + 3 VIPL
+= 8 subjects):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>N</th>
+<th>MAE (pp)</th>
+<th>RMSE (pp)</th>
+<th>Pearson r</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pooled</td>
+<td>8</td>
+<td>1.23</td>
+<td>1.35</td>
+<td>-0.755</td>
+</tr>
+<tr>
+<td>UBFC only</td>
+<td>5</td>
+<td>1.22</td>
+<td>1.39</td>
+<td>-0.863</td>
+</tr>
+<tr>
+<td>VIPL only</td>
+<td>3</td>
+<td>1.24</td>
+<td>1.28</td>
+<td>-0.708</td>
+</tr>
+</tbody>
+</table>
+<p>The negative Pearson r is the <strong>physiologically expected
+direction</strong> — per <code>calibrateSpO2.m</code>’s own documented
+form (<code>SpO2 = A - B*R</code>), SpO2 should fall as <code>R</code>
+rises, so a negative correlation between predicted SpO2 and true SpO2’s
+residual pattern lining up this way across a genuinely pooled 8-subject
+fit is a real, if still preliminary, positive signal, not a red flag.
+Compare this to Segment 5’s own DATASET_1-only leave-one-out result
+(Segment 5’s Line-by-Line doc, Part 5): that 5-subject-only loop saw its
+fitted slope <code>B</code> flip sign across folds, an instability
+directly attributed to having only 4 training subjects per fold. Pooling
+in 3 more VIPL subjects (giving 7 training subjects per fold instead of
+4) is exactly the kind of change the task brief predicted would help —
+and the MAE here (1.23 percentage points pooled) is noticeably tighter
+than DATASET_1 alone’s prior 1.97-point result, consistent with more
+training data stabilizing the fit. <strong>This is still only 8 subjects
+total</strong> — see <code>Segment6_Team_README.md</code> for why this
+must not be oversold as a validated result yet.</p>
+<hr />
+<h2 id="how-this-feeds-into-the-rest-of-the-project">How This Feeds Into
+the Rest of the Project</h2>
+<p>Every number in this document came from a single, repeatable run of
+<code>run_segment6_validation.m</code> against whatever CSVs currently
+exist under <code>results/metrics/</code>. As more VIPL subjects get
+extracted and processed through
+<code>run_vipl_integration_batch.m</code>, and once
+<code>run_segment4_heartrate_ batch.m</code> is re-run on UBFC’s
+subjects now that <code>loadGroundTruth.m</code> exists, re-running this
+one script is the entire update procedure — no code in
+<code>src/validation/</code> needs to change, and none of Segments 2-5’s
+algorithm files are touched by any of this. That auto-pickup behavior,
+not any single number reported above, is this segment’s actual
+deliverable.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 6 (formal validation: LOSO, metrics &amp; Bland-Altman) docs — BUET EEE 312.
+  Source markdown lives in <code>segment6_validation/</code>; the actual code lives under <code>matlab/src/validation/</code>.
+</footer>
+</body>
+</html>

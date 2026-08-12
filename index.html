@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spandan — Contactless Vital Sign Monitoring</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1c1e21;
+    --muted: #5b6270;
+    --border: #e3e6ea;
+    --code-bg: #f4f5f7;
+    --link: #1a5fb4;
+    --card-bg: #f8f9fb;
+    --intuition-bg: #eef4fd;
+    --intuition-border: #1a5fb4;
+    --pitfall-bg: #fdf2e9;
+    --pitfall-border: #b5540a;
+    --pausecheck-bg: #edf9ee;
+    --pausecheck-border: #1f7a2e;
+    --ok-bg: #edf9ee;
+    --ok-border: #1f7a2e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14161a;
+      --fg: #e7e9ec;
+      --muted: #9aa2ad;
+      --border: #2c2f34;
+      --code-bg: #1d2024;
+      --link: #6fa8f5;
+      --card-bg: #1a1d22;
+      --intuition-bg: #17233a;
+      --intuition-border: #5b8fd9;
+      --pitfall-bg: #33230f;
+      --pitfall-border: #d98a3d;
+      --pausecheck-bg: #16281a;
+      --pausecheck-border: #4caf5c;
+      --ok-bg: #16281a;
+      --ok-border: #4caf5c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.65;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2.2rem 1.5rem 5rem;
+    font-size: 17px;
+  }
+  nav.site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.1rem;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+  }
+  nav.site-nav .brand {
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    margin-right: 0.4rem;
+  }
+  nav.site-nav a { color: var(--link); text-decoration: none; padding: 0.15rem 0.1rem; }
+  nav.site-nav a:hover { text-decoration: underline; }
+  nav.site-nav span.active { color: var(--fg); font-weight: 700; }
+  nav.site-nav span.sep { color: var(--border); }
+  h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+  h1 {
+    font-size: 2.1rem;
+    margin-top: 0;
+    border-bottom: 3px solid var(--link);
+    padding-bottom: 0.5rem;
+  }
+  h2 { font-size: 1.5rem; margin-top: 2.8rem; padding-top: 0.2rem; }
+  h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+  a { color: var(--link); }
+  p, li { color: var(--fg); }
+  code {
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 0.15em 0.4em;
+    font-size: 0.9em;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  blockquote {
+    border-left: 3px solid var(--border);
+    margin-left: 0;
+    padding-left: 1rem;
+    color: var(--muted);
+  }
+  table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+  th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+  footer.page-footer {
+    margin-top: 3.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.1rem;
+    margin: 1.8rem 0;
+  }
+  .card {
+    display: block;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.3rem;
+    text-decoration: none;
+    color: var(--fg);
+    transition: border-color 0.15s ease;
+    position: relative;
+  }
+  .card:hover { border-color: var(--link); }
+  .card .card-icon { font-size: 1.6rem; }
+  .card .card-step {
+    position: absolute; top: 1.1rem; right: 1.2rem;
+    font-size: 0.72rem; font-weight: 700; color: var(--muted);
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .card h3 { margin: 0.5rem 0 0.3rem; color: var(--fg); font-size: 1.05rem; }
+  .card p { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.8rem; }
+  .pill { background: var(--code-bg); border: 1px solid var(--border); border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.82rem; color: var(--muted); }
+  .pill.ok { background: var(--ok-bg); border-color: var(--ok-border); color: var(--ok-border); }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .stat {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+  }
+  .stat .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--fg); }
+  .stat .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+  div.note {
+    border-left: 5px solid var(--pitfall-border);
+    background: var(--pitfall-bg);
+    border-radius: 8px;
+    padding: 0.9rem 1.2rem;
+    margin: 1.5rem 0;
+  }
+  div.note p:first-child::before {
+    content: "Honest Caveat"; display: block; font-weight: 700;
+    color: var(--pitfall-border); margin-bottom: 0.5rem;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  ol.chain-list { padding-left: 1.4em; }
+  ol.chain-list li { margin: 0.4rem 0; }
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+<span class="brand">Spandan</span>
+<span class="active">Home</span>
+<span class="sep">&middot;</span>
+<a href="README.md">Full README</a>
+<span class="sep">&middot;</span>
+<a href="android/README.md">Android App</a>
+<span class="sep">&middot;</span>
+<a href="LICENSE">License</a>
+<span class="sep">&middot;</span>
+<a href="https://github.com/Thunder-Bird-007/spandan_contactless_vital_sign">GitHub Repo</a>
+</nav>
+
+<h1>Spandan: Contactless Vital Sign Monitoring</h1>
+
+<p>
+<strong>Spandan</strong> (Bengali: "heartbeat / pulsation") estimates
+<strong>heart rate (HR)</strong> and <strong>blood oxygen saturation
+(SpO2)</strong> from ordinary facial video &mdash; no contact sensor, no
+deep learning, just classical digital signal processing. It's the term
+project for <strong>EEE 312 (Digital Signal Processing I Laboratory)</strong>,
+Department of Electrical and Electronic Engineering, BUET, supervised by
+Prof. Dr. Md. Kamrul Hasan.
+</p>
+
+<p>
+This page is the teaching site for the whole pipeline: six segments that
+each take you from raw video to a validated number, explained twice over
+&mdash; once as <em>theory you can actually build intuition for</em>, and
+once as a <em>line-by-line walkthrough of the real, working code</em> that
+implements it. If you're new to the project, start at Segment 2 and follow
+the chain in order; if you already know the pipeline and just need a
+specific piece, jump straight in from the map below.
+</p>
+
+<div class="pill-row">
+  <span class="pill ok">✓ MATLAB pipeline validated (r=0.957, MAE ~3.8bpm)</span>
+  <span class="pill ok">✓ Android app defense-ready</span>
+  <span class="pill">Classical DSP, no deep learning</span>
+  <span class="pill">UBFC-rPPG + VIPL-HR, 149 subjects</span>
+</div>
+
+<h2>The pipeline, in one paragraph</h2>
+
+<p>
+A camera watches a face. Segment 2 finds the face and crops a patch of
+forehead skin, averaging its pixels into three raw brightness traces over
+time &mdash; R(t), G(t), B(t). Segment 3 cleans those traces up: removing
+slow drift, then bandpass-filtering to the 0.7&ndash;4&nbsp;Hz range a real
+human heartbeat can physically live in. Segment 4 combines the three
+cleaned channels into one pulse signal (CHROM/POS, not naive averaging) and
+reads a heart rate off its dominant FFT frequency. Segment 5 computes an
+AC/DC ratio-of-ratios per channel and empirically calibrates it against
+real ground-truth SpO2. Segment 6 pools every subject's numbers &mdash;
+from both datasets &mdash; and runs the same statistical validation
+(MAE, RMSE, Pearson r, Bland-Altman) a real clinical device study would
+use, honestly reporting exactly how much data backs each number. The VIPL
+Integration note explains how a second, much larger dataset was wired into
+that same, unmodified pipeline to make Segment 6's validation less thin.
+Everything culminates in a real Android app running this whole chain live,
+on-device, from the phone's own camera.
+</p>
+
+<h2>Start here: the six-segment chain</h2>
+
+<div class="card-grid">
+  <a class="card" href="segment2_face_roi/index.html">
+    <span class="card-step">Segment 2</span>
+    <div class="card-icon">🎥</div>
+    <h3>Face Detection &amp; ROI Extraction</h3>
+    <p>Find the face, crop a forehead patch, and turn its pixels into
+    three raw signals: R(t), G(t), B(t) &mdash; plus the true sampling
+    rate. The "cheap contact PPG sensor built from a webcam" stage.</p>
+  </a>
+  <a class="card" href="segment3_filtering/index.html">
+    <span class="card-step">Segment 3</span>
+    <div class="card-icon">📉</div>
+    <h3>Detrending &amp; Bandpass Filtering</h3>
+    <p>Remove slow lighting drift, then bandpass-filter to the
+    0.7&ndash;4&nbsp;Hz physiological heart-rate band &mdash; discarding
+    everything outside it as noise, by definition.</p>
+  </a>
+  <a class="card" href="segment4_heartrate/index.html">
+    <span class="card-step">Segment 4</span>
+    <div class="card-icon">💓</div>
+    <h3>CHROM/POS &amp; FFT Heart Rate</h3>
+    <p>Combine the three filtered channels into one motion-robust pulse
+    signal, then FFT it to find the dominant frequency &mdash; the actual
+    bpm number.</p>
+  </a>
+  <a class="card" href="segment5_spo2/index.html">
+    <span class="card-step">Segment 5</span>
+    <div class="card-icon">🩸</div>
+    <h3>SpO2 Ratio-of-Ratios &amp; Calibration</h3>
+    <p>Compute an AC/DC ratio per channel (Blue substitutes for Infrared)
+    and fit a linear calibration against real ground-truth SpO2.</p>
+  </a>
+  <a class="card" href="segment6_validation/index.html">
+    <span class="card-step">Segment 6</span>
+    <div class="card-icon">📊</div>
+    <h3>Formal Validation</h3>
+    <p>Pool every subject's numbers and run leave-one-subject-out
+    cross-validation, MAE/RMSE/Pearson r, and Bland-Altman analysis &mdash;
+    the honest, final-exam version of "how good is this, really?"</p>
+  </a>
+  <a class="card" href="vipl_integration/index.html">
+    <span class="card-step">Appendix</span>
+    <div class="card-icon">🔌</div>
+    <h3>VIPL Integration</h3>
+    <p>An I/O adapter note: wiring a second, 107-subject dataset into
+    Segments 2&ndash;5 unmodified, to give Segment 6 a much larger,
+    less-thin subject pool to validate against.</p>
+  </a>
+</div>
+
+<p>
+Each segment site has the same four doors in: a <strong>Guideline</strong>
+(the theory, in plain language, with "Intuition First" / "Common Beginner
+Mistake" / "Pause and Check Yourself" call-outs throughout), a
+<strong>Line-by-Line Explanation</strong> (a walkthrough of the actual
+MATLAB code), a <strong>Team README</strong> (practical run instructions),
+and a printable <strong>PDF</strong> of the Guideline.
+</p>
+
+<h2>Beyond MATLAB: the Android app</h2>
+
+<div class="card-grid">
+  <a class="card" href="android/README.md">
+    <div class="card-icon">📱</div>
+    <h3>Android App (Kotlin, CameraX, ML Kit)</h3>
+    <p>A real, on-device port of the validated pipeline &mdash; live HR
+    (CHROM/POS + FFT) and SpO2 (ratio-of-ratios + calibration), verified
+    on physical hardware, not just planned. See the README's
+    "Download &amp; Install" section for a ready-to-sideload debug APK.</p>
+  </a>
+  <a class="card" href="android/docs/Defense_Readiness_Checklist.md">
+    <div class="card-icon">✅</div>
+    <h3>Defense Readiness Checklist</h3>
+    <p>The current, honest snapshot of what's demo-ready, what's a known
+    limitation, and the standing decisions on which MATLAB-side
+    refinements were deliberately not ported this close to defense.</p>
+  </a>
+</div>
+
+<h2>Validated results, honestly reported</h2>
+
+<div class="stat-grid">
+  <div class="stat">
+    <div class="stat-value">r = 0.957</div>
+    <div class="stat-label">HR correlation, pooled UBFC + VIPL</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">~3.8 bpm</div>
+    <div class="stat-label">HR mean absolute error</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">1.23 pts</div>
+    <div class="stat-label">SpO2 pooled LOSO MAE (N=8)</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value">149</div>
+    <div class="stat-label">Subjects available (42 UBFC + 107 VIPL-HR)</div>
+  </div>
+</div>
+
+<div class="note">
+<p>
+SpO2's calibration is finalized but genuinely weak: with only 8 pooled
+subjects, its LOSO MAE does <strong>not</strong> beat a trivial
+"guess the training mean" baseline within the narrow observed SpO2 range
+&mdash; see <code>matlab/docs/SpO2_Final_Report_Section.md</code> and the
+Segment 6 Guideline for the full, unhidden breakdown. The Android app's
+on-device HR accuracy has also not been shown to match MATLAB's validated
+r=0.957 result (its live buffer window is much shorter than MATLAB's
+~80s test clips) &mdash; see <code>android/README.md</code>'s own
+verification sections before treating an on-screen bpm reading as
+validated-accurate. This project reports these limitations plainly
+because that is exactly the standard Segment 6 itself argues for.
+</p>
+</div>
+
+<h2>Everything else in this repo</h2>
+
+<ul>
+  <li><code><a href="README.md">README.md</a></code> &mdash; the full project README: goal, pipeline stages, folder structure, getting-started instructions, and current status.</li>
+  <li><code><a href="docs/DATA_FORMAT.md">docs/DATA_FORMAT.md</a></code>, <code><a href="docs/VIPL_DATA_FORMAT.md">docs/VIPL_DATA_FORMAT.md</a></code>, <code><a href="docs/HOFFMAN_DATA_FORMAT.md">docs/HOFFMAN_DATA_FORMAT.md</a></code> &mdash; exactly what's inside each dataset and where to extract it.</li>
+  <li><code><a href="matlab/">matlab/</a></code> &mdash; the actual pipeline source (<code>src/</code>), batch scripts (<code>scripts/</code>), and Segment 6 task-by-task investigation write-ups (<code>docs/</code>).</li>
+  <li><code><a href="android/">android/</a></code> &mdash; the Android app source and its own docs.</li>
+  <li><code><a href="LICENSE">LICENSE</a></code> &mdash; MIT.</li>
+</ul>
+
+<footer class="page-footer">
+  <strong>Spandan</strong> &mdash; EEE 312 Digital Signal Processing I Laboratory, BUET.
+  Supervisor: Prof. Dr. Md. Kamrul Hasan. Source:
+  <a href="https://github.com/Thunder-Bird-007/spandan_contactless_vital_sign">github.com/Thunder-Bird-007/spandan_contactless_vital_sign</a>.
+</footer>
+
+</body>
+</html>

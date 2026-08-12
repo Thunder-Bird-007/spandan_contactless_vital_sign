@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Segment 3 — Detrending &amp; Bandpass Filtering</title>
+<title>VIPL Integration — Dataset I/O Adapter</title>
 <style>
   :root {
     --bg: #ffffff;
@@ -201,129 +201,136 @@
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 3 &middot; <a href="../index.html">Spandan</a></span>
+<span class="brand">VIPL Integration &middot; <a href="../index.html">Spandan</a></span>
 <span class="active">Home</span>
 <span class="sep">&middot;</span>
-<a href="Segment3_Filtering_Guideline.html">Guideline</a>
+<a href="VIPL_Integration_Guideline.html">Guideline</a>
 <span class="sep">&middot;</span>
-<a href="Segment3_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<a href="VIPL_Integration_LineByLine_Explanation.html">Line-by-Line Explanation</a>
 <span class="sep">&middot;</span>
-<a href="Segment3_Team_README.html">Team README</a>
+<a href="VIPL_Team_README.html">Team README</a>
 <span class="sep">&middot;</span>
-<a href="Segment3_Filtering_Guideline.pdf">PDF</a>
+<a href="VIPL_Integration_Guideline.pdf">PDF</a>
 <span class="sep">&middot;</span>
-<a href="../segment2_face_roi/index.html">&larr; Segment 2</a>
-<span class="sep">&middot;</span>
-<a href="../segment4_heartrate/index.html">Segment 4 &rarr;</a>
+<a href="../segment6_validation/index.html">&larr; Segment 6</a>
 </nav>
 
-<h1>Segment 3: Detrending &amp; Bandpass Filtering</h1>
+<h1>VIPL Integration: Dataset I/O Adapter</h1>
 
 <p>
-This is the documentation site for <strong>Segment 3</strong> of the
-<strong>Spandan</strong> project (contactless heart-rate &amp; SpO2 estimation
-from ordinary video — EEE 312 DSP Lab, BUET). Segment 3 takes the raw
-R(t), G(t), B(t) traces that Segment 2 produced and cleans them up:
-removes slow illumination drift, then bandpass-filters each channel down
-to the 0.7-4 Hz physiological pulse band. Nothing here does CHROM/POS
-combination, FFT heart rate, or SpO2 — those are later segments.
+This is the documentation site for the <strong>VIPL-HR integration</strong>
+of the <strong>Spandan</strong> project (contactless heart-rate &amp; SpO2
+estimation from ordinary video — EEE 312 DSP Lab, BUET). This is an
+<strong>I/O integration note, not new DSP theory</strong> — Segments 2&ndash;5
+(face/ROI extraction, filtering, CHROM/POS/FFT heart rate, SpO2
+ratio-of-ratios + calibration) are completely untouched. UBFC-rPPG gave this
+project SpO2 ground truth for only 5 subjects across a narrow 96&ndash;99%
+range; VIPL-HR ships 107 subjects with real HR and SpO2 ground truth across
+9 recording scenarios each. Everything on this page is about getting that
+second dataset feeding into the same, already-tested pipeline through two
+new loader functions — nothing more.
 </p>
 
 <div class="pill-row">
-  <span class="pill">Polynomial detrending</span>
-  <span class="pill">Butterworth bandpass</span>
-  <span class="pill">filtfilt (zero-phase)</span>
-  <span class="pill">0.7&ndash;4 Hz pulse band</span>
+  <span class="pill">107-subject dataset</span>
+  <span class="pill">No algorithm code changed</span>
+  <span class="pill">time.txt frame-rate correction</span>
+  <span class="pill">Loader-side reshaping, not dataset-aware branches</span>
+  <span class="pill">Collision-safe subject IDs</span>
   <span class="pill">MATLAB</span>
 </div>
 
 <h2>Where to start</h2>
 
 <div class="card-grid">
-  <a class="card" href="Segment3_Filtering_Guideline.html">
+  <a class="card" href="VIPL_Integration_Guideline.html">
     <div class="card-icon">📘</div>
     <h3>Guideline</h3>
-    <p>Start here if you're new to this segment. The theory: why raw
-    R/G/B has drift and out-of-band noise, polynomial detrending
-    intuition, Butterworth bandpass intuition, why <code>filtfilt</code>
-    over <code>filter</code> matters for the SpO2 stage later, and the
-    common pitfalls. Includes "Intuition First", "Common Beginner
-    Mistake", and "Pause and Check Yourself" call-outs throughout.</p>
+    <p>Start here if you're new to this integration. The theory: why no
+    algorithm code needed to change, why "the loader reshapes to fit the
+    function" beats "the function grows a dataset-aware branch," and the
+    one real surprise — VIPL-HR's declared video frame rate cannot be
+    trusted naively, off by up to 19&ndash;20% for some recordings.
+    Includes "Intuition First" and "Common Beginner Mistake" call-outs.</p>
   </a>
-  <a class="card" href="Segment3_LineByLine_Explanation.html">
+  <a class="card" href="VIPL_Integration_LineByLine_Explanation.html">
     <div class="card-icon">🔍</div>
     <h3>Line-by-Line Explanation</h3>
-    <p>A block-by-block walkthrough of the actual MATLAB implementation
-    (<code>detrendSignal.m</code> and <code>bandpassClean.m</code>) —
-    what each part does, why it's written that way, and the reasoning
-    behind every parameter choice (polynomial order, filter order, why
-    the cutoffs are computed from <code>fs</code> instead of fixed).</p>
+    <p>A block-by-block walkthrough of <code>loadVIPLVideo.m</code> and
+    <code>loadVIPLGroundTruth.m</code> — what each part does and why,
+    including the 3-subject end-to-end validation run and its actual
+    numbers.</p>
   </a>
-  <a class="card" href="Segment3_Team_README.html">
+  <a class="card" href="VIPL_Team_README.html">
     <div class="card-icon">👥</div>
     <h3>Team README</h3>
-    <p>Practical instructions for the other team members: confirming
-    your Segment 2 output exists, how to edit the subject list in the
-    batch script, how to run it, and where your filtered output lands
-    so everyone's results merge cleanly.</p>
+    <p>Practical instructions for the other team members: VIPL-HR isn't
+    extracted on disk yet, so extract only your own assigned
+    (subject, scenario, source) share — never a whole archive — and how to
+    run the batch script once you have.</p>
   </a>
-  <a class="card" href="Segment3_Filtering_Guideline.pdf">
+  <a class="card" href="VIPL_Integration_Guideline.pdf">
     <div class="card-icon">📄</div>
     <h3>Guideline (PDF)</h3>
-    <p>The same guideline content as a printable/shareable PDF, built
-    with pandoc + xelatex + tcolorbox, styled call-out boxes included.</p>
+    <p>The same guideline content as a printable/shareable PDF, built with
+    pandoc + xelatex + tcolorbox, styled call-out boxes included.</p>
   </a>
 </div>
 
 <h2>The code</h2>
 
 <p>
-The actual implementation lives in the main project scaffold, not in
-this docs folder:
+The actual implementation lives in the main project scaffold, not in this
+docs folder:
 </p>
 
 <ul>
-  <li><code><a href="../matlab/src/filtering/detrendSignal.m">matlab/src/filtering/detrendSignal.m</a></code> — polynomial detrend, removes slow illumination drift.</li>
-  <li><code><a href="../matlab/src/filtering/bandpassClean.m">matlab/src/filtering/bandpassClean.m</a></code> — Butterworth bandpass over 0.7&ndash;4 Hz, applied with <code>filtfilt</code>.</li>
-  <li><code><a href="../matlab/scripts/run_segment3_filtering_batch.m">matlab/scripts/run_segment3_filtering_batch.m</a></code> — batch driver the team runs over their filtered subjects.</li>
+  <li><code><a href="../matlab/src/io/loadVIPLVideo.m">matlab/src/io/loadVIPLVideo.m</a></code> — opens a VIPL-HR video, recomputes the real frame rate from <code>time.txt</code> whenever one exists.</li>
+  <li><code><a href="../matlab/src/io/loadVIPLGroundTruth.m">matlab/src/io/loadVIPLGroundTruth.m</a></code> — parses VIPL-HR's per-second HR/SpO2 ground-truth files into the same shape Segments 4&ndash;5 already expect.</li>
+  <li><code><a href="../matlab/scripts/run_vipl_integration_batch.m">matlab/scripts/run_vipl_integration_batch.m</a></code> — batch driver the team runs over their assigned (subject, scenario, source) triples.</li>
+  <li><code><a href="../docs/VIPL_DATA_FORMAT.md">docs/VIPL_DATA_FORMAT.md</a></code> — the full, file-verified format writeup; read before touching the loaders.</li>
 </ul>
 
 <h2>What comes out of this segment</h2>
 
 <p>
-For every subject processed: <code>data/processed/&lt;subjectID&gt;_filtered_traces.mat</code>
-(fields <code>R_filtered</code>, <code>G_filtered</code>,
-<code>B_filtered</code>, <code>fs</code>, <code>subjectID</code>,
-<code>detrendOrder</code>, <code>filterOrder</code>) and
-<code>results/figures/&lt;subjectID&gt;_filtering_sanity.png</code> — three
-stacked plots of the green channel (raw, detrended, detrended +
-filtered) on the same time axis. Always look at the PNG before trusting
-the <code>.mat</code> output — the drift should visibly be gone and the
-final plot should look like a repeating pulse wave, not a flat line or
-residual noise.
+For every <code>(subject, scenario, source)</code> triple processed: the
+same <code>data/processed/&lt;subjectID&gt;_rgb_traces.mat</code> shape
+UBFC subjects already use, saved under a collision-safe
+<code>VIPL_p&lt;N&gt;_v&lt;scenario&gt;_source&lt;S&gt;</code> subject ID.
+HR/SpO2 summary CSVs (<code>segment4_hr_summary_vipl.csv</code>,
+<code>segment5_vipl_calibration.csv</code>) carry an explicit
+<code>dataset</code> column, so Segment 6 can tell which dataset any pooled
+row came from without a lookup table. The initial 3-subject validation run
+(<code>p1</code>/<code>p2</code>/<code>p3</code>, scenario <code>v1</code>
+"stable", source1 webcam) landed CHROM/POS heart rate within about 1&ndash;6
+bpm of ground truth on all 3 subjects, and a 3-subject leave-one-out SpO2
+calibration MAE of 3.1 percentage points — proof the code path works
+end-to-end on real VIPL-HR data, not yet a validated calibration on its own
+(that's Segment 6's job, across the full pooled subject count).
 </p>
 
 <h2>Other segments</h2>
 
 <div class="card-grid">
-  <a class="card" href="../segment2_face_roi/index.html">
+  <a class="card" href="../segment6_validation/index.html">
     <div class="card-icon">⬅️</div>
-    <h3>Segment 2 — Face &amp; ROI Extraction</h3>
-    <p>The previous stage: face detection and forehead ROI cropping,
-    producing the raw R(t), G(t), B(t) traces this segment consumes.</p>
+    <h3>Segment 6 — Formal Validation</h3>
+    <p>This integration's whole purpose: unblocking Segment 6's pooled
+    leave-one-subject-out validation with a genuinely larger, more varied
+    subject pool than UBFC's 5&ndash;8 subjects could provide alone.</p>
   </a>
-  <a class="card" href="../segment4_heartrate/index.html">
-    <div class="card-icon">➡️</div>
-    <h3>Segment 4 — CHROM/POS &amp; FFT Heart Rate</h3>
-    <p>The next stage: combining the filtered R(t), G(t), B(t) traces this
-    segment produces into a single pulse signal via CHROM/POS, then
-    estimating heart rate via FFT.</p>
+  <a class="card" href="../index.html">
+    <div class="card-icon">🏠</div>
+    <h3>Project Home</h3>
+    <p>Back to the full Spandan pipeline overview — every segment, the
+    Android app, and where to find the validated results.</p>
   </a>
 </div>
 
 <footer class="page-footer">
-  Part of the <strong>Spandan</strong> project's Segment 3 (detrending + bandpass filtering) docs — BUET EEE 312.
-  Source markdown lives in <code>segment3_filtering/</code>; the actual code lives under <code>matlab/src/filtering/</code>.
+  Part of the <strong>Spandan</strong> project's VIPL-HR dataset integration docs — BUET EEE 312.
+  Source markdown lives in <code>vipl_integration/</code>; the actual code lives under <code>matlab/src/io/</code>.
 </footer>
 
 </body>

@@ -310,9 +310,11 @@
       padding: 0.15rem 0.1rem;
     }
     nav.site-nav a:hover { text-decoration: underline; }
-    nav.site-nav span.active {
+    nav.site-nav a.active {
       color: var(--fg);
       font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
     }
     nav.site-nav span.sep { color: var(--border); }
     h1, h2, h3 { line-height: 1.3; font-weight: 700; }
@@ -434,10 +436,11 @@
       color: var(--muted);
     }
   </style>
+
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 3 &middot; Spandan</span>
+<span class="brand">Segment 3 &middot; <a href="../index.html">Spandan</a></span>
 <a href="index.html">Home</a>
 <span class="sep">&middot;</span>
 <span class="active">Guideline</span>
@@ -447,8 +450,6 @@
 <a href="Segment3_Team_README.html">Team README</a>
 <span class="sep">&middot;</span>
 <a href="Segment3_Filtering_Guideline.pdf">PDF</a>
-<span class="sep">&middot;</span>
-<a href="../segment2_face_roi/index.html">&larr; Segment 2</a>
 <span class="sep">&middot;</span>
 <a href="../segment4_heartrate/index.html">Segment 4 &rarr;</a>
 </nav>
@@ -491,15 +492,18 @@ Into Segment 4</a></li>
 </ul>
 </nav>
 <h1 id="why-this-segment-exists">Why This Segment Exists</h1>
-<p>Segment 2 gave us three raw signals — <em>R</em>(<em>t</em>),
-<em>G</em>(<em>t</em>), <em>B</em>(<em>t</em>) — one spatially-averaged
-pixel value per video frame, per color channel. If you plot one of these
-raw traces, it does <strong>not</strong> look like a heartbeat. It looks
-like a slowly wandering curve with a faint, fast ripple riding on top of
-it, half-buried in noise. Segment 3’s whole job is classical DSP
-housekeeping: strip away everything that isn’t the 0.7-4 Hz pulse band,
-so that Segment 4 (CHROM/POS combination) and Segment 5 (FFT heart rate,
-SpO2) have something clean to actually work with.</p>
+<p>Segment 2 gave us three raw signals — <span
+class="math inline"><em>R</em>(<em>t</em>)</span>, <span
+class="math inline"><em>G</em>(<em>t</em>)</span>, <span
+class="math inline"><em>B</em>(<em>t</em>)</span> — one
+spatially-averaged pixel value per video frame, per color channel. If
+you plot one of these raw traces, it does <strong>not</strong> look like
+a heartbeat. It looks like a slowly wandering curve with a faint, fast
+ripple riding on top of it, half-buried in noise. Segment 3’s whole job
+is classical DSP housekeeping: strip away everything that isn’t the
+0.7-4 Hz pulse band, so that Segment 4 (CHROM/POS combination) and
+Segment 5 (FFT heart rate, SpO2) have something clean to actually work
+with.</p>
 <p>Nothing in this segment does anything clever or algorithm-specific to
 rPPG. It’s two textbook DSP operations — detrending and bandpass
 filtering — applied carefully, with parameters that are justified rather
@@ -578,9 +582,10 @@ drift without having enough wiggle room to start tracking the pulse
 ripple itself.</li>
 <li>The frequency argument makes this precise: a degree-3 polynomial fit
 to an 80-second recording has almost all its energy at frequencies
-around 1/<em>T</em> ≈ 0.01–0.04 Hz — more than an order of magnitude
-below the 0.7 Hz pulse band floor. It physically cannot oscillate fast
-enough to remove real pulse content.</li>
+around <span class="math inline">1/<em>T</em> ≈ 0.01-0.04</span> Hz —
+more than an order of magnitude below the 0.7 Hz pulse band floor. It
+physically cannot oscillate fast enough to remove real pulse
+content.</li>
 </ul>
 <div class="pausecheck">
 <p><strong>Pause and check yourself.</strong> If someone suggested using
@@ -591,11 +596,13 @@ would actually go wrong with the output signal, and why?</p>
 id="butterworth-bandpass-intuition-why-0.7-4-hz-maps-to-40-240-bpm">Butterworth
 Bandpass Intuition — Why 0.7-4 Hz Maps to 40-240 bpm</h1>
 <p>A heart rate in beats per minute converts to a frequency in Hz by
-dividing by 60 (60 seconds per minute): 40 bpm is 40/60 ≈ 0.67 Hz, and
-240 bpm is 240/60 = 4 Hz. This project rounds the lower edge up slightly
-to 0.7 Hz as a small safety margin (filters don’t cut off perfectly
-sharply, and resting heart rates in this dataset never come close to 40
-bpm anyway), giving the working band <strong>0.7-4 Hz</strong>.</p>
+dividing by 60 (60 seconds per minute): 40 bpm is <span
+class="math inline">40/60 ≈ 0.67</span> Hz, and 240 bpm is <span
+class="math inline">240/60 = 4</span> Hz. This project rounds the lower
+edge up slightly to 0.7 Hz as a small safety margin (filters don’t cut
+off perfectly sharply, and resting heart rates in this dataset never
+come close to 40 bpm anyway), giving the working band <strong>0.7-4
+Hz</strong>.</p>
 <p><code>filtering/bandpassClean.m</code> designs a Butterworth bandpass
 filter over exactly that range using <code>butter()</code>, then applies
 it. A Butterworth filter is chosen specifically because it has a

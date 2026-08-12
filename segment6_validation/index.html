@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Segment 3 — Detrending &amp; Bandpass Filtering</title>
+<title>Segment 6 — Formal Validation: LOSO, Metrics &amp; Bland-Altman</title>
 <style>
   :root {
     --bg: #ffffff;
@@ -201,129 +201,144 @@
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 3 &middot; <a href="../index.html">Spandan</a></span>
+<span class="brand">Segment 6 &middot; <a href="../index.html">Spandan</a></span>
 <span class="active">Home</span>
 <span class="sep">&middot;</span>
-<a href="Segment3_Filtering_Guideline.html">Guideline</a>
+<a href="Segment6_Validation_Guideline.html">Guideline</a>
 <span class="sep">&middot;</span>
-<a href="Segment3_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<a href="Segment6_LineByLine_Explanation.html">Line-by-Line Explanation</a>
 <span class="sep">&middot;</span>
-<a href="Segment3_Team_README.html">Team README</a>
+<a href="Segment6_Team_README.html">Team README</a>
 <span class="sep">&middot;</span>
-<a href="Segment3_Filtering_Guideline.pdf">PDF</a>
+<a href="Segment6_Validation_Guideline.pdf">PDF</a>
 <span class="sep">&middot;</span>
-<a href="../segment2_face_roi/index.html">&larr; Segment 2</a>
-<span class="sep">&middot;</span>
-<a href="../segment4_heartrate/index.html">Segment 4 &rarr;</a>
+<a href="../segment5_spo2/index.html">&larr; Segment 5</a>
 </nav>
 
-<h1>Segment 3: Detrending &amp; Bandpass Filtering</h1>
+<h1>Segment 6: Formal Validation — LOSO, Metrics &amp; Bland-Altman</h1>
 
 <p>
-This is the documentation site for <strong>Segment 3</strong> of the
+This is the documentation site for <strong>Segment 6</strong> of the
 <strong>Spandan</strong> project (contactless heart-rate &amp; SpO2 estimation
-from ordinary video — EEE 312 DSP Lab, BUET). Segment 3 takes the raw
-R(t), G(t), B(t) traces that Segment 2 produced and cleans them up:
-removes slow illumination drift, then bandpass-filters each channel down
-to the 0.7-4 Hz physiological pulse band. Nothing here does CHROM/POS
-combination, FFT heart rate, or SpO2 — those are later segments.
+from ordinary video — EEE 312 DSP Lab, BUET). Segments 2&ndash;5 built the
+whole measurement chain — face detection, filtering, CHROM/POS pulse
+extraction, FFT heart rate, and an SpO2 calibration attempt — and each
+produced numbers for individual subjects. Segment 6 asks the harder, more
+honest question across <em>every</em> subject at once: how good is this
+method really, and how do we know? It touches no video, no filter, no FFT —
+it pools the numbers Segments 4&ndash;5 already produced (plus the VIPL
+integration's extra subjects) and puts them through the same statistical
+machinery a real clinical validation study would use: MAE, RMSE, Pearson
+correlation, and Bland-Altman agreement analysis, with a genuine
+leave-one-subject-out (LOSO) refit for the one thing in this pipeline that's
+actually fitted to data — the SpO2 calibration.
 </p>
 
 <div class="pill-row">
-  <span class="pill">Polynomial detrending</span>
-  <span class="pill">Butterworth bandpass</span>
-  <span class="pill">filtfilt (zero-phase)</span>
-  <span class="pill">0.7&ndash;4 Hz pulse band</span>
+  <span class="pill">Bland-Altman agreement analysis</span>
+  <span class="pill">MAE / RMSE / Pearson r</span>
+  <span class="pill">Leave-one-subject-out (LOSO)</span>
+  <span class="pill">Pooled UBFC + VIPL</span>
+  <span class="pill">Calibrated vs. uncalibrated validation</span>
   <span class="pill">MATLAB</span>
 </div>
 
 <h2>Where to start</h2>
 
 <div class="card-grid">
-  <a class="card" href="Segment3_Filtering_Guideline.html">
+  <a class="card" href="Segment6_Validation_Guideline.html">
     <div class="card-icon">📘</div>
     <h3>Guideline</h3>
-    <p>Start here if you're new to this segment. The theory: why raw
-    R/G/B has drift and out-of-band noise, polynomial detrending
-    intuition, Butterworth bandpass intuition, why <code>filtfilt</code>
-    over <code>filter</code> matters for the SpO2 stage later, and the
-    common pitfalls. Includes "Intuition First", "Common Beginner
-    Mistake", and "Pause and Check Yourself" call-outs throughout.</p>
+    <p>Start here if you're new to this segment. The theory: what a
+    Bland-Altman plot actually shows that a plain scatter or a correlation
+    coefficient hides, why pooling UBFC and VIPL is the right move for a
+    thin linear calibration, the calibrated-vs-uncalibrated validation
+    distinction (why HR needs no LOSO but SpO2 does), and how this maps
+    onto the live defense-day, N=1 comparison against a real pulse
+    oximeter. Includes "Intuition First", "Common Beginner Mistake", and
+    "Pause and Check Yourself" call-outs throughout.</p>
   </a>
-  <a class="card" href="Segment3_LineByLine_Explanation.html">
+  <a class="card" href="Segment6_LineByLine_Explanation.html">
     <div class="card-icon">🔍</div>
     <h3>Line-by-Line Explanation</h3>
     <p>A block-by-block walkthrough of the actual MATLAB implementation
-    (<code>detrendSignal.m</code> and <code>bandpassClean.m</code>) —
-    what each part does, why it's written that way, and the reasoning
-    behind every parameter choice (polynomial order, filter order, why
-    the cutoffs are computed from <code>fs</code> instead of fixed).</p>
+    (<code>computeMetrics.m</code>, <code>blandAltman.m</code>,
+    <code>runLOSO.m</code>, and the batch script) — what each part does and
+    why, with the real pooled results this project obtained.</p>
   </a>
-  <a class="card" href="Segment3_Team_README.html">
+  <a class="card" href="Segment6_Team_README.html">
     <div class="card-icon">👥</div>
     <h3>Team README</h3>
-    <p>Practical instructions for the other team members: confirming
-    your Segment 2 output exists, how to edit the subject list in the
-    batch script, how to run it, and where your filtered output lands
-    so everyone's results merge cleanly.</p>
+    <p>Practical instructions for the other team members: why HR and SpO2
+    are validated differently, why the current pooled N is still thin (and
+    the honest way to present that), and how this segment automatically
+    tightens its own numbers every time more VIPL subjects are extracted —
+    with nothing to configure.</p>
   </a>
-  <a class="card" href="Segment3_Filtering_Guideline.pdf">
+  <a class="card" href="Segment6_Validation_Guideline.pdf">
     <div class="card-icon">📄</div>
     <h3>Guideline (PDF)</h3>
-    <p>The same guideline content as a printable/shareable PDF, built
-    with pandoc + xelatex + tcolorbox, styled call-out boxes included.</p>
+    <p>The same guideline content as a printable/shareable PDF, built with
+    pandoc + xelatex + tcolorbox, styled call-out boxes included.</p>
   </a>
 </div>
 
 <h2>The code</h2>
 
 <p>
-The actual implementation lives in the main project scaffold, not in
-this docs folder:
+The actual implementation lives in the main project scaffold, not in this
+docs folder:
 </p>
 
 <ul>
-  <li><code><a href="../matlab/src/filtering/detrendSignal.m">matlab/src/filtering/detrendSignal.m</a></code> — polynomial detrend, removes slow illumination drift.</li>
-  <li><code><a href="../matlab/src/filtering/bandpassClean.m">matlab/src/filtering/bandpassClean.m</a></code> — Butterworth bandpass over 0.7&ndash;4 Hz, applied with <code>filtfilt</code>.</li>
-  <li><code><a href="../matlab/scripts/run_segment3_filtering_batch.m">matlab/scripts/run_segment3_filtering_batch.m</a></code> — batch driver the team runs over their filtered subjects.</li>
+  <li><code><a href="../matlab/src/validation/computeMetrics.m">matlab/src/validation/computeMetrics.m</a></code> — MAE, RMSE, and Pearson correlation for a pool of (predicted, ground-truth) pairs.</li>
+  <li><code><a href="../matlab/src/validation/blandAltman.m">matlab/src/validation/blandAltman.m</a></code> — bias line, ±1.96&times;SD limits of agreement, and the mean-vs-difference plot itself.</li>
+  <li><code><a href="../matlab/src/validation/runLOSO.m">matlab/src/validation/runLOSO.m</a></code> — leave-one-subject-out SpO2 calibration refit across the pooled UBFC+VIPL set (HR needs no equivalent — see the Guideline for why).</li>
+  <li><code><a href="../matlab/scripts/run_segment6_validation.m">matlab/scripts/run_segment6_validation.m</a></code> — the batch driver that pools whatever Segment 4/5 CSVs currently exist and runs all of the above.</li>
 </ul>
 
 <h2>What comes out of this segment</h2>
 
 <p>
-For every subject processed: <code>data/processed/&lt;subjectID&gt;_filtered_traces.mat</code>
-(fields <code>R_filtered</code>, <code>G_filtered</code>,
-<code>B_filtered</code>, <code>fs</code>, <code>subjectID</code>,
-<code>detrendOrder</code>, <code>filterOrder</code>) and
-<code>results/figures/&lt;subjectID&gt;_filtering_sanity.png</code> — three
-stacked plots of the green channel (raw, detrended, detrended +
-filtered) on the same time axis. Always look at the PNG before trusting
-the <code>.mat</code> output — the drift should visibly be gone and the
-final plot should look like a repeating pulse wave, not a flat line or
-residual noise.
+<code>results/metrics/segment6_hr_pooled_metrics.csv</code> — one row per
+(method, scope), scope in <code>{pooled, UBFC, VIPL}</code>.
+<code>results/metrics/segment6_spo2_loso_pooled.csv</code> — one row per
+subject's LOSO fold. <code>results/metrics/segment6_spo2_loso_metrics.csv</code>
+— one row per scope. As of this segment's own verification run: pooled SpO2
+MAE 1.23 percentage points across 8 subjects (5 UBFC + 3 VIPL), pooled HR
+CHROM/POS correlation r=0.995 on the pooled VIPL subjects with a real ~4bpm
+average error a bare correlation number would hide. Bland-Altman figures
+land in <code>results/figures/</code>: <code>segment6_hr_bland_altman_
+{chrom,pos,green}.png</code> and <code>segment6_spo2_bland_altman_
+pooled.png</code> plus <code>segment6_spo2_predicted_vs_true.png</code>,
+all dataset-colored. <strong>Look at the plots before quoting any single
+number</strong> — with this few points, one unusual subject can visibly
+shift a bias line, which a bare MAE figure will not show you.
 </p>
 
 <h2>Other segments</h2>
 
 <div class="card-grid">
-  <a class="card" href="../segment2_face_roi/index.html">
+  <a class="card" href="../segment5_spo2/index.html">
     <div class="card-icon">⬅️</div>
-    <h3>Segment 2 — Face &amp; ROI Extraction</h3>
-    <p>The previous stage: face detection and forehead ROI cropping,
-    producing the raw R(t), G(t), B(t) traces this segment consumes.</p>
+    <h3>Segment 5 — SpO2 Ratio-of-Ratios &amp; Calibration</h3>
+    <p>The previous stage: computing an AC/DC ratio-of-ratios and fitting
+    the empirical SpO2 calibration this segment's LOSO refit validates
+    honestly.</p>
   </a>
-  <a class="card" href="../segment4_heartrate/index.html">
+  <a class="card" href="../vipl_integration/index.html">
     <div class="card-icon">➡️</div>
-    <h3>Segment 4 — CHROM/POS &amp; FFT Heart Rate</h3>
-    <p>The next stage: combining the filtered R(t), G(t), B(t) traces this
-    segment produces into a single pulse signal via CHROM/POS, then
-    estimating heart rate via FFT.</p>
+    <h3>VIPL Integration — Dataset I/O Adapter</h3>
+    <p>A related note: how the second dataset, VIPL-HR, was wired into
+    Segments 2&ndash;5 unmodified, to give this segment's pooled LOSO
+    validation more independent subjects than UBFC alone could ever
+    provide.</p>
   </a>
 </div>
 
 <footer class="page-footer">
-  Part of the <strong>Spandan</strong> project's Segment 3 (detrending + bandpass filtering) docs — BUET EEE 312.
-  Source markdown lives in <code>segment3_filtering/</code>; the actual code lives under <code>matlab/src/filtering/</code>.
+  Part of the <strong>Spandan</strong> project's Segment 6 (formal validation: LOSO, metrics &amp; Bland-Altman) docs — BUET EEE 312.
+  Source markdown lives in <code>segment6_validation/</code>; the actual code lives under <code>matlab/src/validation/</code>.
 </footer>
 
 </body>

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>VIPL Integration — Line-by-Line Explanation</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav a.active {
+      color: var(--fg);
+      font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">VIPL Integration &middot; <a href="../index.html">Spandan</a></span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<a href="VIPL_Integration_Guideline.html">Guideline</a>
+<span class="sep">&middot;</span>
+<span class="active">Line-by-Line Explanation</span>
+<span class="sep">&middot;</span>
+<a href="VIPL_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="VIPL_Integration_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../index.html">Back to Project Home</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">VIPL Integration — Line-by-Line Explanation</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#vipl-hr-integration-line-by-line-explanation"
+id="toc-vipl-hr-integration-line-by-line-explanation">VIPL-HR
+Integration — Line-by-Line Explanation</a>
+<ul>
+<li><a
+href="#part-0-why-vipl-hr-needed-a-genuinely-different-loader-shape-than-ubfc"
+id="toc-part-0-why-vipl-hr-needed-a-genuinely-different-loader-shape-than-ubfc">Part
+0 — Why VIPL-HR needed a genuinely different loader shape than
+UBFC</a></li>
+<li><a href="#part-1-loadviplvideo.m"
+id="toc-part-1-loadviplvideo.m">Part 1 —
+<code>loadVIPLVideo.m</code></a>
+<ul>
+<li><a href="#path-construction-and-source-validation"
+id="toc-path-construction-and-source-validation">Path construction and
+source validation</a></li>
+<li><a href="#opening-the-video-and-reading-the-containers-frame-rate"
+id="toc-opening-the-video-and-reading-the-containers-frame-rate">Opening
+the video and reading the container’s frame rate</a></li>
+<li><a
+href="#the-frame-rate-correction-the-biggest-real-format-surprise-found"
+id="toc-the-frame-rate-correction-the-biggest-real-format-surprise-found">The
+frame-rate correction — the biggest real format surprise found</a></li>
+<li><a href="#return-values" id="toc-return-values">Return
+values</a></li>
+</ul></li>
+<li><a href="#part-2-loadviplgroundtruth.m"
+id="toc-part-2-loadviplgroundtruth.m">Part 2 —
+<code>loadVIPLGroundTruth.m</code></a>
+<ul>
+<li><a
+href="#why-the-ground-truth-needed-its-own-design-decision-separate-from-the-video-loader"
+id="toc-why-the-ground-truth-needed-its-own-design-decision-separate-from-the-video-loader">Why
+the ground truth needed its own design decision, separate from the video
+loader</a></li>
+<li><a
+href="#the-decision-keep-gt.timestampgt.hrgt.spo2-parallel-let-gt.ppg-be-its-own-length"
+id="toc-the-decision-keep-gt.timestampgt.hrgt.spo2-parallel-let-gt.ppg-be-its-own-length">The
+decision: keep
+<code>gt.timestamp</code>/<code>gt.hr</code>/<code>gt.spo2</code>
+parallel; let <code>gt.ppg</code> be its own length</a></li>
+<li><a href="#row-count-mismatch-defense"
+id="toc-row-count-mismatch-defense">Row-count mismatch defense</a></li>
+</ul></li>
+<li><a
+href="#part-3-why-the-shared-result-csvs-got-their-own-vipl-suffixed-files"
+id="toc-part-3-why-the-shared-result-csvs-got-their-own-vipl-suffixed-files">Part
+3 — Why the shared result CSVs got their own VIPL-suffixed
+files</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="vipl-hr-integration-line-by-line-explanation">VIPL-HR
+Integration — Line-by-Line Explanation</h1>
+<p>This document walks through
+<code>matlab/src/io/loadVIPLVideo.m</code> and
+<code>matlab/src/io/loadVIPLGroundTruth.m</code> block by block, and
+explains what was genuinely <em>different</em> about VIPL-HR’s real
+on-disk format compared to UBFC’s — the design decisions those
+differences forced, not just what the code does.
+<code>docs/VIPL_DATA_FORMAT.md</code> is the source of truth for every
+factual claim made here about the raw files; this document is about the
+two loader functions built on top of it.</p>
+<p>No Segment 2-5 algorithm file changed. Every design decision below
+lives entirely inside the two new loader files — that was a hard
+constraint of this integration, not a coincidence.</p>
+<hr />
+<h2
+id="part-0-why-vipl-hr-needed-a-genuinely-different-loader-shape-than-ubfc">Part
+0 — Why VIPL-HR needed a genuinely different loader shape than UBFC</h2>
+<p><code>io/loadUBFCVideo.m</code> takes one input,
+<code>videoPath</code>, because UBFC has exactly one addressable unit
+per subject: one video file, found by the caller globbing for the single
+<code>.avi</code> in that subject’s folder. VIPL-HR does not have that.
+A real zip-entry listing of <code>p1-5.zip</code> (881 entries, no
+extraction needed to see this) shows every subject has up to 9 scenario
+folders (<code>v1</code>-<code>v9</code>) and up to 4 device folders
+inside each (<code>source1</code>-<code>source4</code>), and
+<strong>every one of those (subject, scenario, source) combinations is
+its own independent video with its own independent ground truth
+files</strong>. There is no single “the video” for a VIPL-HR subject the
+way there is for a UBFC subject.</p>
+<p>This is why <code>loadVIPLVideo.m</code> and
+<code>loadVIPLGroundTruth.m</code> both take three identifiers —
+<code>subjectNum</code>, <code>scenarioNum</code>,
+<code>sourceNum</code> — instead of one <code>subjectID</code> string.
+The task brief that kicked off this integration originally suggested a
+2-part <code>(subjectID, sourceID)</code> scheme; that was revised after
+actually looking at the real folder tree, because it silently assumes
+every subject has exactly one video per source, which is false (a given
+subject can have the same source recorded across up to 9 different
+scenarios, each a physically different video with different ground
+truth).</p>
+<hr />
+<h2 id="part-1-loadviplvideo.m">Part 1 —
+<code>loadVIPLVideo.m</code></h2>
+<h3 id="path-construction-and-source-validation">Path construction and
+source validation</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">sourceNum</span> <span class="op">==</span> <span class="fl">4</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">error</span>(<span class="ss">&#39;loadVIPLVideo:nirNotSupported&#39;</span><span class="op">,</span> <span class="op">...</span>)<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">sourceNum</span> <span class="op">~=</span> <span class="fl">1</span> <span class="op">&amp;&amp;</span> <span class="va">sourceNum</span> <span class="op">~=</span> <span class="fl">2</span> <span class="op">&amp;&amp;</span> <span class="va">sourceNum</span> <span class="op">~=</span> <span class="fl">3</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">error</span>(<span class="ss">&#39;loadVIPLVideo:badSource&#39;</span><span class="op">,</span> <span class="op">...</span>)<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="va">subjectFolder</span> <span class="op">=</span> [<span class="ss">&#39;p&#39;</span> <span class="va">num2str</span>(<span class="va">subjectNum</span>)]<span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="va">scenarioFolder</span> <span class="op">=</span> [<span class="ss">&#39;v&#39;</span> <span class="va">num2str</span>(<span class="va">scenarioNum</span>)]<span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="va">sourceFolder</span> <span class="op">=</span> [<span class="ss">&#39;source&#39;</span> <span class="va">num2str</span>(<span class="va">sourceNum</span>)]<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="va">videoPath</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">viplRoot</span><span class="op">,</span> <span class="va">subjectFolder</span><span class="op">,</span> <span class="va">scenarioFolder</span><span class="op">,</span> <span class="va">sourceFolder</span><span class="op">,</span> <span class="ss">&#39;video.avi&#39;</span>)<span class="op">;</span></span></code></pre></div>
+<p><code>source4</code> is rejected with a specific, named error rather
+than silently loaded, because it is VIPL-HR’s near-infrared (NIR)
+camera, not RGB — a different sensing modality this project’s
+<code>extractROISignals.m</code> onward was never built to handle, and
+the task brief was explicit that NIR handling is out of scope for this
+segment. Any other value outside <code>{1, 2, 3}</code> is also
+rejected, since VIPL-HR only defines four sources total. The path is
+built directly from the three numeric identifiers using VIPL-HR’s own
+confirmed naming convention (<code>pXXX/vY/sourceN/video.avi</code>) —
+no globbing needed, unlike UBFC’s DATASET_1 loader, because VIPL-HR’s
+filenames are fixed (<code>video.avi</code>, always) rather than varying
+per subject the way UBFC DATASET_1’s video filenames do.</p>
+<h3 id="opening-the-video-and-reading-the-containers-frame-rate">Opening
+the video and reading the container’s frame rate</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">frames</span> <span class="op">=</span> <span class="va">VideoReader</span>(<span class="va">videoPath</span>)<span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">containerFrameRate</span> <span class="op">=</span> <span class="va">frames</span>.<span class="va">FrameRate</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="va">numFrames</span> <span class="op">=</span> <span class="va">frames</span>.<span class="va">NumFrames</span><span class="op">;</span></span></code></pre></div>
+<p>Same discipline as <code>loadUBFCVideo.m</code>: the video is opened
+but not preloaded, and frame rate is read from the file, never
+hardcoded. This is where VIPL-HR’s real format forced the first
+genuinely new design decision.</p>
+<h3
+id="the-frame-rate-correction-the-biggest-real-format-surprise-found">The
+frame-rate correction — the biggest real format surprise found</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">timePath</span> <span class="op">=</span> <span class="va">fullfile</span>(<span class="va">viplRoot</span><span class="op">,</span> <span class="va">subjectFolder</span><span class="op">,</span> <span class="va">scenarioFolder</span><span class="op">,</span> <span class="va">sourceFolder</span><span class="op">,</span> <span class="ss">&#39;time.txt&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">isfile</span>(<span class="va">timePath</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">frameTimestampsMs</span> <span class="op">=</span> <span class="va">readmatrix</span>(<span class="va">timePath</span><span class="op">,</span> <span class="ss">&#39;FileType&#39;</span><span class="op">,</span> <span class="ss">&#39;text&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">numTimestamps</span> <span class="op">=</span> <span class="va">numel</span>(<span class="va">frameTimestampsMs</span>)<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="va">numTimestamps</span> <span class="op">&gt;=</span> <span class="fl">2</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">elapsedSec</span> <span class="op">=</span> (<span class="va">frameTimestampsMs</span>(<span class="va">numTimestamps</span>) <span class="op">-</span> <span class="va">frameTimestampsMs</span>(<span class="fl">1</span>)) <span class="op">/</span> <span class="fl">1000</span><span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">timestampFrameRate</span> <span class="op">=</span> (<span class="va">numTimestamps</span> <span class="op">-</span> <span class="fl">1</span>) <span class="op">/</span> <span class="va">elapsedSec</span><span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">frameRate</span> <span class="op">=</span> <span class="va">timestampFrameRate</span><span class="op">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">frameRate</span> <span class="op">=</span> <span class="va">containerFrameRate</span><span class="op">;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">end</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="kw">else</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">...</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="va">frameRate</span> <span class="op">=</span> <span class="va">containerFrameRate</span><span class="op">;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span></code></pre></div>
+<p>This project’s established rule, learned from UBFC, is “always read
+fps from <code>VideoReader.FrameRate</code>, never hardcode it.” Testing
+that rule against real VIPL-HR files showed it is <strong>not sufficient
+on its own</strong> for this dataset. Every video tested — regardless of
+source — reported exactly <code>FrameRate = 25</code> from
+<code>VideoReader</code>, including
+<code>source3</code>/<code>source4</code>, whose own
+<code>ReadMe.pdf</code> entry claims “~30 fps”. Cross-checking against
+each video’s own <code>time.txt</code> (present for source1/3/4) showed
+the container’s declared 25 fps was measurably wrong for some
+recordings:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Video</th>
+<th>Container FrameRate</th>
+<th>time.txt-derived FrameRate</th>
+<th>Disagreement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>p1/v1/source1</td>
+<td>25</td>
+<td>29.80</td>
+<td>19.2%</td>
+</tr>
+<tr>
+<td>p1/v1/source3</td>
+<td>25</td>
+<td>29.96</td>
+<td>19.8%</td>
+</tr>
+<tr>
+<td>p2/v1/source1</td>
+<td>25</td>
+<td>24.93</td>
+<td>0.3%</td>
+</tr>
+<tr>
+<td>p3/v1/source1</td>
+<td>25</td>
+<td>24.93</td>
+<td>0.3%</td>
+</tr>
+</tbody>
+</table>
+<p>VIPL-HR’s own <code>ReadMe.pdf</code> actually explains why, in a
+sentence easy to skim past: for source1/source3/source4 it states
+<em>“the videos are only used for compression and the time steps for the
+frames are recorded in the time.txt.”</em> The container’s frame rate is
+a re-encoding artifact, not real acquisition timing — the dataset’s own
+authors are telling readers to recompute it from <code>time.txt</code>
+instead. <code>loadVIPLVideo.m</code> does exactly that whenever a
+<code>time.txt</code> file exists: it computes
+<code>(numTimestamps - 1) / elapsed_seconds</code> from the real
+per-frame timestamps and uses that as <code>frameRate</code>, printing a
+<code>disp()</code> warning whenever it disagrees with the container’s
+own declared value by more than 5%.</p>
+<p><code>source2</code> (the phone camera) has <strong>no
+<code>time.txt</code> at all</strong>, in every instance checked —
+confirmed against the real zip listing, zero exceptions. There is no way
+to independently verify its declared frame rate, so
+<code>loadVIPLVideo.m</code> falls back to
+<code>VideoReader.FrameRate</code> for source2 and says so explicitly in
+a <code>disp()</code> message, so this known limitation is visible at
+runtime, not just in a comment nobody reads.</p>
+<p>::: Why this matters A wrong frame rate does not just shift a
+timestamp — <code>heartrate/ fftHeartRate.m</code> converts an FFT bin’s
+frequency directly to bpm using <code>frameRate</code>. A 19-20%
+frame-rate error, uncaught, would produce an HR estimate roughly 19-20%
+off for every affected video, silently. This was the single biggest,
+most consequential real-format surprise found in this integration.
+:::</p>
+<h3 id="return-values">Return values</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="va">frameRate</span> <span class="op">=</span> <span class="op">...;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">numFrames</span> <span class="op">=</span> <span class="va">frames</span>.<span class="va">NumFrames</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="va">videoPath</span> <span class="op">=</span> <span class="op">...;</span></span></code></pre></div>
+<p><code>videoPath</code> is returned in addition to the three values
+<code>loadUBFCVideo.m</code> already returns, purely so
+<code>run_vipl_integration_batch.m</code>’s progress logging can print
+exactly which file was opened without reconstructing the path a second
+time — a convenience addition, not a format-driven one.</p>
+<hr />
+<h2 id="part-2-loadviplgroundtruth.m">Part 2 —
+<code>loadVIPLGroundTruth.m</code></h2>
+<h3
+id="why-the-ground-truth-needed-its-own-design-decision-separate-from-the-video-loader">Why
+the ground truth needed its own design decision, separate from the video
+loader</h3>
+<p>UBFC DATASET_1’s <code>gtdump.xmp</code> is one file with four
+columns (<code>timestamp_ms, HR, SpO2, PPG</code>), all sharing one row
+per oximeter sample — <code>io/loadGroundTruth.m</code> returns
+<code>gt.timestamp</code>, <code>gt.hr</code>, <code>gt.spo2</code>,
+<code>gt.ppg</code> as four parallel, equal-length vectors, and
+downstream code (e.g.
+<code>scripts/run_segment5_dataset1_calibration_batch.m</code>) relies
+on that: it masks <code>gt.timestamp &lt;= videoDurationSec</code> and
+applies that same mask, by position, to <code>gt.spo2</code>.</p>
+<p>VIPL-HR ships ground truth as <strong>three separate files</strong>,
+each at its own native rate, confirmed directly from real file
+content:</p>
+<ul>
+<li><code>gt_HR.csv</code> — one HR value per <strong>elapsed
+second</strong>, header <code>HR</code>, no timestamp column.</li>
+<li><code>gt_SpO2.csv</code> — one SpO2 value per elapsed second, header
+<code>SpO2</code>, same row count as <code>gt_HR.csv</code> in every
+file checked.</li>
+<li><code>wave.csv</code> — the BVP waveform, header <code>Wave</code>,
+one sample roughly every 16-17 ms (~60 Hz) — a completely different
+length and rate from the other two (e.g. p1/v1/source1: 36 HR/SpO2 rows
+vs. 2084 wave rows).</li>
+</ul>
+<p>There is no single shared per-row timestamp covering all three the
+way <code>gtdump.xmp</code>’s one timestamp column covers all four of
+its columns. This is the format surprise that forced a real decision,
+not a mechanical translation of <code>loadGroundTruth.m</code>’s
+existing shape.</p>
+<h3
+id="the-decision-keep-gt.timestampgt.hrgt.spo2-parallel-let-gt.ppg-be-its-own-length">The
+decision: keep
+<code>gt.timestamp</code>/<code>gt.hr</code>/<code>gt.spo2</code>
+parallel; let <code>gt.ppg</code> be its own length</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="va">hrValues</span> <span class="op">=</span> <span class="va">hrTable</span>.<span class="va">HR</span><span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="va">spo2Values</span> <span class="op">=</span> <span class="va">spo2Table</span>.<span class="va">SpO2</span><span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="va">ppgValues</span> <span class="op">=</span> <span class="va">waveTable</span>.<span class="va">Wave</span><span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="va">numCommonSamples</span> <span class="op">=</span> <span class="va">min</span>(<span class="va">numHRSamples</span><span class="op">,</span> <span class="va">numSpO2Samples</span>)<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> <span class="va">samplePos</span> <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="va">numCommonSamples</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="va">hr</span>(<span class="va">samplePos</span>) <span class="op">=</span> <span class="va">hrValues</span>(<span class="va">samplePos</span>)<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="va">spo2</span>(<span class="va">samplePos</span>) <span class="op">=</span> <span class="va">spo2Values</span>(<span class="va">samplePos</span>)<span class="op">;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">timestamp</span>(<span class="va">samplePos</span>) <span class="op">=</span> <span class="va">samplePos</span> <span class="op">-</span> <span class="fl">1</span><span class="op">;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="va">gt</span>.<span class="va">timestamp</span> <span class="op">=</span> <span class="va">timestamp</span><span class="op">;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="va">gt</span>.<span class="va">hr</span> <span class="op">=</span> <span class="va">hr</span><span class="op">;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="va">gt</span>.<span class="va">spo2</span> <span class="op">=</span> <span class="va">spo2</span><span class="op">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="va">gt</span>.<span class="va">ppg</span> <span class="op">=</span> <span class="va">ppgValues</span><span class="op">;</span></span></code></pre></div>
+<p><code>gt.timestamp</code> is <strong>reconstructed</strong>, not read
+from a file — there is no timestamp column in
+<code>gt_HR.csv</code>/<code>gt_SpO2.csv</code> to read. It is built as
+elapsed whole seconds (<code>0, 1, 2, ...</code>) because the VIPL-HR
+<code>ReadMe.pdf</code> states both files are “recorded every second,”
+implying a shared, implicit t=0 start with one sample per second
+thereafter. This was chosen specifically so
+<code>gt.timestamp &lt;= videoDurationSec</code> masking — the exact
+pattern <code>run_segment5_dataset1_calibration_batch.m</code> already
+uses for UBFC — keeps working unmodified if a future VIPL-specific
+validation script needs it: index-position alignment between
+<code>gt.timestamp</code>, <code>gt.hr</code>, and <code>gt.spo2</code>
+is preserved, just like UBFC’s shape, only at a coarser (1 Hz instead of
+~62 Hz) native resolution.</p>
+<p><code>gt.ppg</code> is deliberately <strong>not</strong> forced into
+that same length. Padding or resampling <code>wave.csv</code>’s ~60 Hz,
+~2084-sample BVP waveform down to <code>gt.hr</code>’s 36 samples would
+either throw away almost all of the real waveform detail or fabricate
+samples that were never actually measured — neither is honest, and
+neither was necessary: none of this project’s existing Segment 4/5 batch
+scripts index <code>gt.ppg</code> elementwise against
+<code>gt.timestamp</code> today. <code>gt.ppg</code> is returned as-is,
+at its own native rate, with this asymmetry documented explicitly in the
+function’s own header comment so a future caller does not assume all
+four fields are parallel the way they are for UBFC DATASET_1.</p>
+<p>::: A smaller, easy-to-miss format detail
+<code>gt_HR.csv</code>/<code>gt_SpO2.csv</code>/<code>wave.csv</code>
+are only guaranteed to share one recording session
+<strong>within</strong> a given
+<code>(subject, scenario, source1-or-3-or-4)</code> group — confirmed
+for p1/v1: source1, source3, and source4’s ground truth files all have
+identical row counts (36/36/2084) because those three physical devices
+record simultaneously. <code>source2</code> (the phone) is a
+<strong>separate take</strong> with its own independent,
+different-length ground truth (45/45/2621 for the same p1/v1) — it is
+not the same physiological recording repackaged.
+<code>loadVIPLGroundTruth.m</code> does not need to handle this
+specially (it always reads exactly the one folder matching the
+<code>(subjectNum, scenarioNum, sourceNum)</code> it was given), but a
+caller must not assume a source2 video and a source1 video from the
+“same” scenario share a timeline — they don’t. :::</p>
+<h3 id="row-count-mismatch-defense">Row-count mismatch defense</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="va">numHRSamples</span> <span class="op">~=</span> <span class="va">numSpO2Samples</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">disp</span>([<span class="ss">&#39;loadVIPLGroundTruth: WARNING -- gt_HR.csv has &#39;</span> <span class="op">...</span> <span class="ss">&#39;truncating both to the shorter length.&#39;</span>])<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="va">numCommonSamples</span> <span class="op">=</span> <span class="va">min</span>(<span class="va">numHRSamples</span><span class="op">,</span> <span class="va">numSpO2Samples</span>)<span class="op">;</span></span></code></pre></div>
+<p>Every file pair checked in this integration had matching row counts,
+but nothing in VIPL-HR’s format guarantees that for the full 107-subject
+pool this integration has not yet processed. Truncating to the shorter
+length and printing a loud <code>disp()</code> warning (rather than
+erroring outright, or silently zero-padding) keeps the batch script’s
+fail-and-continue pattern working for a subject with this kind of minor
+real-world data glitch, without hiding that the glitch happened.</p>
+<hr />
+<h2
+id="part-3-why-the-shared-result-csvs-got-their-own-vipl-suffixed-files">Part
+3 — Why the shared result CSVs got their own VIPL-suffixed files</h2>
+<p><code>results/metrics/segment4_hr_summary.csv</code> and
+<code>segment5_dataset1_calibration.csv</code> already exist on disk
+with real UBFC rows, written by teammates’
+<code>run_segment4_heartrate_batch.m</code> and
+<code>run_segment5_dataset1_calibration_batch.m</code> under a fixed
+column header that has no <code>dataset</code> column. Those two scripts
+own those files’ headers — they are explicitly out of scope for this
+integration to touch. Rewriting a live, already-populated shared file’s
+schema out from under a 4-person team, just so this integration’s own
+rows can carry one extra column, was judged a worse outcome than the
+alternative: <code>run_vipl_integration_batch.m</code> writes to its own
+<code>segment4_hr_summary_vipl.csv</code> and
+<code>segment5_vipl_calibration.csv</code>, using the exact same column
+order as their UBFC counterparts plus one explicit trailing
+<code>dataset</code> column (always <code>VIPL</code>). Segment 6 can
+pool both datasets either by reading the explicit <code>dataset</code>
+column on the VIPL files, or by concatenating both HR files directly and
+inferring dataset from the <code>VIPL_</code> subjectID prefix on rows
+that lack the column — both paths work, and neither required touching a
+file this integration does not own.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's VIPL Integration (VIPL-HR dataset I/O integration) docs — BUET EEE 312.
+  Source markdown lives in <code>vipl_integration/</code>; the actual code lives under <code>matlab/src/io/</code>.
+</footer>
+</body>
+</html>

@@ -308,9 +308,11 @@
       padding: 0.15rem 0.1rem;
     }
     nav.site-nav a:hover { text-decoration: underline; }
-    nav.site-nav span.active {
+    nav.site-nav a.active {
       color: var(--fg);
       font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
     }
     nav.site-nav span.sep { color: var(--border); }
     h1, h2, h3 { line-height: 1.3; font-weight: 700; }
@@ -432,10 +434,11 @@
       color: var(--muted);
     }
   </style>
+
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 3 &middot; Spandan</span>
+<span class="brand">Segment 3 &middot; <a href="../index.html">Spandan</a></span>
 <a href="index.html">Home</a>
 <span class="sep">&middot;</span>
 <a href="Segment3_Filtering_Guideline.html">Guideline</a>
@@ -445,8 +448,6 @@
 <a href="Segment3_Team_README.html">Team README</a>
 <span class="sep">&middot;</span>
 <a href="Segment3_Filtering_Guideline.pdf">PDF</a>
-<span class="sep">&middot;</span>
-<a href="../segment2_face_roi/index.html">&larr; Segment 2</a>
 <span class="sep">&middot;</span>
 <a href="../segment4_heartrate/index.html">Segment 4 &rarr;</a>
 </nav>
@@ -461,10 +462,33 @@ Explanation</a>
 <ul>
 <li><a href="#part-1-detrendsignal.m"
 id="toc-part-1-detrendsignal.m">Part 1 —
-<code>detrendSignal.m</code></a></li>
+<code>detrendSignal.m</code></a>
+<ul>
+<li><a href="#what-the-function-is-for"
+id="toc-what-the-function-is-for">What the function is for</a></li>
+<li><a href="#the-function-signature"
+id="toc-the-function-signature">The function signature</a></li>
+<li><a href="#the-two-lines-that-do-the-actual-work"
+id="toc-the-two-lines-that-do-the-actual-work">The two lines that do the
+actual work</a></li>
+</ul></li>
 <li><a href="#part-2-bandpassclean.m"
 id="toc-part-2-bandpassclean.m">Part 2 —
-<code>bandpassClean.m</code></a></li>
+<code>bandpassClean.m</code></a>
+<ul>
+<li><a href="#what-the-function-is-for-1"
+id="toc-what-the-function-is-for-1">What the function is for</a></li>
+<li><a href="#the-function-signature-1"
+id="toc-the-function-signature-1">The function signature</a></li>
+<li><a href="#computing-the-cutoffs-from-the-actual-frame-rate"
+id="toc-computing-the-cutoffs-from-the-actual-frame-rate">Computing the
+cutoffs from the <em>actual</em> frame rate</a></li>
+<li><a href="#why-order-2-not-higher"
+id="toc-why-order-2-not-higher">Why order 2 (not higher)</a></li>
+<li><a href="#filtfilt-not-filter-and-why-it-specifically-matters-here"
+id="toc-filtfilt-not-filter-and-why-it-specifically-matters-here"><code>filtfilt</code>,
+not <code>filter</code> — and why it specifically matters here</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>

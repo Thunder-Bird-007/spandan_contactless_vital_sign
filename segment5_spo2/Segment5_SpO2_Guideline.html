@@ -245,9 +245,11 @@
       padding: 0.15rem 0.1rem;
     }
     nav.site-nav a:hover { text-decoration: underline; }
-    nav.site-nav span.active {
+    nav.site-nav a.active {
       color: var(--fg);
       font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
     }
     nav.site-nav span.sep { color: var(--border); }
     h1, h2, h3 { line-height: 1.3; font-weight: 700; }
@@ -369,10 +371,11 @@
       color: var(--muted);
     }
   </style>
+
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 5 &middot; Spandan</span>
+<span class="brand">Segment 5 &middot; <a href="../index.html">Spandan</a></span>
 <a href="index.html">Home</a>
 <span class="sep">&middot;</span>
 <span class="active">Guideline</span>
@@ -383,7 +386,7 @@
 <span class="sep">&middot;</span>
 <a href="Segment5_SpO2_Guideline.pdf">PDF</a>
 <span class="sep">&middot;</span>
-<a href="../segment4_heartrate/index.html">&larr; Segment 4</a>
+<a href="../segment6_validation/index.html">Segment 6 &rarr;</a>
 </nav>
 <header id="title-block-header">
 <h1 class="title">Segment 5 — SpO2 Ratio-of-Ratios &amp; Empirical

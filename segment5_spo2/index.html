@@ -201,7 +201,7 @@
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 5 &middot; Spandan</span>
+<span class="brand">Segment 5 &middot; <a href="../index.html">Spandan</a></span>
 <span class="active">Home</span>
 <span class="sep">&middot;</span>
 <a href="Segment5_SpO2_Guideline.html">Guideline</a>
@@ -213,6 +213,8 @@
 <a href="Segment5_SpO2_Guideline.pdf">PDF</a>
 <span class="sep">&middot;</span>
 <a href="../segment4_heartrate/index.html">&larr; Segment 4</a>
+<span class="sep">&middot;</span>
+<a href="../segment6_validation/index.html">Segment 6 &rarr;</a>
 </nav>
 
 <h1>Segment 5: SpO2 Ratio-of-Ratios &amp; Empirical Calibration</h1>
@@ -327,6 +329,14 @@ for and why the per-subject panel exists.
     into a pulse signal via CHROM/POS and estimating heart rate via FFT
     &mdash; this segment's filtered traces feed Segment 5's AC computation
     directly.</p>
+  </a>
+  <a class="card" href="../segment6_validation/index.html">
+    <div class="card-icon">➡️</div>
+    <h3>Segment 6 — Formal Validation</h3>
+    <p>The next stage: pooling this segment's per-subject SpO2 numbers
+    (and Segment 4's HR numbers) across every available subject, and
+    running LOSO cross-validation, MAE/RMSE/Pearson r, and Bland-Altman
+    analysis on the whole pool honestly.</p>
   </a>
 </div>
 

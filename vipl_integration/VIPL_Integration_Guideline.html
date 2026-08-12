@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Team Spandan" />
+  <title>VIPL Integration — Guideline</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      font-size: 11pt;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav a.active {
+      color: var(--fg);
+      font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">VIPL Integration &middot; <a href="../index.html">Spandan</a></span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<span class="active">Guideline</span>
+<span class="sep">&middot;</span>
+<a href="VIPL_Integration_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<a href="VIPL_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="VIPL_Integration_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../index.html">Back to Project Home</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">VIPL Integration — Guideline</h1>
+<p class="subtitle">Spandan: Contactless Vital Sign Monitoring — EEE 312
+DSP Project, BUET</p>
+<p class="author">Team Spandan</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#what-this-note-is-and-isnt"
+id="toc-what-this-note-is-and-isnt">What This Note Is (and
+Isn’t)</a></li>
+<li><a href="#why-vipl-hr-and-what-it-adds"
+id="toc-why-vipl-hr-and-what-it-adds">Why VIPL-HR, and What It
+Adds</a></li>
+<li><a href="#no-algorithm-code-changed-why-that-was-possible"
+id="toc-no-algorithm-code-changed-why-that-was-possible">No Algorithm
+Code Changed — Why That Was Possible</a></li>
+<li><a
+href="#the-one-real-surprise-vipl-hrs-video-frame-rate-cannot-be-trusted-naively"
+id="toc-the-one-real-surprise-vipl-hrs-video-frame-rate-cannot-be-trusted-naively">The
+One Real Surprise: VIPL-HR’s Video Frame Rate Cannot Be Trusted
+Naively</a></li>
+<li><a
+href="#the-vipl_-subject-id-convention-and-why-it-matters-for-segment-6"
+id="toc-the-vipl_-subject-id-convention-and-why-it-matters-for-segment-6">The
+VIPL_ Subject ID Convention, and Why It Matters for Segment 6</a></li>
+<li><a
+href="#small-scale-validation-result-3-subjects-before-any-larger-batch-run"
+id="toc-small-scale-validation-result-3-subjects-before-any-larger-batch-run">Small-Scale
+Validation Result (3 Subjects, Before Any Larger Batch Run)</a></li>
+<li><a href="#whats-next-segment-6" id="toc-whats-next-segment-6">What’s
+Next: Segment 6</a></li>
+</ul>
+</nav>
+<h1 id="what-this-note-is-and-isnt">What This Note Is (and Isn’t)</h1>
+<p>This is an <strong>I/O integration note</strong>, not new DSP theory
+— Segments 2-5 (face/ROI extraction, filtering, CHROM/POS/FFT heart
+rate, SpO2 ratio-of-ratios + calibration) are untouched. Everything here
+is about getting a second dataset, VIPL-HR, feeding into that same,
+already-tested pipeline through two new loader functions. If you already
+understand Segments 2-5, this document adds nothing new about the DSP
+itself.</p>
+<h1 id="why-vipl-hr-and-what-it-adds">Why VIPL-HR, and What It Adds</h1>
+<p>DATASET_1 (UBFC) gave this project SpO2 ground truth for only
+<strong>5 subjects</strong>, spanning a narrow 96-99% true range — thin
+enough that the Segment 5 Guideline PDF calls it a “calibration
+attempt,” not a validated calibration. VIPL-HR ships <strong>107
+subjects</strong>, each with real HR and SpO2 ground truth recorded per
+second by a CONTEC CMS60C pulse oximeter (the same sensor family already
+used for DATASET_1), across up to 9 recording scenarios per subject
+(stable, motion, talking, dark, bright, long-distance, post-exercise,
+and two phone-camera scenarios). Even a modest first slice of VIPL-HR
+gives Segment 6’s leave-one-subject-out validation dramatically more
+subjects and more physiological variety to work with than DATASET_1
+alone ever could.</p>
+<h1 id="no-algorithm-code-changed-why-that-was-possible">No Algorithm
+Code Changed — Why That Was Possible</h1>
+<p><code>extractROISignals.m</code>, <code>bandpassClean.m</code>,
+<code>chromCombine.m</code>, <code>posCombine.m</code>,
+<code>fftHeartRate.m</code>, <code>ratioOfRatios.m</code>, and
+<code>calibrateSpO2.m</code> all already take plain numeric signals and
+a sampling rate — nothing UBFC-specific is baked into any of them. The
+only place a new dataset’s real format has to be reconciled is at the
+<strong>input boundary</strong>: turning VIPL-HR’s actual files into the
+same <code>(R, G, B, fs)</code> / ground-truth shapes those functions
+already expect. That is exactly what <code>io/loadVIPLVideo.m</code> and
+<code>io/loadVIPLGroundTruth.m</code> do, and it is the only place this
+integration needed to write new code.</p>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Assuming a new dataset “not
+fitting” the existing functions means the functions need new
+dataset-aware branches. The correct fix is almost always on the loader
+side: reshape the new data to match what the existing, tested functions
+already expect. Adding a <code>if strcmp(dataset, 'VIPL')</code> branch
+inside <code>chromCombine.m</code> would make that function harder to
+test and reason about for <em>every</em> future dataset, not just this
+one.</p>
+</div>
+<h1
+id="the-one-real-surprise-vipl-hrs-video-frame-rate-cannot-be-trusted-naively">The
+One Real Surprise: VIPL-HR’s Video Frame Rate Cannot Be Trusted
+Naively</h1>
+<p>This project’s standing rule, learned from UBFC, is “always read fps
+from <code>VideoReader.FrameRate</code>, never hardcode it.” Applied to
+real VIPL-HR files, that rule turned out to be <strong>necessary but not
+sufficient</strong>.</p>
+<p>Every VIPL-HR video tested reported
+<code>VideoReader.FrameRate = 25</code>, regardless of which of the four
+recording devices made it — including the RealSense color/NIR cameras,
+whose own dataset documentation claims “~30 fps.” Cross- checking
+against each video’s own frame-acquisition-timestamp file
+(<code>time.txt</code>, shipped alongside 3 of the 4 sources) showed the
+declared 25 fps was measurably wrong for some recordings — by as much as
+<strong>19-20%</strong> — while matching almost exactly for others.
+VIPL-HR’s own documentation explains why: these videos are re-encoded
+for storage, and the container’s declared playback rate is a compression
+artifact, not real capture timing; real timing lives in
+<code>time.txt</code>.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Think of <code>time.txt</code> as
+the camera’s own logbook of exactly when each frame was actually taken,
+and the video container’s declared frame rate as just the number a video
+player uses to decide how fast to play the file back smoothly. Those two
+numbers usually agree, but nothing forces them to — a video can be
+re-packaged to play back at a tidy round number (25 fps) while the
+frames inside it were genuinely captured irregularly or at a different
+real rate. <code>heartrate/fftHeartRate.m</code> needs the <em>real</em>
+capture rate to convert a frequency correctly to bpm; the playback rate
+is the wrong number to feed it whenever the two disagree.</p>
+</div>
+<p><code>loadVIPLVideo.m</code> handles this by recomputing frame rate
+from <code>time.txt</code> whenever one exists, falling back to
+<code>VideoReader.FrameRate</code> only for the one source (the phone
+camera) that ships no <code>time.txt</code> at all — a real, documented
+accuracy limitation for that source specifically, not an oversight. See
+<code>docs/VIPL_DATA_FORMAT.md</code> Section 4 for the full measured
+numbers, and <code>VIPL_Integration_LineByLine_Explanation.md</code>
+Part 1 for the code itself.</p>
+<h1
+id="the-vipl_-subject-id-convention-and-why-it-matters-for-segment-6">The
+VIPL_ Subject ID Convention, and Why It Matters for Segment 6</h1>
+<p>VIPL-HR has no single “the video” per subject the way UBFC does —
+every <code>(subject, scenario, source)</code> triple is its own
+independent recording with its own ground truth. This integration’s
+subject IDs are built as
+<code>VIPL_p&lt;N&gt;_v&lt;scenario&gt;_source&lt;S&gt;</code>
+(e.g. <code>VIPL_p1_v1_source1</code>), saved into the same
+<code>data/processed/</code> folder UBFC subjects already use.</p>
+<p>This matters for two reasons. First, <strong>collision
+avoidance</strong>: UBFC subject IDs look like <code>5-gt</code>,
+<code>subject5</code>, <code>after-exercise</code> — none of those could
+ever collide with a <code>VIPL_</code>-prefixed ID, so both datasets’
+processed <code>.mat</code> files can sit in the same shared folder with
+zero risk of one silently overwriting the other. Second, <strong>dataset
+provenance stays visible downstream</strong>: Segment 6 can tell which
+dataset any given row came from just by looking at the subject ID
+string, without needing a side lookup table — and the HR/SpO2 summary
+CSVs this integration writes (<code>segment4_hr_summary_vipl.csv</code>,
+<code>segment5_vipl_calibration.csv</code>) carry an explicit
+<code>dataset</code> column on top of that, for the same reason.</p>
+<h1
+id="small-scale-validation-result-3-subjects-before-any-larger-batch-run">Small-Scale
+Validation Result (3 Subjects, Before Any Larger Batch Run)</h1>
+<p>Per this project’s standing discipline, the new loaders were
+validated end-to-end on 3 real VIPL-HR subjects (<code>p1</code>,
+<code>p2</code>, <code>p3</code>, all scenario <code>v1</code> “stable”,
+source1 webcam) before any larger batch was attempted — including
+manually confirming <code>vision.CascadeObjectDetector()</code> still
+finds a face on VIPL-HR’s frames, which arrive <strong>already cropped
+tight to the face</strong> by the dataset’s own authors (a structurally
+different starting point from UBFC’s full-scene video). The detector
+worked without modification on all 3 subjects (one subject had 4 out of
+754 frames briefly fall back to a reused bounding box — the same
+graceful-degradation path <code>extractROISignals.m</code> already has
+for UBFC, not a new failure mode).</p>
+<p>All 3 rows are scenario <code>v1</code> (stable), source1 (webcam) —
+full subject IDs are <code>VIPL_p1_v1_source1</code>,
+<code>VIPL_p2_v1_source1</code>, <code>VIPL_p3_v1_source1</code>.</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>Subject</th>
+<th>HR (CHROM)</th>
+<th>HR ground truth</th>
+<th>SpO2 (predicted, LOO)</th>
+<th>SpO2 true</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>p1</td>
+<td>62.1 bpm</td>
+<td>63.1 bpm</td>
+<td>98.1%</td>
+<td>96.2%</td>
+</tr>
+<tr>
+<td>p2</td>
+<td>76.1 bpm</td>
+<td>82.0 bpm</td>
+<td>102.1%</td>
+<td>96.0%</td>
+</tr>
+<tr>
+<td>p3</td>
+<td>69.4 bpm</td>
+<td>74.5 bpm</td>
+<td>96.1%</td>
+<td>97.6%</td>
+</tr>
+</tbody>
+</table>
+<p>CHROM/POS heart rate estimates landed within about 1-6 bpm of ground
+truth across all 3 subjects, and consistently beat green-channel-only
+estimation — the same pattern already established on UBFC in Segment 4.
+The 3-subject leave-one-out SpO2 calibration produced a 3.1
+percentage-point mean absolute error, in the same rough ballpark as
+DATASET_1’s own 5-subject result (1.97 points) — and comes with exactly
+the same “thin data” caveat the Segment 5 Guideline PDF already
+documents for DATASET_1: 3 subjects proves the <em>code path</em> works
+end-to-end on real VIPL-HR data, it does not constitute a validated
+calibration. That is Segment 6’s job, across the full available subject
+pool.</p>
+<h1 id="whats-next-segment-6">What’s Next: Segment 6</h1>
+<p>This integration’s whole purpose was to unblock Segment 6 — the
+project’s final, formal leave-one-subject-out validation
+(<code>validation/runLOSO.m</code>/<code>computeMetrics.m</code>/<code>blandAltman.m</code>,
+still untouched stubs) — with a genuinely larger, more varied pool than
+DATASET_1’s 5 subjects could ever provide on its own. See
+<code>vipl_integration/VIPL_Team_README.md</code> for how to extract
+your own share of VIPL-HR’s 107 subjects and run
+<code>scripts/run_vipl_integration_batch.m</code> against them.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's VIPL Integration (VIPL-HR dataset I/O integration) docs — BUET EEE 312.
+  Source markdown lives in <code>vipl_integration/</code>; the actual code lives under <code>matlab/src/io/</code>.
+</footer>
+</body>
+</html>

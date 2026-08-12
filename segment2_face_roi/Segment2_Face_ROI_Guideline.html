@@ -371,10 +371,11 @@
       color: var(--muted);
     }
   </style>
+
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 2 &middot; Spandan</span>
+<span class="brand">Segment 2 &middot; <a href="../index.html">Spandan</a></span>
 <a href="index.html">Home</a>
 <span class="sep">&middot;</span>
 <span class="active">Guideline</span>
@@ -406,10 +407,10 @@ Face Detection, High-Level Intuition</a></li>
 <li><a href="#detecting-every-nth-frame-not-every-frame"
 id="toc-detecting-every-nth-frame-not-every-frame">Detecting Every Nth
 Frame, Not Every Frame</a></li>
-<li><a href="#why-fs-must-be-read-from-the-file-never-assumed"
-id="toc-why-fs-must-be-read-from-the-file-never-assumed">Why
-<em>f</em><sub>s</sub> Must Be Read From the File, Never
-Assumed</a></li>
+<li><a href="#why-f_s-must-be-read-from-the-file-never-assumed"
+id="toc-why-f_s-must-be-read-from-the-file-never-assumed">Why <span
+class="math inline"><em>f</em><sub><em>s</em></sub></span> Must Be Read
+From the File, Never Assumed</a></li>
 <li><a href="#spatial-averaging-and-the-choir-effect"
 id="toc-spatial-averaging-and-the-choir-effect">Spatial Averaging and
 the Choir Effect</a></li>
@@ -424,11 +425,14 @@ Into the Next One</a></li>
 <h1 id="why-this-segment-exists">Why This Segment Exists</h1>
 <p>Every later stage of this project — filtering, CHROM/POS combination,
 FFT-based heart rate, and SpO2 estimation — assumes it already has three
-clean 1-D signals: <em>R</em>(<em>t</em>), <em>G</em>(<em>t</em>),
-<em>B</em>(<em>t</em>). Those signals have to come from somewhere. This
-segment is that “somewhere”: it takes a raw facial video and turns it
-into those three traces, plus the true sampling rate
-<em>f</em><sub>s</sub>.</p>
+clean 1-D signals: <span
+class="math inline"><em>R</em>(<em>t</em>)</span>, <span
+class="math inline"><em>G</em>(<em>t</em>)</span>, <span
+class="math inline"><em>B</em>(<em>t</em>)</span>. Those signals have to
+come from somewhere. This segment is that “somewhere”: it takes a raw
+facial video and turns it into those three traces, plus the true
+sampling rate <span
+class="math inline"><em>f</em><sub><em>s</em></sub></span>.</p>
 <p>Nothing in this segment does any <em>signal processing</em> in the
 DSP sense yet — no filtering, no frequency analysis. It is purely
 computer vision (finding the face) and spatial averaging (turning a
@@ -565,8 +569,9 @@ up. For a different dataset with faster head motion or a lower frame
 rate, this interval would need to be revisited — it is a tuned choice
 for <em>this</em> dataset’s recording conditions, not a universal
 constant.</p>
-<h1 id="why-fs-must-be-read-from-the-file-never-assumed">Why
-<em>f</em><sub>s</sub> Must Be Read From the File, Never Assumed</h1>
+<h1 id="why-f_s-must-be-read-from-the-file-never-assumed">Why <span
+class="math inline"><em>f</em><sub><em>s</em></sub></span> Must Be Read
+From the File, Never Assumed</h1>
 <p>It’s tempting to assume every video in a dataset runs at a clean 30
 frames per second and hardcode that number. For UBFC-rPPG, this
 assumption is simply false: direct inspection of the AVI file headers in
@@ -598,11 +603,12 @@ frequency-domain calculation downstream of the wrong assumption.)</p>
 <h1 id="spatial-averaging-and-the-choir-effect">Spatial Averaging and
 the Choir Effect</h1>
 <p>Once the right patch of forehead skin is identified, the raw pixel
-data inside it is a small block of numbers — width × height × 3 color
-channels, for every single frame. The next step collapses each channel
-of that block down to just <em>one number per frame</em>: the mean pixel
-value across every pixel in the patch, done separately for red, green,
-and blue.</p>
+data inside it is a small block of numbers — width <span
+class="math inline">×</span> height <span class="math inline">×</span> 3
+color channels, for every single frame. The next step collapses each
+channel of that block down to just <em>one number per frame</em>: the
+mean pixel value across every pixel in the patch, done separately for
+red, green, and blue.</p>
 <div class="intuition">
 <p><strong>Intuition first — the choir effect.</strong> A single pixel’s
 brightness change from blood flow is minuscule — far smaller than
@@ -633,8 +639,10 @@ one.</p>
 Segment</h1>
 <p><strong>Lighting changes.</strong> If ambient lighting shifts during
 a recording (a cloud passing outside a window, a flickering fluorescent
-light), that shift shows up in <em>R</em>(<em>t</em>),
-<em>G</em>(<em>t</em>), <em>B</em>(<em>t</em>) as a slow drift or a
+light), that shift shows up in <span
+class="math inline"><em>R</em>(<em>t</em>)</span>, <span
+class="math inline"><em>G</em>(<em>t</em>)</span>, <span
+class="math inline"><em>B</em>(<em>t</em>)</span> as a slow drift or a
 sudden jump that has nothing to do with the heartbeat. This segment does
 not correct for it — that’s explicitly the job of the
 detrending/filtering stage that comes next. What this segment
@@ -661,16 +669,17 @@ precisely so this isn’t invisible to whoever reviews the output
 later.</p>
 <div class="pitfall">
 <p><strong>Common beginner mistake.</strong> Treating a
-<code>.mat</code> file of <em>R</em>, <em>G</em>, <em>B</em> traces as
-trustworthy just because the code ran without throwing an error. A face
-detector can lock onto the wrong region (background texture that happens
-to pass the cascade, for instance) and still return a bounding box every
-time — no crash, no error message, just a wrong answer to every average
-built from then on. This is exactly why this segment mandates a
-sanity-check PNG for every subject: a human glancing at the image with
-both boxes drawn on it can catch a mis-detected or mis-cropped ROI in
-about two seconds, something no amount of clean code execution can
-guarantee on its own.</p>
+<code>.mat</code> file of <span class="math inline"><em>R</em></span>,
+<span class="math inline"><em>G</em></span>, <span
+class="math inline"><em>B</em></span> traces as trustworthy just because
+the code ran without throwing an error. A face detector can lock onto
+the wrong region (background texture that happens to pass the cascade,
+for instance) and still return a bounding box every time — no crash, no
+error message, just a wrong answer to every average built from then on.
+This is exactly why this segment mandates a sanity-check PNG for every
+subject: a human glancing at the image with both boxes drawn on it can
+catch a mis-detected or mis-cropped ROI in about two seconds, something
+no amount of clean code execution can guarantee on its own.</p>
 </div>
 <h1 id="how-this-segment-feeds-into-the-next-one">How This Segment Feeds
 Into the Next One</h1>

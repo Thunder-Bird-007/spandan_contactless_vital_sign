@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Team Spandan" />
+  <title>Segment 6 — Validation Guideline</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      font-size: 11pt;
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      white-space: pre-wrap;
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: 1.5em;}
+    div.column{flex: auto;}
+    @media screen {
+    div.columns{gap: min(4vw, 1.5em);}
+    div.column{overflow-x: auto;}
+    }
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1c1e21;
+      --muted: #5b6270;
+      --border: #e3e6ea;
+      --code-bg: #f4f5f7;
+      --link: #1a5fb4;
+      --card-bg: #f8f9fb;
+      --intuition-bg: #eef4fd;
+      --intuition-border: #1a5fb4;
+      --pitfall-bg: #fdf2e9;
+      --pitfall-border: #b5540a;
+      --pausecheck-bg: #edf9ee;
+      --pausecheck-border: #1f7a2e;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #14161a;
+        --fg: #e7e9ec;
+        --muted: #9aa2ad;
+        --border: #2c2f34;
+        --code-bg: #1d2024;
+        --link: #6fa8f5;
+        --card-bg: #1a1d22;
+        --intuition-bg: #17233a;
+        --intuition-border: #5b8fd9;
+        --pitfall-bg: #33230f;
+        --pitfall-border: #d98a3d;
+        --pausecheck-bg: #16281a;
+        --pausecheck-border: #4caf5c;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.65;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2.2rem 1.5rem 5rem;
+      font-size: 17px;
+    }
+    nav.site-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      align-items: center;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    nav.site-nav .brand {
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      margin-right: 0.4rem;
+    }
+    nav.site-nav a {
+      color: var(--link);
+      text-decoration: none;
+      padding: 0.15rem 0.1rem;
+    }
+    nav.site-nav a:hover { text-decoration: underline; }
+    nav.site-nav a.active {
+      color: var(--fg);
+      font-weight: 700;
+      text-decoration: none;
+      pointer-events: none;
+    }
+    nav.site-nav span.sep { color: var(--border); }
+    h1, h2, h3 { line-height: 1.3; font-weight: 700; }
+    h1 {
+      font-size: 1.9rem;
+      margin-top: 0;
+      border-bottom: 3px solid var(--link);
+      padding-bottom: 0.4rem;
+    }
+    h2 { font-size: 1.4rem; margin-top: 2.6rem; padding-top: 0.2rem; }
+    h3 { font-size: 1.12rem; margin-top: 1.8rem; color: var(--muted); }
+    a { color: var(--link); }
+    p, li { color: var(--fg); }
+    code {
+      background: var(--code-bg);
+      border-radius: 4px;
+      padding: 0.15em 0.4em;
+      font-size: 0.9em;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+    }
+    pre code { background: none; padding: 0; font-size: 0.87em; }
+    blockquote {
+      border-left: 3px solid var(--border);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--muted);
+    }
+    div.intuition, div.pitfall, div.pausecheck {
+      border-left: 5px solid;
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1.5rem 0;
+    }
+    div.intuition { background: var(--intuition-bg); border-color: var(--intuition-border); }
+    div.pitfall { background: var(--pitfall-bg); border-color: var(--pitfall-border); }
+    div.pausecheck { background: var(--pausecheck-bg); border-color: var(--pausecheck-border); }
+    div.intuition p:first-child::before {
+      content: "Intuition First"; display: block; font-weight: 700;
+      color: var(--intuition-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pitfall p:first-child::before {
+      content: "Common Beginner Mistake"; display: block; font-weight: 700;
+      color: var(--pitfall-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    div.pausecheck p:first-child::before {
+      content: "Pause and Check Yourself"; display: block; font-weight: 700;
+      color: var(--pausecheck-border); margin-bottom: 0.5rem;
+      font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    table { border-collapse: collapse; width: 100%; display: block; overflow-x: auto; }
+    th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    #TOC {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin-bottom: 2rem;
+      font-size: 0.92rem;
+    }
+    #TOC ul { margin: 0.3rem 0; }
+    footer.page-footer {
+      margin-top: 3.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+      margin: 1.8rem 0;
+    }
+    .card {
+      display: block;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.3rem;
+      text-decoration: none;
+      color: var(--fg);
+      transition: border-color 0.15s ease;
+    }
+    .card:hover { border-color: var(--link); }
+    .card .card-icon { font-size: 1.6rem; }
+    .card h3 {
+      margin: 0.5rem 0 0.3rem;
+      color: var(--fg);
+      font-size: 1.05rem;
+    }
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.8rem;
+    }
+    .pill {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+  </style>
+
+</head>
+<body>
+<nav class="site-nav">
+<span class="brand">Segment 6 &middot; <a href="../index.html">Spandan</a></span>
+<a href="index.html">Home</a>
+<span class="sep">&middot;</span>
+<span class="active">Guideline</span>
+<span class="sep">&middot;</span>
+<a href="Segment6_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<span class="sep">&middot;</span>
+<a href="Segment6_Team_README.html">Team README</a>
+<span class="sep">&middot;</span>
+<a href="Segment6_Validation_Guideline.pdf">PDF</a>
+<span class="sep">&middot;</span>
+<a href="../vipl_integration/index.html">VIPL Integration &rarr;</a>
+</nav>
+<header id="title-block-header">
+<h1 class="title">Segment 6 — Validation Guideline</h1>
+<p class="subtitle">Spandan: Contactless Vital Sign Monitoring — EEE 312
+DSP Project, BUET</p>
+<p class="author">Team Spandan</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#why-this-segment-exists"
+id="toc-why-this-segment-exists">Why This Segment Exists</a></li>
+<li><a href="#what-bland-altman-actually-shows-versus-a-simple-scatter"
+id="toc-what-bland-altman-actually-shows-versus-a-simple-scatter">What
+Bland-Altman Actually Shows, Versus a Simple Scatter</a></li>
+<li><a
+href="#why-pooling-ubfc-and-vipl-for-spo2-calibration-is-the-right-move"
+id="toc-why-pooling-ubfc-and-vipl-for-spo2-calibration-is-the-right-move">Why
+Pooling UBFC and VIPL for SpO2 Calibration Is the Right Move</a></li>
+<li><a href="#the-calibrated-vs-uncalibrated-distinction"
+id="toc-the-calibrated-vs-uncalibrated-distinction">The
+Calibrated-vs-Uncalibrated Distinction</a></li>
+<li><a href="#how-this-maps-onto-dr.-hasans-live-defense-day-comparison"
+id="toc-how-this-maps-onto-dr.-hasans-live-defense-day-comparison">How
+This Maps Onto Dr. Hasan’s Live Defense-Day Comparison</a></li>
+</ul>
+</nav>
+<h1 id="why-this-segment-exists">Why This Segment Exists</h1>
+<p>Segments 2-5 built the whole measurement chain: face detection,
+signal filtering, heart rate extraction, and an SpO2 calibration
+attempt. Every one of those segments produced a real number for a real
+subject and compared it, informally, against that subject’s own ground
+truth. What none of them did — deliberately, by design — was ask the
+harder, more honest question: <strong>across every subject available,
+taken together, how good is this method really, and how do we
+know?</strong> That is Segment 6’s entire job. It touches no video, no
+filter, no FFT — it consumes the numbers Segments 4-5 already produced
+and puts them through the same statistical machinery a real clinical
+device validation study would use.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Segments 2-5 were like a student
+solving practice problems one at a time and checking each answer against
+the back of the book. Segment 6 is the final exam: pool every problem
+attempted so far, grade all of them together, and report a real,
+defensible score — not “I got this one right,” but “here is my accuracy,
+my error spread, and my correlation with the answer key, computed
+honestly, with no problem’s answer key ever leaking into how that same
+problem was solved.”</p>
+</div>
+<h1 id="what-bland-altman-actually-shows-versus-a-simple-scatter">What
+Bland-Altman Actually Shows, Versus a Simple Scatter</h1>
+<p>A plain scatter plot of predicted vs. true values answers one
+question: <em>do these two move together?</em> Pearson correlation is
+the number version of that same question. Both can be fooled by a
+<strong>constant bias</strong> — two methods that always disagree by the
+same fixed amount will still correlate close to perfectly, because
+“moving together” says nothing about “being equal.”</p>
+<p>A Bland-Altman plot asks a different, more clinically useful
+question: <em>how much do these two methods actually disagree, in
+absolute terms, and does that disagreement change depending on the value
+being measured?</em> It does this with a specific re-plotting trick:</p>
+<ul>
+<li><strong>x-axis: the mean of the two measurements</strong>,
+<code>(predicted + groundTruth) / 2</code> — a stand-in for “the best
+available estimate of the true value,” since a real ground-truth device
+(a pulse oximeter, a contact PPG sensor) is itself not perfectly
+noise-free.</li>
+<li><strong>y-axis: the difference between the two
+measurements</strong>, <code>predicted - groundTruth</code> — the actual
+disagreement, in the original units (bpm or SpO2%), not hidden inside a
+correlation coefficient.</li>
+</ul>
+<p>Three horizontal reference lines complete the picture:</p>
+<ul>
+<li><strong>Bias</strong> (the mean of all the differences) — is there a
+systematic tendency to over- or under-estimate?</li>
+<li><strong>Upper and lower limits of agreement</strong>
+(<code>bias ± 1.96 × SD</code> of the differences) — the range within
+which about 95% of individual disagreements are expected to fall, under
+the standard assumption that the differences are roughly normally
+distributed.</li>
+</ul>
+<div class="pitfall">
+<p><strong>Common beginner mistake.</strong> Looking only at the
+correlation coefficient and concluding “high r means the method is
+accurate.” A method can be consistently 5 bpm too high on every single
+subject and still produce an r very close to 1.0, because r only
+measures whether the two variables rise and fall together — it is blind
+to a constant offset. Segment 6’s own HR results (see the Line-by-Line
+doc) show exactly this: CHROM/POS land an r of 0.995 on the pooled VIPL
+subjects while still carrying a real ~4 bpm average error.
+Bland-Altman’s bias line is what catches that a bare correlation number
+would hide.</p>
+</div>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> If a method’s Bland-Altman
+plot showed a bias line sitting exactly at zero, but very wide limits of
+agreement (say, ±20 percentage points for SpO2), would you call that
+method accurate? What does “zero average bias” actually guarantee, and
+what does it <em>not</em> guarantee, about any single individual
+prediction?</p>
+</div>
+<h1
+id="why-pooling-ubfc-and-vipl-for-spo2-calibration-is-the-right-move">Why
+Pooling UBFC and VIPL for SpO2 Calibration Is the Right Move</h1>
+<p><code>spo2/calibrateSpO2.m</code> fits a straight line,
+<code>SpO2 = A - B*R</code>, from whatever <code>(R, SpO2)</code> pairs
+it is handed. A linear fit’s reliability depends overwhelmingly on how
+many independent data points it has to learn from — 5 points (Segment
+5’s DATASET_1-only attempt) is barely enough to define a line at all,
+and Segment 5’s own results showed exactly this instability: the fitted
+slope’s sign flipped depending on which single subject was held out.</p>
+<p>The natural instinct is to worry that UBFC and VIPL are different
+enough (different cameras, different lighting, different populations)
+that mixing them “contaminates” the calibration. This instinct gets the
+tradeoff backwards for a <strong>linear ratio-of-ratios calibration
+specifically</strong>: what kills this kind of fit is not moderate
+cross-dataset heterogeneity — it is having too few independent subjects
+to average that heterogeneity out over. More independent subjects, even
+somewhat different ones, is exactly what turns an unstable,
+sign-flipping 5-subject line into a more stable 8+ subject line. This is
+not a hand-wave — Segment 6’s own pooled result (1.23 percentage points
+pooled MAE, physiologically-correct-direction Pearson r of -0.755) is
+measurably tighter than Segment 5’s DATASET_1-only result (1.97 points,
+unstable slope sign), and the only thing that changed between the two is
+3 more pooled subjects.</p>
+<div class="intuition">
+<p><strong>Intuition first.</strong> Estimating the average height of a
+population from 5 people, all from one city, gives you a shaky number
+that could easily be thrown off by one unusually tall or short person in
+that small sample. Estimating it from 8 people across two different
+cities gives you a more stable number, even though the two cities aren’t
+identical — because the extra independent data points do more to cancel
+out random sampling noise than the cities’ real differences do to bias
+the average. The same arithmetic applies to fitting a line through noisy
+points: more independent points beats a smaller, purer sample, up to the
+point where the <em>sources</em> themselves are so different they
+represent genuinely different physical relationships (not the case here
+— both datasets are the same red/blue ratio-of-ratios measured on human
+facial skin under ordinary lighting).</p>
+</div>
+<p><strong>This does not mean dataset differences are
+irrelevant.</strong> Segment 6 pools UBFC and VIPL for the <em>fit
+itself</em> (a leave-one-out fold’s training set is genuinely drawn from
+both datasets together) precisely because a linear model with only two
+free parameters (<code>A</code>, <code>B</code>) cannot afford to throw
+away independent training subjects — but Segment 6 also reports
+<strong>per-dataset breakdowns</strong>
+(<code>results/metrics/segment6_spo2_loso_metrics.csv</code>’s
+<code>UBFC</code> and <code>VIPL</code> scope rows) specifically so the
+team can check whether accuracy holds up consistently across both
+datasets or quietly diverges on one of them. Pooling for training and
+still reporting per-source accuracy separately are not in tension — they
+answer two different, both useful, questions.</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> Segment 6’s per-dataset
+SpO2 breakdown shows UBFC’s MAE (1.22 points) and VIPL’s MAE (1.24
+points) landing very close to each other. If instead one dataset’s MAE
+had come out dramatically worse than the other’s (say, 1.2 points for
+UBFC vs. 6 points for VIPL), would that be a reason to <em>stop</em>
+pooling them for the fit, or would it instead point toward a different,
+more specific problem to investigate first? What would you check before
+concluding “these datasets shouldn’t be pooled”?</p>
+</div>
+<h1 id="the-calibrated-vs-uncalibrated-distinction">The
+Calibrated-vs-Uncalibrated Distinction</h1>
+<p>This project’s two vital signs sit on genuinely different footing,
+and Segment 6’s evaluation design reflects that honestly rather than
+papering over it:</p>
+<ul>
+<li><strong>Heart rate is uncalibrated</strong> —
+<code>heartrate/fftHeartRate.m</code> reads a frequency peak directly
+off a spectrum. Nothing about it is fit to any subject’s ground truth,
+ever. There is no parameter to leak, so HR is pooled across every
+available subject and scored directly with
+<code>validation/computeMetrics.m</code> — no held-out folds needed or
+appropriate.</li>
+<li><strong>SpO2 is calibrated</strong> —
+<code>spo2/calibrateSpO2.m</code>’s <code>A</code> and <code>B</code>
+are learned from ground-truth data. Evaluating a calibrated model
+without holding subjects out is a well-known way to produce artificially
+optimistic numbers, because the model can partially “memorize” the very
+subjects it’s being tested against. <code>validation/runLOSO.m</code>
+exists specifically to prevent this: every fold refits fresh on every
+other pooled subject before ever touching the held-out one.</li>
+</ul>
+<p>Reporting both with the <em>same</em> MAE/RMSE/Pearson-r/Bland-Altman
+toolkit, while being explicit that they were produced by two different
+validation procedures for a real, physically-grounded reason, is more
+honest than either (a) applying LOSO to HR unnecessarily (padding out a
+report with folds that don’t change anything, since there is nothing to
+leak), or (b) skipping LOSO for SpO2 to save effort (silently accepting
+leaked, overly optimistic numbers).</p>
+<h1 id="how-this-maps-onto-dr.-hasans-live-defense-day-comparison">How
+This Maps Onto Dr. Hasan’s Live Defense-Day Comparison</h1>
+<p>On defense day, the plan is a live, in-person comparison: Dr. Hasan’s
+own pulse oximeter against this project’s camera-based app, read in real
+time, side by side. It is worth recognizing explicitly what that live
+comparison actually <em>is</em>, statistically: it is a
+Bland-Altman-style comparison with <strong>N = 1</strong>.</p>
+<p>One subject (Dr. Hasan himself, or whoever volunteers), one pair of
+readings (the app’s estimate, the oximeter’s reading) at one moment in
+time, produces exactly one point: one <code>mean</code> value, one
+<code>diff</code> value. That single point can be plotted on the exact
+same axes as every point in
+<code>results/figures/segment6_spo2_bland_altman_pooled.png</code>, and
+it will either fall inside this project’s own measured limits of
+agreement or it won’t.</p>
+<div class="pausecheck">
+<p><strong>Pause and check yourself.</strong> If the live defense-day
+reading falls <em>outside</em> the pooled limits of agreement measured
+in Segment 6 (an unlucky but entirely possible outcome with a system
+trained on only 8 subjects), does that automatically mean the method is
+broken? What would N=1 be capable of proving or disproving on its own,
+versus what the pooled 8-point Bland-Altman study is capable of? (Hint:
+re-read what “95% of individual differences are expected to fall inside
+these two lines” actually implies about the other roughly 5%, and what a
+single sample can and cannot tell you about a distribution.)</p>
+</div>
+<p>This is exactly why Segment 6’s numbers, and this document’s own
+repeated insistence on stating N honestly, matter for the defense
+specifically: a single live comparison is real evidence, but it is
+statistically the thinnest possible amount of it — one draw from the
+same distribution Segment 6’s 8-subject (SpO2) or 3-subject (HR, today)
+pooled study is already trying to characterize. Walking in with the
+pooled Bland-Altman plot and limits of agreement already in hand means a
+single live reading — good or bad — can be explained and contextualized
+on the spot, rather than treated as the entire verdict on the
+project.</p>
+<footer class="page-footer">
+  Part of the <strong>Spandan</strong> project's Segment 6 (formal validation: LOSO, metrics &amp; Bland-Altman) docs — BUET EEE 312.
+  Source markdown lives in <code>segment6_validation/</code>; the actual code lives under <code>matlab/src/validation/</code>.
+</footer>
+</body>
+</html>

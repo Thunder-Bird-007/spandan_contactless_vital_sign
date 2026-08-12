@@ -434,10 +434,11 @@
       color: var(--muted);
     }
   </style>
+
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 2 &middot; Spandan</span>
+<span class="brand">Segment 2 &middot; <a href="../index.html">Spandan</a></span>
 <a href="index.html">Home</a>
 <span class="sep">&middot;</span>
 <a href="Segment2_Face_ROI_Guideline.html">Guideline</a>
@@ -461,10 +462,49 @@ Explanation</a>
 <ul>
 <li><a href="#part-1-loadubfcvideo.m"
 id="toc-part-1-loadubfcvideo.m">Part 1 —
-<code>loadUBFCVideo.m</code></a></li>
+<code>loadUBFCVideo.m</code></a>
+<ul>
+<li><a href="#what-the-function-is-for"
+id="toc-what-the-function-is-for">What the function is for</a></li>
+<li><a href="#the-file-existence-check"
+id="toc-the-file-existence-check">The file-existence check</a></li>
+<li><a href="#opening-the-video" id="toc-opening-the-video">Opening the
+video</a></li>
+</ul></li>
 <li><a href="#part-2-extractroisignals.m"
 id="toc-part-2-extractroisignals.m">Part 2 —
-<code>extractROISignals.m</code></a></li>
+<code>extractROISignals.m</code></a>
+<ul>
+<li><a href="#the-overall-shape-of-the-function"
+id="toc-the-overall-shape-of-the-function">The overall shape of the
+function</a></li>
+<li><a href="#setting-up-before-the-loop"
+id="toc-setting-up-before-the-loop">Setting up before the loop</a></li>
+<li><a href="#preallocating-the-output-arrays"
+id="toc-preallocating-the-output-arrays">Preallocating the output
+arrays</a></li>
+<li><a href="#the-main-per-frame-loop"
+id="toc-the-main-per-frame-loop">The main per-frame loop</a></li>
+<li><a href="#deciding-whether-to-run-the-detector-this-frame"
+id="toc-deciding-whether-to-run-the-detector-this-frame">Deciding
+whether to run the detector this frame</a></li>
+<li><a href="#the-one-time-cold-start-fallback"
+id="toc-the-one-time-cold-start-fallback">The one-time cold-start
+fallback</a></li>
+<li><a href="#turning-a-face-box-into-a-forehead-roi-box"
+id="toc-turning-a-face-box-into-a-forehead-roi-box">Turning a face box
+into a forehead ROI box</a></li>
+<li><a
+href="#averaging-the-roi-into-one-number-per-channel-the-choir-effect"
+id="toc-averaging-the-roi-into-one-number-per-channel-the-choir-effect">Averaging
+the ROI into one number per channel — the “choir effect”</a></li>
+<li><a href="#capturing-one-frame-for-the-sanity-check-figure"
+id="toc-capturing-one-frame-for-the-sanity-check-figure">Capturing one
+frame for the sanity-check figure</a></li>
+<li><a href="#trimming-the-arrays-and-finalizing-the-dropped-frame-list"
+id="toc-trimming-the-arrays-and-finalizing-the-dropped-frame-list">Trimming
+the arrays and finalizing the dropped-frame list</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>

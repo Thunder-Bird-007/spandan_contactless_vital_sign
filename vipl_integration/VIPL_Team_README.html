@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc 3.10" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Segment 3 — Team README</title>
+  <title>VIPL Integration — Team README</title>
   <style>
     /* Default styles provided by pandoc.
     ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -438,138 +438,199 @@
 </head>
 <body>
 <nav class="site-nav">
-<span class="brand">Segment 3 &middot; <a href="../index.html">Spandan</a></span>
+<span class="brand">VIPL Integration &middot; <a href="../index.html">Spandan</a></span>
 <a href="index.html">Home</a>
 <span class="sep">&middot;</span>
-<a href="Segment3_Filtering_Guideline.html">Guideline</a>
+<a href="VIPL_Integration_Guideline.html">Guideline</a>
 <span class="sep">&middot;</span>
-<a href="Segment3_LineByLine_Explanation.html">Line-by-Line Explanation</a>
+<a href="VIPL_Integration_LineByLine_Explanation.html">Line-by-Line Explanation</a>
 <span class="sep">&middot;</span>
 <span class="active">Team README</span>
 <span class="sep">&middot;</span>
-<a href="Segment3_Filtering_Guideline.pdf">PDF</a>
+<a href="VIPL_Integration_Guideline.pdf">PDF</a>
 <span class="sep">&middot;</span>
-<a href="../segment4_heartrate/index.html">Segment 4 &rarr;</a>
+<a href="../index.html">Back to Project Home</a>
 </nav>
 <header id="title-block-header">
-<h1 class="title">Segment 3 — Team README</h1>
+<h1 class="title">VIPL Integration — Team README</h1>
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#segment-3-detrending-bandpass-filtering-team-instructions"
-id="toc-segment-3-detrending-bandpass-filtering-team-instructions">Segment
-3 (Detrending + Bandpass Filtering) — Team Instructions</a>
+<li><a href="#vipl-hr-integration-team-instructions"
+id="toc-vipl-hr-integration-team-instructions">VIPL-HR Integration —
+Team Instructions</a>
 <ul>
-<li><a href="#before-you-start-confirm-your-segment-2-output-exists"
-id="toc-before-you-start-confirm-your-segment-2-output-exists">1. Before
-you start: confirm your Segment 2 output exists</a></li>
-<li><a href="#editing-the-subject-list"
-id="toc-editing-the-subject-list">2. Editing the subject list</a></li>
-<li><a href="#running-it" id="toc-running-it">3. Running it</a></li>
-<li><a href="#where-your-output-lands-and-how-we-merge-it-later"
-id="toc-where-your-output-lands-and-how-we-merge-it-later">4. Where your
-output lands (and how we merge it later)</a></li>
+<li><a
+href="#vipl-hr-is-not-extracted-on-disk-yet-extract-only-your-own-share"
+id="toc-vipl-hr-is-not-extracted-on-disk-yet-extract-only-your-own-share">1.
+VIPL-HR is not extracted on disk yet — extract only your own
+share</a></li>
+<li><a href="#only-rgb-sources-are-supported-source1-source2-source3"
+id="toc-only-rgb-sources-are-supported-source1-source2-source3">2. Only
+RGB sources are supported (source1, source2, source3)</a></li>
+<li><a href="#running-the-integration-batch"
+id="toc-running-the-integration-batch">3. Running the integration
+batch</a></li>
+<li><a href="#how-this-integrations-outputs-feed-into-segment-6"
+id="toc-how-this-integrations-outputs-feed-into-segment-6">4. How this
+integration’s outputs feed into Segment 6</a></li>
 </ul></li>
 </ul>
 </nav>
-<h1
-id="segment-3-detrending-bandpass-filtering-team-instructions">Segment 3
-(Detrending + Bandpass Filtering) — Team Instructions</h1>
-<p>This covers only Segment 3 of the pipeline: taking each subject’s raw
-<code>R(t), G(t), B(t)</code> traces from Segment 2 and cleaning them up
-into detrended, bandpass-filtered traces ready for CHROM/POS
-combination. It does <strong>not</strong> cover CHROM/POS, FFT heart
-rate, or SpO2 — those are later segments and are still stubs.</p>
+<h1 id="vipl-hr-integration-team-instructions">VIPL-HR Integration —
+Team Instructions</h1>
+<p>This covers only the VIPL-HR I/O integration: two new loader
+functions (<code>io/loadVIPLVideo.m</code>,
+<code>io/loadVIPLGroundTruth.m</code>) and one new batch script
+(<code>scripts/run_vipl_integration_batch.m</code>) that feed VIPL-HR’s
+real files into the already-tested, unmodified Segment 2-5 pipeline. It
+does <strong>not</strong> add or change any DSP algorithm, and it does
+<strong>not</strong> run Segment 6’s formal LOSO validation —
+<code>validation/runLOSO.m</code>,
+<code>validation/computeMetrics.m</code>, and
+<code>validation/blandAltman.m</code> are still untouched stubs.</p>
 <p>The actual code lives in the main scaffold, not in this folder:</p>
 <ul>
 <li><a
-href="../matlab/src/filtering/detrendSignal.m"><code>matlab/src/filtering/detrendSignal.m</code></a></li>
+href="../matlab/src/io/loadVIPLVideo.m"><code>matlab/src/io/loadVIPLVideo.m</code></a></li>
 <li><a
-href="../matlab/src/filtering/bandpassClean.m"><code>matlab/src/filtering/bandpassClean.m</code></a></li>
+href="../matlab/src/io/loadVIPLGroundTruth.m"><code>matlab/src/io/loadVIPLGroundTruth.m</code></a></li>
 <li><a
-href="../matlab/scripts/run_segment3_filtering_batch.m"><code>matlab/scripts/run_segment3_filtering_batch.m</code></a></li>
+href="../matlab/scripts/run_vipl_integration_batch.m"><code>matlab/scripts/run_vipl_integration_batch.m</code></a></li>
+<li><a
+href="../docs/VIPL_DATA_FORMAT.md"><code>docs/VIPL_DATA_FORMAT.md</code></a>
+— the full, file-verified format writeup; read this before touching the
+loaders.</li>
 </ul>
-<p>This <code>segment3_filtering/</code> folder is docs only:</p>
+<p>This <code>vipl_integration/</code> folder is docs only (no
+code):</p>
 <ul>
-<li><code>Segment3_Filtering_Guideline.pdf</code> — theory background
-(why raw R/G/B has drift and out-of-band noise, polynomial detrending
-intuition, Butterworth bandpass intuition, <code>filtfilt</code> vs
-<code>filter</code>, common pitfalls).</li>
-<li><code>Segment3_LineByLine_Explanation.md</code> — a plain-language
-walkthrough of every block of the two implementation files, including
-the reasoning behind every parameter choice.</li>
+<li><code>VIPL_Integration_Guideline.pdf</code> — why this integration
+exists, why no algorithm code changed, and the one real format surprise
+(VIPL-HR’s video frame rate) that shaped the loader design.</li>
+<li><code>VIPL_Integration_LineByLine_Explanation.md</code> — a
+plain-language walkthrough of every block of both loader functions.</li>
 <li>This README.</li>
 </ul>
-<h2 id="before-you-start-confirm-your-segment-2-output-exists">1. Before
-you start: confirm your Segment 2 output exists</h2>
-<p>This segment reads, for each subject, a file already produced by
-Segment 2:</p>
-<pre><code>data/processed/&lt;subjectID&gt;_rgb_traces.mat</code></pre>
-<p>containing <code>R</code>, <code>G</code>, <code>B</code>,
-<code>fs</code>, <code>subjectID</code>, <code>numDroppedFrames</code>.
-If you haven’t run <code>run_segment2_roi_batch.m</code> on your
-assigned subjects yet (or don’t see their <code>*_rgb_traces.mat</code>
-files in <code>data/processed/</code>), do that first — Segment 3 has
-nothing to work on without it. See
-<code>segment2_face_roi/Segment2_Team_README.md</code> if you need a
-refresher on that step.</p>
-<h2 id="editing-the-subject-list">2. Editing the subject list</h2>
-<p>Open <code>matlab/scripts/run_segment3_filtering_batch.m</code>.
-Right at the top there is one variable to edit:</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">subjectList</span> <span class="op">=</span> {<span class="ss">&#39;5-gt&#39;</span><span class="op">,</span> <span class="ss">&#39;6-gt&#39;</span><span class="op">,</span> <span class="ss">&#39;7-gt&#39;</span>}<span class="op">;</span></span></code></pre></div>
-<p>Change it to your own subject IDs — the same ones you already used
-for Segment 2, since this script reads their
-<code>_rgb_traces.mat</code> files by that exact ID:</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode matlab"><code class="sourceCode matlab"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">subjectList</span> <span class="op">=</span> {<span class="ss">&#39;subject9&#39;</span><span class="op">,</span> <span class="ss">&#39;subject10&#39;</span><span class="op">,</span> <span class="ss">&#39;subject11&#39;</span><span class="op">,</span> <span class="ss">&#39;subject12&#39;</span><span class="op">,</span> <span class="ss">&#39;subject13&#39;</span>}<span class="op">;</span></span></code></pre></div>
-<h2 id="running-it">3. Running it</h2>
+<h2
+id="vipl-hr-is-not-extracted-on-disk-yet-extract-only-your-own-share">1.
+VIPL-HR is not extracted on disk yet — extract only your own share</h2>
+<p>The full VIPL-HR download sits, still zipped, at
+<code>H:\EEE 312 project\Contactless Vital Sign\VIPL-HR-V1\data\</code>
+— 21 archives (<code>p1-5.zip</code>, <code>p6-10.zip</code>, …,
+<code>p101-107.zip</code>), about <strong>48.6 GB compressed
+total</strong>, covering all 107 subjects. <strong>Do not run
+<code>Expand-Archive</code> (or any whole-archive unzip) on one of these
+files</strong> — a single archive can be over 2.5 GB, and unzipping
+several of them on a machine with limited free disk space (this
+integration was built with only ~56 GB free) risks running the drive out
+of space for everyone else’s work too.</p>
+<p>Instead, extract only the specific
+<code>(subject, scenario, source)</code> triples you’re assigned, using
+targeted per-entry extraction. A short PowerShell snippet that does this
+(adjust <code>$targets</code> to your own assigned subjects):</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">$destRoot</span> <span class="op">=</span> <span class="st">&quot;H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Add-Type</span> <span class="op">-</span>AssemblyName System<span class="op">.</span><span class="fu">IO</span><span class="op">.</span><span class="fu">Compression</span><span class="op">.</span><span class="fu">FileSystem</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="va">$zip</span> <span class="op">=</span> <span class="op">[</span>System<span class="op">.</span><span class="fu">IO</span><span class="op">.</span><span class="fu">Compression</span><span class="op">.</span><span class="fu">ZipFile</span><span class="op">]::</span>OpenRead<span class="op">(</span><span class="st">&quot;H:\EEE 312 project\Contactless Vital Sign\VIPL-HR-V1\data\p1-5.zip&quot;</span><span class="op">)</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="va">$targets</span> <span class="op">=</span> <span class="op">@(</span><span class="st">&quot;p1/v1/source1/&quot;</span><span class="op">,</span> <span class="st">&quot;p1/v1/source2/&quot;</span><span class="op">,</span> <span class="st">&quot;p1/v1/source3/&quot;</span><span class="op">)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">foreach</span> <span class="op">(</span><span class="va">$entry</span> <span class="kw">in</span> <span class="va">$zip</span><span class="op">.</span><span class="fu">Entries</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">foreach</span> <span class="op">(</span><span class="va">$t</span> <span class="kw">in</span> <span class="va">$targets</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span><span class="va">$entry</span><span class="op">.</span><span class="fu">FullName</span><span class="op">.</span><span class="fu">StartsWith</span><span class="op">(</span><span class="va">$t</span><span class="op">)</span> <span class="op">-and</span> <span class="va">$entry</span><span class="op">.</span><span class="fu">Name</span> <span class="op">-ne</span> <span class="st">&quot;&quot;</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>      <span class="va">$outPath</span> <span class="op">=</span> <span class="fu">Join-Path</span> <span class="va">$destRoot</span> <span class="va">$entry</span><span class="op">.</span><span class="fu">FullName</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">New-Item</span> <span class="op">-</span>ItemType Directory <span class="op">-</span>Force <span class="op">-</span>Path <span class="op">(</span><span class="fu">Split-Path</span> <span class="va">$outPath</span> <span class="op">-</span>Parent<span class="op">)</span> <span class="op">|</span> <span class="fu">Out-Null</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="op">[</span>System<span class="op">.</span><span class="fu">IO</span><span class="op">.</span><span class="fu">Compression</span><span class="op">.</span><span class="fu">ZipFileExtensions</span><span class="op">]::</span>ExtractToFile<span class="op">(</span><span class="va">$entry</span><span class="op">,</span> <span class="va">$outPath</span><span class="op">,</span> <span class="va">$true</span><span class="op">)</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="va">$zip</span><span class="op">.</span><span class="fu">Dispose</span><span class="op">()</span></span></code></pre></div>
+<p>Each subject <code>pN</code> lives in the zip named for the 5-subject
+range containing <code>N</code> (e.g. <code>p1</code>-<code>p5</code>
+are in <code>p1-5.zip</code>, <code>p6</code>-<code>p10</code> are in
+<code>p6-10.zip</code>, etc. — see the file listing under
+<code>VIPL-HR-V1\data\</code>). Extracted files must land under
+<code>spandan/data/raw/VIPL-HR/pXXX/vY/sourceN/</code> for the loaders
+to find them — that path is built automatically by
+<code>loadVIPLVideo.m</code>/ <code>loadVIPLGroundTruth.m</code> from
+<code>data/raw/VIPL-HR</code> plus your subject/scenario/ source
+numbers, so don’t rename or restructure anything after extraction.</p>
+<p>Check <code>VIPL-HR-V1\Missing_data.txt</code> before assuming a
+triple exists — 107 real <code>(subject/scenario/source)</code>
+combinations are absent despite the naming convention predicting them
+(e.g. <code>p1/v7/source1</code>).
+<code>run_vipl_integration_ batch.m</code> logs a missing file as a
+per-subject failure and continues rather than halting, so this is safe
+to hit, just expected.</p>
+<h2 id="only-rgb-sources-are-supported-source1-source2-source3">2. Only
+RGB sources are supported (source1, source2, source3)</h2>
+<p><code>source4</code> is VIPL-HR’s near-infrared camera, a different
+sensing modality this pipeline was never built for —
+<code>loadVIPLVideo.m</code> rejects it outright with a clear error.
+Stick to source1 (webcam), source2 (phone), or source3 (RealSense color)
+when picking triples to run.</p>
+<h2 id="running-the-integration-batch">3. Running the integration
+batch</h2>
 <ol type="1">
 <li>Open MATLAB, <code>cd</code> into <code>spandan/matlab/</code>.</li>
 <li>Run <code>startup</code> (adds <code>src/</code> to the path).</li>
-<li>Either <code>cd scripts</code> and run
-<code>run_segment3_filtering_batch</code>, or add
-<code>matlab/scripts</code> to the path first
-(<code>addpath('scripts')</code>) and run it from
-<code>matlab/</code>.</li>
+<li>Open <code>scripts/run_vipl_integration_batch.m</code> and edit the
+<code>subjectTriples</code> matrix at the top to your own assigned
+<code>[subjectNum, scenarioNum, sourceNum]</code> rows (one row per
+video).</li>
+<li><code>addpath('scripts')</code> (or <code>cd scripts</code>), then
+run <code>run_vipl_integration_batch</code>.</li>
 </ol>
-<p>It prints progress per subject as it goes — the frame rate and frame
-count it read from your Segment 2 output, and the detrend/filter orders
-used. If one of your subjects is missing its
-<code>_rgb_traces.mat</code> file (or it fails to load), it will say so
-and continue to the next subject rather than stopping the whole batch —
-check the summary printed at the very end for anything that failed.</p>
-<h2 id="where-your-output-lands-and-how-we-merge-it-later">4. Where your
-output lands (and how we merge it later)</h2>
-<p>For every subject in your list, two files are produced, both named
-after that subject’s own ID so there are no collisions when we combine
-everyone’s results into one shared folder:</p>
-<ul>
-<li><code>data/processed/&lt;subjectID&gt;_filtered_traces.mat</code> —
-contains <code>R_filtered</code>, <code>G_filtered</code>,
-<code>B_filtered</code> (the detrended and bandpass-filtered traces),
-<code>fs</code>, <code>subjectID</code>, <code>detrendOrder</code>, and
-<code>filterOrder</code> (the exact parameters used, so anyone can audit
-the choices later without re-reading the code).</li>
-<li><code>results/figures/&lt;subjectID&gt;_filtering_sanity.png</code>
-— three stacked plots of the green channel for that subject: raw, after
-detrending only, and after detrending + bandpass filtering, all on the
-same time axis. <strong>Look at this before trusting the
-<code>.mat</code> output for that subject</strong> — the slow drift
-should visibly be gone by the second plot, and the third plot should
-look like a repeating, roughly periodic wave, not a flat line and not
-still-noisy random wiggling. If it doesn’t, something’s worth flagging
-before that subject’s data moves on to CHROM/POS combination.</li>
-</ul>
-<p>Once everyone’s done, copy all <code>*_filtered_traces.mat</code>
-files into one shared <code>data/processed/</code> folder and all
-<code>*_filtering_sanity.png</code> files into one shared
-<code>results/figures/</code> folder — since every filename is tagged
-with its own subject ID, nobody’s files will overwrite anyone
-else’s.</p>
+<p>For each triple it runs the full chain — ROI extraction, filtering,
+CHROM/POS/green heart rate, ratio-of-ratios SpO2 — and saves everything
+under <code>VIPL_p&lt;N&gt;_v&lt;scenario&gt;_source&lt;S&gt;</code>
+subject IDs, so nothing collides with UBFC’s
+<code>5-gt</code>/<code>subject5</code>-style IDs when pooled later. A
+subject that fails (missing file, no detected face, etc.) is logged and
+skipped; the rest of the batch continues.</p>
+<p>Output, all with the <code>VIPL_</code> prefix: -
+<code>data/processed/VIPL_..._rgb_traces.mat</code> /
+<code>..._filtered_traces.mat</code> / <code>..._hr_estimates.mat</code>
+— same shape as the UBFC equivalents. -
+<code>results/figures/VIPL_..._roi_sanity.png</code> /
+<code>..._filtering_sanity.png</code> /
+<code>..._heartrate_sanity.png</code> — <strong>look at these before
+trusting the numbers</strong>, same discipline as every prior segment. -
+<code>results/metrics/segment4_hr_summary_vipl.csv</code> — same column
+layout as Segment 4’s <code>segment4_hr_summary.csv</code> plus an
+explicit <code>dataset</code> column. Written to its
+<strong>own</strong> file, not appended to the shared UBFC file — see
+the Line-by-Line doc Part 3 for why (the shared file’s header is owned
+by <code>run_segment4_heartrate_batch.m</code>, out of scope for this
+integration). -
+<code>results/metrics/segment5_vipl_calibration.csv</code> (only
+produced once at least 3 subjects succeed in one run — the leave-one-out
+loop needs that many) plus
+<code>results/figures/segment5_vipl_calibration_scatter.png</code>.</p>
+<h2 id="how-this-integrations-outputs-feed-into-segment-6">4. How this
+integration’s outputs feed into Segment 6</h2>
+<p><code>segment4_hr_summary_vipl.csv</code> and
+<code>segment5_vipl_calibration.csv</code> are raw material for Segment
+6, exactly the same relationship UBFC’s own summary CSVs already have to
+it — not a substitute for it. Segment 6 can pool UBFC + VIPL results
+either by reading the explicit <code>dataset</code> column on the VIPL
+files, or by concatenating both HR files directly and inferring dataset
+from the <code>VIPL_</code> subjectID prefix on rows that lack the
+column.</p>
+<p><strong>Segment 6 (formal leave-one-subject-out validation) is the
+next and final validation segment for this project, and this integration
+is what unblocks it from being limited to DATASET_1’s 5 SpO2
+subjects.</strong> <code>validation/ runLOSO.m</code>,
+<code>validation/computeMetrics.m</code>, and
+<code>validation/blandAltman.m</code> remain untouched stubs — proper
+MAE/RMSE/correlation/Bland-Altman reporting across the full pooled UBFC
++ VIPL-HR subject pool is Segment 6’s job, not this one’s. This
+integration’s job was narrower: confirm VIPL-HR’s real files can be read
+correctly and fed through the existing pipeline without touching any
+tested algorithm code, and be explicit about exactly how much (or
+little) a 3-subject validation run can prove on its own.</p>
 <footer class="page-footer">
-  Part of the <strong>Spandan</strong> project's Segment 3 (detrending + bandpass filtering) docs — BUET EEE 312.
-  Source markdown lives in <code>segment3_filtering/</code>; the actual code lives under <code>matlab/src/filtering/</code>.
+  Part of the <strong>Spandan</strong> project's VIPL Integration (VIPL-HR dataset I/O integration) docs — BUET EEE 312.
+  Source markdown lives in <code>vipl_integration/</code>; the actual code lives under <code>matlab/src/io/</code>.
 </footer>
 </body>
 </html>
