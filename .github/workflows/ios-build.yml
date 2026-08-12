@@ -77,11 +77,22 @@ jobs:
             -destination "id=${{ steps.sim.outputs.udid }}" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
 
-      - name: Debug - dump the built app's Info.plist
+      - name: Sanity-check the built Info.plist
+        # Cheap regression guard, not just one-off debugging: an earlier CI run
+        # on this branch built successfully but the app crashed at test-launch
+        # because XcodeGen's `info:` sugar silently produced a fully
+        # Xcode-auto-generated Info.plist instead of using Spandan/Info.plist
+        # (no NSCameraUsageDescription, among other missing keys) -- see
+        # project.yml's INFOPLIST_FILE comment for the fix. Fail loudly here if
+        # that ever regresses, instead of via an opaque test-launch crash.
         run: |
           PLIST=$(find ~/Library/Developer/Xcode/DerivedData -path "*Debug-iphonesimulator/Spandan.app/Info.plist" | head -n1)
           echo "Found: $PLIST"
-          plutil -p "$PLIST" || true
+          plutil -p "$PLIST"
+          if ! plutil -extract NSCameraUsageDescription raw "$PLIST" >/dev/null 2>&1; then
+            echo "::error::NSCameraUsageDescription missing from the built Info.plist -- the app will crash at camera-permission time."
+            exit 1
+          fi
 
       - name: Run unit tests
         run: |
