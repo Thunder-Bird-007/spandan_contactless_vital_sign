@@ -25,13 +25,20 @@ targets:
     platform: iOS
     sources:
       - path: Spandan/Sources
-    info:
-      path: Spandan/Info.plist
     settings:
       base:
         PRODUCT_NAME: Spandan
         PRODUCT_BUNDLE_IDENTIFIER: com.spandan.app
+        # Explicit build setting rather than XcodeGen's `info:` sugar -- the
+        # first CI attempt using `info: path:` produced a fully
+        # Xcode-auto-generated Info.plist (none of the custom keys below,
+        # CFBundleShortVersionString stuck at Xcode's own default "1.0"),
+        # which crashes at launch: no NSCameraUsageDescription means
+        # AVCaptureDevice.requestAccess(for:.video) aborts the process. This
+        # is the unambiguous, xcodegen-version-independent way to point at a
+        # hand-written Info.plist.
         GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Spandan/Info.plist
 
   SpandanTests:
     type: bundle.unit-test
