@@ -101,3 +101,62 @@ jobs:
             -scheme Spandan \
             -destination "id=${{ steps.sim.outputs.udid }}" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+  build-ipa:
+    # Produces a sideloadable .ipa for testers without an Apple Developer
+    # Program account: an UNSIGNED, real-device (iphoneos, not Simulator)
+    # build. Nobody's Apple ID or certificate is baked in here -- whoever
+    # installs it (e.g. via Sideloadly or AltStore) signs it locally with
+    # their own free Apple ID at install time, same as any other
+    # community-distributed unsigned .ipa. Only runs after build-and-test
+    # passes.
+    needs: build-and-test
+    runs-on: macos-14
+
+    defaults:
+      run:
+        working-directory: ios
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n1)
+          if [ -n "$LATEST" ]; then
+            echo "Selecting $LATEST"
+            sudo xcode-select -s "$LATEST"
+          fi
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned .app for a real device (iphoneos SDK)
+        run: |
+          xcodebuild build \
+            -project Spandan.xcodeproj \
+            -target Spandan \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+
+      - name: Package as an .ipa (Payload/Spandan.app, zipped)
+        run: |
+          APP_PATH=$(find build/DerivedData -maxdepth 6 -name "Spandan.app" -path "*Release-iphoneos*" | head -n1)
+          echo "Found: $APP_PATH"
+          test -n "$APP_PATH"
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          zip -r Spandan-unsigned.ipa Payload
+
+      - name: Upload .ipa as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Spandan-unsigned-ipa
+          path: ios/Spandan-unsigned.ipa
+          retention-days: 90
