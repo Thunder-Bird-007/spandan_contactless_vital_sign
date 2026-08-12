@@ -1,0 +1,176 @@
+name: iOS build
+
+on:
+  push:
+    branches: [ "ios-app", "main" ]
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-build.yml"
+  pull_request:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-build.yml"
+  workflow_dispatch: {}
+
+jobs:
+  build-and-test:
+    # This is the whole point of this workflow: there is no Mac available to the
+    # person who wrote this port, so this macOS runner is the only place the
+    # Swift actually gets compiled and the unit tests actually get run before
+    # anyone trusts them. See ios/README.md's verification-status section.
+    runs-on: macos-14
+
+    defaults:
+      run:
+        working-directory: ios
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest available Xcode
+        # macos-14 runners ship several Xcode versions side by side. XcodeGen
+        # writes the .pbxproj's objectVersion based on the *active* Xcode at
+        # generate time; if that's older than the Xcode actually used to build
+        # (or vice versa), xcodebuild refuses to open the project ("future
+        # Xcode project file format"). Pin both steps to the same, newest
+        # available Xcode so generate and build always agree.
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n1)
+          if [ -n "$LATEST" ]; then
+            echo "Selecting $LATEST"
+            sudo xcode-select -s "$LATEST"
+          fi
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Pick an available iOS simulator
+        id: sim
+        run: |
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, sys
+          data = json.load(sys.stdin)["devices"]
+          candidates = []
+          for runtime, devices in data.items():
+              if "iOS" not in runtime:
+                  continue
+              for dev in devices:
+                  if "iPhone" in dev["name"]:
+                      candidates.append((runtime, dev))
+          if not candidates:
+              sys.exit("No available iPhone simulator found")
+          candidates.sort(key=lambda rd: rd[0], reverse=True)
+          print(candidates[0][1]["udid"])
+          ')
+          echo "Selected simulator UDID: $UDID"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      - name: Build (Simulator, no code signing needed)
+        run: |
+          xcodebuild build \
+            -project Spandan.xcodeproj \
+            -scheme Spandan \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+      - name: Sanity-check the built Info.plist
+        # Cheap regression guard, not just one-off debugging: an earlier CI run
+        # on this branch built successfully but the app crashed at test-launch
+        # because XcodeGen's `info:` sugar silently produced a fully
+        # Xcode-auto-generated Info.plist instead of using Spandan/Info.plist
+        # (no NSCameraUsageDescription, among other missing keys) -- see
+        # project.yml's INFOPLIST_FILE comment for the fix. Fail loudly here if
+        # that ever regresses, instead of via an opaque test-launch crash.
+        run: |
+          PLIST=$(find ~/Library/Developer/Xcode/DerivedData -path "*Debug-iphonesimulator/Spandan.app/Info.plist" | head -n1)
+          echo "Found: $PLIST"
+          plutil -p "$PLIST"
+          if ! plutil -extract NSCameraUsageDescription raw "$PLIST" >/dev/null 2>&1; then
+            echo "::error::NSCameraUsageDescription missing from the built Info.plist -- the app will crash at camera-permission time."
+            exit 1
+          fi
+
+      - name: Run unit tests
+        run: |
+          xcodebuild test \
+            -project Spandan.xcodeproj \
+            -scheme Spandan \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+
+  build-ipa:
+    # Produces a sideloadable .ipa for testers without an Apple Developer
+    # Program account: an UNSIGNED, real-device (iphoneos, not Simulator)
+    # build. Nobody's Apple ID or certificate is baked in here -- whoever
+    # installs it (e.g. via Sideloadly or AltStore) signs it locally with
+    # their own free Apple ID at install time, same as any other
+    # community-distributed unsigned .ipa. Only runs after build-and-test
+    # passes.
+    needs: build-and-test
+    runs-on: macos-14
+
+    defaults:
+      run:
+        working-directory: ios
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select the newest available Xcode
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n1)
+          if [ -n "$LATEST" ]; then
+            echo "Selecting $LATEST"
+            sudo xcode-select -s "$LATEST"
+          fi
+          xcodebuild -version
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned .app for a real device (iphoneos SDK)
+        # -scheme (not -target) + an explicit -derivedDataPath: xcodebuild
+        # requires -scheme whenever -derivedDataPath is given ("-scheme ...
+        # required when specifying -derivedDataPath"), and pinning the
+        # derived-data path removes any guesswork about where the built
+        # product lands (an earlier attempt without it produced NOTHING under
+        # the expected default ~/Library/Developer/Xcode/DerivedData on this
+        # runner -- xcodebuild apparently fell back to a different location
+        # without -derivedDataPath set explicitly). This also builds
+        # SpandanTests (part of the Spandan scheme's build phase), which is
+        # harmless -- it just doesn't get packaged below.
+        run: |
+          xcodebuild build \
+            -project Spandan.xcodeproj \
+            -scheme Spandan \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+
+      - name: Package as an .ipa (Payload/Spandan.app, zipped)
+        run: |
+          APP_PATH="build/DerivedData/Build/Products/Release-iphoneos/Spandan.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "$APP_PATH not found. Full derived-data Products tree:"
+            find build/DerivedData/Build/Products -maxdepth 3
+            exit 1
+          fi
+          echo "Found: $APP_PATH"
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          zip -r Spandan-unsigned.ipa Payload
+
+      - name: Upload .ipa as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Spandan-unsigned-ipa
+          path: ios/Spandan-unsigned.ipa
+          retention-days: 90

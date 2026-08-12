@@ -1,0 +1,66 @@
+name: Spandan
+
+options:
+  bundleIdPrefix: com.spandan
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1" # iPhone only, matches this app's front-camera-in-portrait design
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # No development team baked in -- CI builds for the Simulator (no signing
+    # needed there) with CODE_SIGNING_ALLOWED=NO passed on the xcodebuild command
+    # line (see ../.github/workflows/ios-build.yml). Set your own team in Xcode's
+    # Signing & Capabilities tab before running on a physical device.
+    CODE_SIGN_STYLE: Automatic
+
+targets:
+  Spandan:
+    type: application
+    platform: iOS
+    sources:
+      - path: Spandan/Sources
+    settings:
+      base:
+        PRODUCT_NAME: Spandan
+        PRODUCT_BUNDLE_IDENTIFIER: com.spandan.app
+        # Explicit build setting rather than XcodeGen's `info:` sugar -- the
+        # first CI attempt using `info: path:` produced a fully
+        # Xcode-auto-generated Info.plist (none of the custom keys below,
+        # CFBundleShortVersionString stuck at Xcode's own default "1.0"),
+        # which crashes at launch: no NSCameraUsageDescription means
+        # AVCaptureDevice.requestAccess(for:.video) aborts the process. This
+        # is the unambiguous, xcodegen-version-independent way to point at a
+        # hand-written Info.plist.
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Spandan/Info.plist
+
+  SpandanTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: SpandanTests/Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.spandan.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Spandan
+
+schemes:
+  Spandan:
+    build:
+      targets:
+        Spandan: all
+        SpandanTests: [test]
+    test:
+      config: Debug
+      targets:
+        - SpandanTests
+    run:
+      config: Debug
