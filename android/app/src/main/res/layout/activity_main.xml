@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Single-screen layout: camera preview + overlays on top, live raw-signal
-  chart, then the HR readout. SpO2 has no UI here at all: not hidden, not a
-  placeholder number, removed outright, because no validated SpO2
-  calibration exists to ship (see
-  ../../../../../../matlab/docs/SpO2_Final_Report_Section.md). hrStatusText
-  carries a "SpO2 omitted" note alongside the "real pipeline" chip instead of
-  a separate SpO2 column, since there's no SpO2 value to attach a chip to
-  anymore. Deliberately simple: functional skeleton, not defense-day polish.
+  chart, then HR/SpO2 readouts side by side. Both are real computations now
+  (signal/RealHeartRateEstimator.kt, signal/LiveSpo2Estimator.kt) with
+  INDEPENDENT subtitles under each value rather than one uniform banner: HR's
+  green "LIVE" chip signals a validated pipeline, SpO2's amber subtitle
+  signals a real-but-narrowly-validated estimate (see
+  LiveSpo2Estimator.kt's KDoc and
+  ../../../../../../matlab/docs/SpO2_Final_Report_Section.md): deliberately
+  different visual weight for a deliberately different confidence level, not
+  an oversight. Deliberately simple: functional skeleton, not defense-day
+  polish.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -74,39 +77,70 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
+        android:orientation="horizontal"
         android:padding="12dp">
 
-        <TextView
-            android:id="@+id/hrText"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:text="@string/hr_placeholder_default" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <TextView
-            android:id="@+id/hrStatusText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="#4CAF50"
-            android:textStyle="bold"
-            android:textSize="11sp"
-            android:gravity="center"
-            android:text="@string/hr_status_real" />
+            <TextView
+                android:id="@+id/hrText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:text="@string/hr_placeholder_default" />
 
-        <TextView
-            android:id="@+id/spo2OmittedText"
-            android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/hrStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#4CAF50"
+                android:textStyle="bold"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:text="@string/hr_status_real" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textColor="#9E9E9E"
-            android:textSize="11sp"
-            android:gravity="center"
-            android:text="@string/spo2_omitted_note" />
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/spo2Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:text="@string/spo2_placeholder_default" />
+
+            <!-- Amber, not HR's green: same visual language ("a short subtitle under
+                 the value") but a deliberately different color to signal a different
+                 confidence tier. This is a real computation (LiveSpo2Estimator.kt),
+                 but validated against a narrower reference range than HR. Not red:
+                 this isn't a fake/placeholder value anymore, so HR's old red
+                 "PLACEHOLDER" language would now be inaccurate. -->
+            <TextView
+                android:id="@+id/spo2SubtitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="#FFA726"
+                android:textStyle="bold"
+                android:textSize="11sp"
+                android:gravity="center"
+                android:text="@string/spo2_subtitle" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

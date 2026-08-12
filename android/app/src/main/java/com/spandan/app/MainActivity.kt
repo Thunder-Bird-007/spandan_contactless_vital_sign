@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.spandan.app.camera.CoordinateMapper
 import com.spandan.app.camera.FaceAnalysisResult
 import com.spandan.app.camera.FaceAnalyzer
+import com.spandan.app.signal.LiveSpo2Estimator
 import com.spandan.app.signal.RealHeartRateEstimator
 import com.spandan.app.signal.SignalBuffer
 import com.spandan.app.ui.OverlayView
@@ -33,11 +34,11 @@ import java.util.concurrent.Executors
 /**
  * Single-screen glue: camera lifecycle, permission handling, and wiring the
  * real analysis pipeline into the UI. HR is a real, validated CHROM/POS+FFT
- * port (see signal/RealHeartRateEstimator.kt). SpO2 is intentionally absent
- * from this build -- no validated calibration exists to ship (see
- * ../../../../../../matlab/docs/SpO2_Final_Report_Section.md), so there is
- * no SpO2 view, string, or placeholder math left anywhere in this app --
- * removed outright rather than left as a fake number.
+ * port (see signal/RealHeartRateEstimator.kt). SpO2 is a real ratio-of-ratios
+ * + linear-calibration estimate (see signal/LiveSpo2Estimator.kt), added
+ * purely additively alongside HR -- both estimators read the same
+ * [signalBuffer] snapshot independently, neither one's class references or
+ * modifies the other's.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -45,10 +46,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var overlayView: OverlayView
     private lateinit var chartView: SignalChartView
     private lateinit var hrText: TextView
+    private lateinit var spo2Text: TextView
     private lateinit var permissionDeniedView: View
 
     private val signalBuffer = SignalBuffer(windowSeconds = SignalBuffer.WINDOW_DURATION_SECONDS)
     private val heartRateEstimator = RealHeartRateEstimator()
+    private val spo2Estimator = LiveSpo2Estimator()
     private var cameraProvider: ProcessCameraProvider? = null
     private val analysisExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val uiHandler = Handler(Looper.getMainLooper())
@@ -72,13 +75,15 @@ class MainActivity : AppCompatActivity() {
         overlayView = findViewById(R.id.overlayView)
         chartView = findViewById(R.id.chartView)
         hrText = findViewById(R.id.hrText)
+        spo2Text = findViewById(R.id.spo2Text)
         permissionDeniedView = findViewById(R.id.permissionDeniedView)
 
         // App targets SDK 35, where edge-to-edge is enforced -- content draws
-        // behind system bars by default. Without this, the bottom HR status
-        // chip gets clipped by the device's nav bar (found via on-device
-        // screenshot during an earlier task's verification, same "check the
-        // real device, don't assume" discipline as the CoordinateMapper bugs).
+        // behind system bars by default. Without this, the bottom HR/SpO2
+        // status chips get clipped by the device's nav bar (found via
+        // on-device screenshot during an earlier task's verification, same
+        // "check the real device, don't assume" discipline as the
+        // CoordinateMapper bugs).
         val rootLayout = findViewById<View>(R.id.rootLayout)
         ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -227,6 +232,16 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.hr_format, hrBpm)
         } else {
             getString(R.string.hr_placeholder_default)
+        }
+
+        // SpO2: real ratio-of-ratios + linear calibration, see
+        // signal/LiveSpo2Estimator.kt. Independent call on the same samples
+        // snapshot -- does not read heartRateEstimator's state or vice versa.
+        val spo2 = spo2Estimator.update(samples)
+        spo2Text.text = if (spo2 != null) {
+            getString(R.string.spo2_format, spo2)
+        } else {
+            getString(R.string.spo2_placeholder_default)
         }
     }
 

@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Spandan</string>
 
-    <string name="permission_rationale">Camera access is needed to capture your face for heart-rate estimation. No video is stored or sent anywhere.</string>
+    <string name="permission_rationale">Camera access is needed to capture your face for heart-rate and SpO2 estimation. No video is stored or sent anywhere.</string>
     <string name="grant_permission">Grant camera permission</string>
 
     <!-- HR is a real CHROM/POS+FFT pipeline (signal/RealHeartRateEstimator.kt),
@@ -11,11 +11,13 @@
     <string name="hr_placeholder_default">HR: -- bpm</string>
     <string name="hr_status_real">● LIVE — CHROM/POS + FFT</string>
 
-    <!-- SpO2 has no reading, view, or placeholder in this build; this is the
-         only SpO2-related string left, and it exists purely to say why. No
-         validated SpO2 calibration exists to ship (see
-         matlab/docs/SpO2_Final_Report_Section.md); it was not hidden or
-         stubbed, the feature was removed outright until a real calibration
-         lands. -->
-    <string name="spo2_omitted_note">SpO2 intentionally omitted — no validated calibration</string>
+    <!-- SpO2 is a real computation now (signal/LiveSpo2Estimator.kt: ratio-of-ratios
+         + the uncentered production linear calibration from
+         matlab/docs/SpO2_Final_Calibration_Spec.md), unlike the old fake-sine
+         placeholder. The subtitle says exactly what it is: a real estimate,
+         validated against a narrow reference range, not a lab-grade
+         pulse-oximeter substitute. -->
+    <string name="spo2_format">SpO2: %.1f%%</string>
+    <string name="spo2_placeholder_default">SpO2: -- %</string>
+    <string name="spo2_subtitle">Estimate — validated against a narrow reference range (87-99%)</string>
 </resources>

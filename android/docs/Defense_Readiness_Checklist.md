@@ -3,6 +3,14 @@
 Status as of **2026-08-12**. This is the "is this ready to demo" summary --
 `../README.md` is the detailed build log/history behind it.
 
+**Update, same day, later session:** Action 2 below (written when SpO2 had
+just been removed entirely) is **superseded** -- SpO2 was re-added as a
+real, live estimate once Task R confirmed the production calibration
+transfers to phone-camera data. See
+[`SpO2_Live_Implementation.md`](SpO2_Live_Implementation.md) for the
+current SpO2 implementation and its own on-device verification. Actions 1,
+3, 4, 5, 6, 7 below are unaffected and still current.
+
 ## Standing decision (this session)
 
 **No MATLAB-side findings from Tasks L/N/O/P are being ported into the
@@ -53,7 +61,7 @@ and the Android sources directly.
   is what Action 4 below specifically adds. Flagging this discrepancy
   plainly rather than silently accepting the original framing.
 
-## Action 2 — SpO2 UI: removed entirely — ✅ Done
+## Action 2 — SpO2 UI: removed entirely — ✅ Done at the time (superseded, see update note above)
 
 Not relabeled, not swapped for a different placeholder -- deleted:
 

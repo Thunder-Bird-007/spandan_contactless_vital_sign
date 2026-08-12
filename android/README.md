@@ -4,19 +4,23 @@ This is the Android half of the Spandan project (see the [repo-root
 README](../README.md) for the overall project: HR/SpO2 from facial video via
 classical DSP, currently being developed in MATLAB under `../matlab/`).
 
-**This build ships a real HR pipeline; SpO2 has no UI at all.** The camera →
-face detection → ROI → signal pipeline is fully wired end to end. HR is a
-real port of the validated MATLAB CHROM/POS+FFT pipeline (see [What's real
-vs. placeholder](#whats-real-vs-placeholder) and [Verification: the HR
-port](#verification-the-hr-port-segment-4) below) -- but its on-device
-accuracy has **not** been shown to match MATLAB's validated r=0.957 result,
-for reasons explained in that section. SpO2 is not a placeholder anymore
-either -- it was removed outright (view, strings, and
-`PlaceholderVitalsEstimator.kt` all deleted), because no validated SpO2
-calibration exists to ship (see `../matlab/docs/SpO2_Final_Report_Section.md`,
-whose own standing decision is "not approved for Android display"). Read the
-verification sections below before anyone mistakes a build screenshot for a
-fully validated result.
+**This build ships both a real HR pipeline and a real, live SpO2 estimate.**
+The camera → face detection → ROI → signal pipeline is fully wired end to
+end. HR is a real port of the validated MATLAB CHROM/POS+FFT pipeline (see
+[What's real vs. placeholder](#whats-real-vs-placeholder) and
+[Verification: the HR port](#verification-the-hr-port-segment-4) below) --
+but its on-device accuracy has **not** been shown to match MATLAB's
+validated r=0.957 result, for reasons explained in that section. SpO2 went
+through three states across this project's history, in order: (1) fake
+placeholder math, (2) removed outright (no validated calibration existed to
+ship), (3) **the current state -- a real, live ratio-of-ratios + linear
+calibration estimate** (`signal/LiveSpo2Estimator.kt`), added once Task R
+confirmed the production calibration formula transfers to phone-camera data
+without needing device-specific centering. See
+[`docs/SpO2_Live_Implementation.md`](docs/SpO2_Live_Implementation.md) for
+the exact formula, on-device verification, and the confidence caveat its
+UI subtitle states plainly. Read the verification sections below before
+anyone mistakes a build screenshot for a fully validated result.
 
 **Defense-readiness status, standing decision, and the current stability-run
 result live in
@@ -77,25 +81,29 @@ the runway available to re-verify them on-device.
 | `signal/PulseExtraction.kt` | Real port of `pulseextraction/chromCombine.m` + `posCombine.m` (CHROM/POS) |
 | `signal/HeartRateFft.kt` | Real port of `heartrate/fftHeartRate.m` (FFT peak-picking in the 0.7-4Hz band), via JTransforms |
 | `signal/RealHeartRateEstimator.kt` | Wires the above into one pipeline against `SignalBuffer`'s window; displayed bpm is chosen per-reading by the CHROM/POS switching rule (see [switching estimator port](#chrompos-switching-estimator-port-segment-4-follow-up-4) below), CHROM/POS raw values still logged alongside for comparison |
+| `signal/LiveSpo2Estimator.kt` | Real port of `spo2/ratioOfRatios.m` + the uncentered production linear calibration (`spo2/calibrateSpO2.m` coefficients, `matlab/docs/SpO2_Final_Calibration_Spec.md`). Independent of `RealHeartRateEstimator` -- see [`docs/SpO2_Live_Implementation.md`](docs/SpO2_Live_Implementation.md) for the exact formula, the sign-convention correction made while porting it, and on-device verification |
 
-**Placeholder/removed:**
+**Placeholder/removed (historical):**
 
 | File | Status |
 |---|---|
-| ~~`signal/PlaceholderVitalsEstimator.kt`~~ | **Superseded -- deleted.** Used to hold `computeSpo2Placeholder()` (a fake sine oscillation) and an already-unused `computeHeartRatePlaceholder()`. Both are gone: SpO2 has no code path in this app anymore (see below), and HR has come from `RealHeartRateEstimator` since the HR port. |
+| ~~`signal/PlaceholderVitalsEstimator.kt`~~ | **Superseded -- deleted.** Used to hold `computeSpo2Placeholder()` (a fake sine oscillation) and an already-unused `computeHeartRatePlaceholder()`. Both are gone: HR has come from `RealHeartRateEstimator` since the HR port, and SpO2 has come from `LiveSpo2Estimator` since Task R (see below) -- neither placeholder function has a live caller anywhere in this app. |
 
-**Superseded -- SpO2 is no longer a placeholder number, it's absent
-entirely.** The paragraph that used to live here described a
-"● PLACEHOLDER — not real" SpO2 chip next to a fake SpO2 reading. For
-defense readiness that was judged worse than showing nothing: a demo
-audience glancing at the screen could mistake a labeled-but-still-numeric
-placeholder for a real reading. `activity_main.xml` now has no SpO2 view at
-all, just a small note (`spo2_omitted_note`) under the HR reading explaining
-why. HR still has a real DSP pipeline behind it (see the "● LIVE" chip), but
-read [Verification: the HR port](#verification-the-hr-port-segment-4)
-before trusting its on-device *accuracy* -- the pipeline is a faithful port,
-but this build's buffer window (**25s**, raised from the original 10s --
-see
+**Superseded twice over -- SpO2 is live again.** This paragraph originally
+described a fake "● PLACEHOLDER — not real" SpO2 chip; a later pass removed
+SpO2's UI entirely (judged safer than a labeled-but-still-numeric fake
+reading a demo audience could mistake for real). **That removal is itself
+now superseded**: once Task R confirmed the production ratio-of-ratios
+calibration transfers to phone-camera data without needing a device-specific
+centering offset (`matlab/docs/Segment6_Task_R_Phone_SpO2_Centering.md`),
+SpO2 was re-added as a real, live estimate -- `activity_main.xml` has a
+`spo2Text` value + amber subtitle column again, matching HR's visual style.
+See [`docs/SpO2_Live_Implementation.md`](docs/SpO2_Live_Implementation.md)
+for the full formula/verification. HR still has a real DSP pipeline behind
+it (see the "● LIVE" chip), but read
+[Verification: the HR port](#verification-the-hr-port-segment-4) before
+trusting its on-device *accuracy* -- the pipeline is a faithful port, but
+this build's buffer window (**25s**, raised from the original 10s -- see
 [Window-length change: 10s → 25s](#window-length-change-10s--25s-segment-4-follow-up-2)
 below) means its instantaneous readings are still noisier than MATLAB's
 validated offline result.
@@ -168,7 +176,7 @@ android/
       java/com/spandan/app/
         MainActivity.kt
         camera/              - real: detection, ROI, coordinate mapping, pixel averaging
-        signal/              - real: buffer/model classes + the HR pipeline (no placeholder files remain)
+        signal/              - real: buffer/model classes + the HR and SpO2 pipelines (no placeholder files remain)
         ui/                  - real: overlay + chart custom Views
       res/                   - layout, strings, theme
   settings.gradle.kts / build.gradle.kts / gradle.properties
