@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+
+	<!-- Front camera is what this app actually uses (facial capture), same
+	     required-feature declaration as AndroidManifest.xml's
+	     uses-feature android:name="android.hardware.camera.front". -->
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+		<string>front-facing-camera</string>
+	</array>
+
+	<!-- Same rationale text as strings.xml's permission_rationale, shown by the
+	     system permission dialog. -->
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is needed to capture your face for heart-rate and SpO2 estimation. No video is stored or sent anywhere.</string>
+
+	<!-- Portrait-only, matching AndroidManifest.xml's
+	     android:screenOrientation="portrait" -- CameraController's pre-rotation
+	     assumption (see its own header comment) depends on this staying fixed. -->
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+
+	<!-- Blank launch screen, no storyboard needed (supported iOS 14+) -- same
+	     "functional skeleton, not defense-day polish" call the Android manifest
+	     makes about not shipping a real launcher icon. -->
+	<key>UILaunchScreen</key>
+	<dict/>
+
+	<!-- Scene-based lifecycle, single scene configuration, UI built entirely in
+	     code (MainViewController) -- no Main.storyboard. -->
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<false/>
+		<key>UISceneConfigurations</key>
+		<dict>
+			<key>UIWindowSceneSessionRoleApplication</key>
+			<array>
+				<dict>
+					<key>UISceneConfigurationName</key>
+					<string>Default Configuration</string>
+					<key>UISceneDelegateClassName</key>
+					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+</dict>
+</plist>

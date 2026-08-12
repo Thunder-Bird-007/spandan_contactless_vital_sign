@@ -1,0 +1,10 @@
+# xcodegen-generated -- regenerate with `xcodegen generate`, don't hand-edit or commit.
+Spandan.xcodeproj/
+
+# Standard Xcode/Swift build noise.
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+.build/
+.swiftpm/
