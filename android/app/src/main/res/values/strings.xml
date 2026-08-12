@@ -16,8 +16,17 @@
          matlab/docs/SpO2_Final_Calibration_Spec.md), unlike the old fake-sine
          placeholder. The subtitle says exactly what it is: a real estimate,
          validated against a narrow reference range, not a lab-grade
-         pulse-oximeter substitute. -->
-    <string name="spo2_format">SpO2: %.1f%%</string>
+         pulse-oximeter substitute.
+
+         2 decimal places, not 1: on-device verification showed the real,
+         live-tracking span (96.72-96.94% observed) is narrow enough at 1dp
+         that consecutive ticks can round to the same displayed number, making
+         a genuinely live value look static during a demo. The extra digit is
+         a DISPLAY-VISIBILITY fix only: it does not claim any measurement
+         precision beyond what LiveSpo2Estimator.kt actually computes (see
+         that file's own KDoc/docs/SpO2_Live_Implementation.md for the real
+         accuracy caveats); the underlying formula/clamp are unchanged. -->
+    <string name="spo2_format">SpO2: %.2f%%</string>
     <string name="spo2_placeholder_default">SpO2: -- %</string>
     <string name="spo2_subtitle">Estimate — validated against a narrow reference range (87-99%)</string>
 </resources>
