@@ -30,6 +30,26 @@ grant the camera permission on first launch. See
 [`android/README.md`](android/README.md#download--install) for full steps
 and what's validated vs. not before trusting an on-screen reading.
 
+## Download & Install (iOS app)
+
+The [`ios/`](ios/) app is a port of the Android app's pipeline, written and
+CI-built (`.github/workflows/ios-build.yml`, macOS runner) without access to
+a Mac or a physical iPhone -- see [`ios/README.md`](ios/README.md) for what's
+verified (the algorithm core, via unit tests) versus not (the camera
+pipeline on real hardware) before trusting an on-screen reading.
+
+iOS has no Android-style "download the APK, tap install" path: installing a
+non-App-Store app on a physical iPhone requires it to be signed with an
+Apple ID, and this build is deliberately **unsigned** (built without any
+Apple Developer account). Grab `Spandan-ios-unsigned.ipa` from the
+[Releases page](https://github.com/Thunder-Bird-007/spandan_contactless_vital_sign/releases/latest)
+and sideload it with a free tool -- e.g.
+[Sideloadly](https://sideloadly.io/) on any Windows or Mac computer, using
+your own free Apple ID -- which signs it locally at install time. Free
+Apple IDs re-sign apps for **7 days at a time**, so it'll need reinstalling
+weekly to keep working. Requires iOS 16+ on a physical iPhone with a front
+camera (the Simulator has no camera, so it can't run the actual pipeline).
+
 ## Goal
 
 Estimate heart rate (HR) and blood oxygen saturation (SpO2) from ordinary
@@ -123,6 +143,12 @@ spandan/
                          android/README.md and android/docs/ for the full
                          history, verification results, and defense-
                          readiness checklist.
+  ios/                 - the iOS app (Swift/UIKit/AVFoundation/Vision), a
+                         port of android/'s pipeline. Algorithm core is
+                         CI-verified (unit tests, macOS runner); the camera
+                         pipeline is NOT yet verified on physical hardware
+                         -- see ios/README.md's "Known risk areas" section
+                         before trusting it.
 ```
 
 `data/raw/`, `data/processed/`, `data/self_collected/`, and `results/` are

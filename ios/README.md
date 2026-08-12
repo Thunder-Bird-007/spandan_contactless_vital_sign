@@ -89,7 +89,25 @@ has been run on real hardware:
    is no reason to expect this port's numbers to be any more stable without
    its own equivalent multi-minute on-device runs.
 
-## How to build (needs a Mac)
+## Download & Install (without a Mac)
+
+There's no paid Apple Developer account behind this project, so there's no
+TestFlight link and no App Store listing. Instead, CI (`.github/workflows/
+ios-build.yml`) builds an **unsigned**, real-device `.ipa` on every push and
+publishes it as a workflow artifact; the latest one is attached to the
+[Releases page](https://github.com/Thunder-Bird-007/spandan_contactless_vital_sign/releases/latest)
+as `Spandan-ios-unsigned.ipa`.
+
+To install it on a physical iPhone, it needs to be signed with *somebody's*
+Apple ID first -- a free one works. [Sideloadly](https://sideloadly.io/) (Windows
+and Mac) is the simplest tool for this: plug the iPhone into a computer via
+USB, open Sideloadly, drag in the `.ipa`, sign in with a free Apple ID, and
+install. **Apps signed this way expire after 7 days** (an Apple limitation on
+free accounts, not something this project can avoid) and need reinstalling
+to keep working -- see the step-by-step guide your teammate should have
+received alongside this, or ask whoever set this up for it again.
+
+## How to build from source (needs a Mac)
 
 1. Install [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`)
    if you don't have it.
@@ -127,3 +145,11 @@ a real device, for the reasons in
 [Known risk areas](#known-risk-areas-for-whoever-tests-this-on-a-real-iphone)
 above. Check the Actions tab (or `gh run list`/`gh run view`) for the current
 status of this workflow before trusting either claim.
+
+A second job, `build-ipa` (gated on `build-and-test` passing), builds an
+**unsigned** `.app` for the `iphoneos` SDK (a real device, not the
+Simulator) with code signing off entirely, and packages it into
+`Spandan-unsigned.ipa` -- see
+[Download & Install](#download--install-without-a-mac) above. No Apple ID or
+certificate is involved on the CI side; whoever installs it signs it locally
+with their own.
