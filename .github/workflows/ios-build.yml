@@ -27,8 +27,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Show Xcode version
-        run: xcodebuild -version
+      - name: Select the newest available Xcode
+        # macos-14 runners ship several Xcode versions side by side. XcodeGen
+        # writes the .pbxproj's objectVersion based on the *active* Xcode at
+        # generate time; if that's older than the Xcode actually used to build
+        # (or vice versa), xcodebuild refuses to open the project ("future
+        # Xcode project file format"). Pin both steps to the same, newest
+        # available Xcode so generate and build always agree.
+        run: |
+          LATEST=$(ls -d /Applications/Xcode_*.app 2>/dev/null | sort -V | tail -n1)
+          if [ -n "$LATEST" ]; then
+            echo "Selecting $LATEST"
+            sudo xcode-select -s "$LATEST"
+          fi
+          xcodebuild -version
 
       - name: Install XcodeGen
         run: brew install xcodegen
