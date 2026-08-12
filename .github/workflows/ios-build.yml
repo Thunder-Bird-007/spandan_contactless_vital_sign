@@ -136,27 +136,31 @@ jobs:
         run: xcodegen generate
 
       - name: Build unsigned .app for a real device (iphoneos SDK)
-        # -target, not -scheme: builds just the app (skips SpandanTests, which
-        # doesn't need to build for a real device at all here). -target is
-        # incompatible with -derivedDataPath ("-scheme ... required when
-        # specifying -derivedDataPath"), so this relies on Xcode's default
-        # DerivedData location instead, found via `find` in the next step --
-        # same approach the build-and-test job already uses to locate its
-        # built .app for the Info.plist check.
+        # -scheme (not -target) + an explicit -derivedDataPath: xcodebuild
+        # requires -scheme whenever -derivedDataPath is given ("-scheme ...
+        # required when specifying -derivedDataPath"), and pinning the
+        # derived-data path removes any guesswork about where the built
+        # product lands (an earlier attempt without it produced NOTHING under
+        # the expected default ~/Library/Developer/Xcode/DerivedData on this
+        # runner -- xcodebuild apparently fell back to a different location
+        # without -derivedDataPath set explicitly). This also builds
+        # SpandanTests (part of the Spandan scheme's build phase), which is
+        # harmless -- it just doesn't get packaged below.
         run: |
           xcodebuild build \
             -project Spandan.xcodeproj \
-            -target Spandan \
+            -scheme Spandan \
             -sdk iphoneos \
             -configuration Release \
+            -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
       - name: Package as an .ipa (Payload/Spandan.app, zipped)
         run: |
-          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -iname "Spandan.app" -not -path "*iphonesimulator*" | head -n1)
-          if [ -z "$APP_PATH" ]; then
-            echo "No Spandan.app found outside a simulator build. Full DerivedData Products tree:"
-            find ~/Library/Developer/Xcode/DerivedData -path "*/Build/Products/*" -maxdepth 8
+          APP_PATH="build/DerivedData/Build/Products/Release-iphoneos/Spandan.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "$APP_PATH not found. Full derived-data Products tree:"
+            find build/DerivedData/Build/Products -maxdepth 3
             exit 1
           fi
           echo "Found: $APP_PATH"
