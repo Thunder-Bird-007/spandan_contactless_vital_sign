@@ -214,7 +214,8 @@ defense day.
 MATLAB's `forehead` mode (`clampedBBox(..., xFracLo=0.30, xFracHi=0.70,
 yFracLo=0.10, yFracHi=0.30, ...)`) is explicitly documented in
 `extractROISignals.m` as the **unchanged, pre-Task-N geometry** -- i.e. the
-exact box Segment 6's validated r=0.957 HR result was computed against. The
+exact box Segment 6's validated full-pool HR result (CHROM MAE ~9.10bpm,
+r=0.31; N=112, 5 UBFC + 107 VIPL) was computed against. The
 Android fractions did not match on three of four edges. Fixed by updating
 the four constants in `RoiCalculator.kt` to match MATLAB exactly (see
 `android/README.md`'s "ROI fraction placeholder" section, marked

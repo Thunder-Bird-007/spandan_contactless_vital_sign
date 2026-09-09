@@ -11,8 +11,9 @@ top section was stale for most of the project's history (see
 unchanged until now) -- it described the repo as empty scaffolding with
 every function stubbed out. That was true only for the very first commit.
 Since then: the full HR pipeline (face detection → ROI → filtering →
-CHROM/POS → FFT) has been implemented and LOSO-validated (r=0.957, MAE
-~3.8bpm, pooled UBFC+VIPL), SpO2 has a finalized calibration (validated
+CHROM/POS → FFT) has been implemented and LOSO-validated (CHROM: MAE
+~9.10bpm, r=0.31; POS: MAE ~8.68bpm, r=0.28 -- full pool, N=112, 5 UBFC +
+107 VIPL), SpO2 has a finalized calibration (validated
 but weak -- see caveat below), and the Android app
 (`android/`) ships a real, on-device HR + SpO2 pipeline, verified on
 physical hardware. See
@@ -183,8 +184,11 @@ silently rewritten.
 - **MATLAB pipeline (Segments 2-6): implemented and validated.** Face
   detection/ROI, detrend+bandpass filtering, CHROM/POS pulse extraction,
   FFT heart rate, and SpO2 ratio-of-ratios + linear calibration are all
-  real, working code (`matlab/src/`), not stubs. HR is validated via
-  stratified LOSO at **r=0.957, MAE ~3.8bpm** (pooled UBFC+VIPL). SpO2's
+  real, working code (`matlab/src/`), not stubs. HR is validated at the
+  full pool (N=112, 5 UBFC + 107 VIPL): **CHROM MAE ~9.10bpm, r=0.31; POS
+  MAE ~8.68bpm, r=0.28** (see `docs/Segment6_Refinement_Notes.md` --
+  earlier smaller-pool figures, e.g. r=0.957 at N=8, are superseded and
+  should not be cited as current). SpO2's
   calibration is finalized but weak -- stratified LOSO MAE 1.908 (VIPL),
   which does **not** beat a trivial "guess the training mean" baseline
   within the narrow observed SpO2 range (see
@@ -207,7 +211,8 @@ silently rewritten.
   stability run, UI cleanup) are documented in `android/README.md` and
   `android/docs/`. **Known, honestly-reported limitation:** the Android
   build's on-device HR accuracy has not been shown to match MATLAB's
-  validated r=0.957 result -- see `android/README.md`'s own verification
+  validated full-pool result (CHROM MAE ~9.10bpm, r=0.31) -- see
+  `android/README.md`'s own verification
   sections for why (shorter live buffer window vs. MATLAB's ~80s clips)
   before treating an on-screen bpm reading as validated-accurate.
 - **Self-collected test set** (pipeline stage 7): not yet started.

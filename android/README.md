@@ -28,7 +28,9 @@ end. HR is a real port of the validated MATLAB CHROM/POS+FFT pipeline (see
 [What's real vs. placeholder](#whats-real-vs-placeholder) and
 [Verification: the HR port](#verification-the-hr-port-segment-4) below) --
 but its on-device accuracy has **not** been shown to match MATLAB's
-validated r=0.957 result, for reasons explained in that section. SpO2 went
+validated full-pool result (CHROM MAE ~9.10bpm, r=0.31; POS MAE ~8.68bpm,
+r=0.28 -- N=112, 5 UBFC + 107 VIPL), for reasons explained in that
+section. SpO2 went
 through three states across this project's history, in order: (1) fake
 placeholder math, (2) removed outright (no validated calibration existed to
 ship), (3) **the current state -- a real, live ratio-of-ratios + linear
@@ -57,8 +59,9 @@ with obvious placeholder math standing in for the parts that depended on
 MATLAB's final numbers.
 
 **Update:** MATLAB's HR pipeline (CHROM/POS-based FFT heart rate) has since
-been validated -- r=0.957, MAE ~3.8bpm, pooled across UBFC and VIPL subjects
--- and has now been ported for real; see
+been validated -- CHROM MAE ~9.10bpm, r=0.31; POS MAE ~8.68bpm, r=0.28,
+pooled across the full N=112 (5 UBFC + 107 VIPL) -- and has now been
+ported for real; see
 [Verification: the HR port](#verification-the-hr-port-segment-4) below.
 SpO2 calibration is explicitly **still unresolved** on the MATLAB side (the
 pooled calibration doesn't beat a trivial "guess the mean" baseline yet) --
@@ -135,7 +138,8 @@ reconciled** against MATLAB. That reconciliation has now been done directly
 against `matlab/src/roi/extractROISignals.m`'s `computeRegionBBoxes`
 (default/original `forehead` mode): MATLAB uses `xFracLo=0.30, xFracHi=0.70,
 yFracLo=0.10, yFracHi=0.30` -- the exact geometry Segment 6's validated
-r=0.957 HR result was computed against. The by-eye fractions genuinely did
+full-pool HR result (CHROM MAE ~9.10bpm, r=0.31) was computed against.
+The by-eye fractions genuinely did
 not match (25–75%/8–30% vs. the real 30–70%/10–30%), so this was a real gap,
 not stale documentation -- `RoiCalculator.kt`'s four constants are now
 `TOP_FRACTION=0.10f, BOTTOM_FRACTION=0.30f, LEFT_FRACTION=0.30f,
@@ -488,8 +492,8 @@ merging -- both fixed, noted here in case they recur).
   Some individual readings landed close to the 76bpm reference (78, 84 --
   within 2-8bpm); others were off by 20-50+ bpm. **This is a real,
   unresolved accuracy limitation of this on-device build, not swept under
-  the rug**: MATLAB's validated r=0.957 result was computed on ~80 second
-  UBFC/VIPL clips at ~29fps (~2,362-2,409 samples/clip, ~0.7bpm FFT bin
+  the rug**: MATLAB's validated full-pool result (CHROM MAE ~9.10bpm,
+  r=0.31) was computed on ~80 second UBFC/VIPL clips at ~29fps (~2,362-2,409 samples/clip, ~0.7bpm FFT bin
   resolution). This on-device build's `SignalBuffer` window is 10 seconds
   at the measured ~13.4Hz (~134 samples, ~6bpm FFT bin resolution) --
   roughly **18x fewer samples** than what was actually validated, which is
