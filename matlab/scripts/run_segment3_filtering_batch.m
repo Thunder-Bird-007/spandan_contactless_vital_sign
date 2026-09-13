@@ -21,6 +21,17 @@
 % If a subject's rgb_traces.mat is missing or fails to load, this script
 % logs the reason and moves on to the next subject rather than halting
 % the whole batch. A summary of any failures is printed at the end.
+%
+% [2026-09-13] DWT wavelet-shrinkage denoising (filtering/waveletDenoise.m,
+% Segment 8 Action 4) is now the default Branch 1 pre-step, applied to
+% each raw channel immediately before detrendSignal.m -- see
+% docs/Segment8_Task4_Wavelet_Denoise_Ablation.md for the full-pool
+% ablation that justified this (CHROM MAE 9.10->7.83bpm, POS MAE
+% 8.68->7.22bpm, both r nearly doubling). Toggle useWaveletDenoise below
+% to false to reproduce the pre-wavelet numbers without editing anything
+% else in this script.
+
+useWaveletDenoise = true;
 
 subjectList = {'5-gt', '6-gt', '7-gt'};
 
@@ -61,6 +72,13 @@ for subjectPos = 1:numSubjects
         fs = rgbData.fs;
 
         disp(['Subject ' subjectID ': loaded rgb_traces.mat, fs = ' num2str(fs) ' fps, numFrames = ' num2str(numel(G))]);
+
+        if useWaveletDenoise
+            R = waveletDenoise(R);
+            G = waveletDenoise(G);
+            B = waveletDenoise(B);
+            disp(['Subject ' subjectID ': applied waveletDenoise (db4, 3-level) to R/G/B before detrending.']);
+        end
 
         [R_detrended, detrendOrder] = detrendSignal(R);
         [G_detrended, detrendOrder] = detrendSignal(G);

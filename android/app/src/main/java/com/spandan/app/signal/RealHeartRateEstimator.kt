@@ -5,10 +5,12 @@ import kotlin.math.abs
 
 /**
  * Real HR pipeline, replacing PlaceholderVitalsEstimator.computeHeartRatePlaceholder():
- * detrend -> bandpass -> CHROM/POS -> re-filter -> FFT peak -> CHROM/POS switch -> bpm.
+ * wavelet-denoise -> detrend -> bandpass -> CHROM/POS -> re-filter -> FFT peak ->
+ * CHROM/POS switch -> bpm.
  *
- * Ports (in order) matlab/src/filtering/detrendSignal.m, bandpassClean.m,
- * matlab/src/pulseextraction/{chromCombine,posCombine}.m, and
+ * Ports (in order) matlab/src/filtering/waveletDenoise.m ([WaveletDenoise], Segment 8
+ * Action 4/[2026-09-13] PROMOTED TO DEFAULT), matlab/src/filtering/detrendSignal.m,
+ * bandpassClean.m, matlab/src/pulseextraction/{chromCombine,posCombine}.m, and
  * matlab/src/heartrate/fftHeartRate.m, operating on SignalBuffer's current window.
  *
  * The displayed "LIVE" value is chosen per reading by the CHROM/POS switching rule
@@ -25,7 +27,13 @@ import kotlin.math.abs
  * SpO2 is untouched by this file -- see
  * PlaceholderVitalsEstimator.computeSpo2Placeholder(), still fake by design.
  */
-class RealHeartRateEstimator {
+class RealHeartRateEstimator(
+    /** Default true, matching the MATLAB pipeline's own promoted default (Segment 8
+     *  Action 4) -- flip to false to reproduce the pre-wavelet numbers without
+     *  touching the rest of this chain, same toggle contract as the MATLAB side's
+     *  useWaveletDenoise. */
+    private val useWaveletDenoise: Boolean = true
+) {
 
     /**
      * [chromBpm]/[posBpm]: the raw, un-switched values (kept for auditing/logging).
@@ -69,9 +77,21 @@ class RealHeartRateEstimator {
             return cached?.displayedBpm
         }
 
-        val rawR = DoubleArray(samples.size) { samples[it].red.toDouble() }
-        val rawG = DoubleArray(samples.size) { samples[it].green.toDouble() }
-        val rawB = DoubleArray(samples.size) { samples[it].blue.toDouble() }
+        var rawR = DoubleArray(samples.size) { samples[it].red.toDouble() }
+        var rawG = DoubleArray(samples.size) { samples[it].green.toDouble() }
+        var rawB = DoubleArray(samples.size) { samples[it].blue.toDouble() }
+
+        // [2026-09-13] PROMOTED TO DEFAULT, matching the MATLAB pipeline's own
+        // scripts/run_segment3_filtering_batch.m / run_vipl_integration_batch.m
+        // useWaveletDenoise toggle: wavelet-shrinkage denoise each raw channel
+        // immediately before detrending. Same "raw" variables are then reused
+        // below for chromCombine/posCombine's own DC-normalization mean, matching
+        // the MATLAB ablation's own convention (see WaveletDenoise.kt's header).
+        if (useWaveletDenoise) {
+            rawR = WaveletDenoise.denoise(rawR)
+            rawG = WaveletDenoise.denoise(rawG)
+            rawB = WaveletDenoise.denoise(rawB)
+        }
 
         val detrendedR = BandpassFilter.detrend(rawR)
         val detrendedG = BandpassFilter.detrend(rawG)
