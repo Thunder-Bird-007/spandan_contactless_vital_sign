@@ -80,7 +80,13 @@ step 1 of the protocol above.)*
   adopted; `bandpassMorphology.m`'s existing `'mid'` mode as the shared-f0 input
   (Segment 12 Task 1) gives a small strictly-non-regressive win untargeted at the
   hypothesis that motivated testing it, also not adopted as the new default. See
-  the Active Work Queue entries below for both.
+  the Active Work Queue entries below for both. **[2026-09-13, Segment 13]** The
+  Gaussian filter's own 17-subject regression (at its best tested parameter,
+  alpha=0.15) has a clean root cause (every regressor was a subject ABPF already
+  passed) and a well-supported fix (`morphology/harmonicFilterConfidenceGate.m`,
+  new, gated) that beats BOTH ABPF and plain Gaussian(0.15) on pass rate (47% vs.
+  24%/31%) with zero severe regressions by construction — still NOT adopted into
+  production, see the new Active Work Queue entry.
 - ~~**⚠️ BROKEN, not yet usable**: Segment 7 Task J ran but produced empty output.~~
   **[2026-09-12] FIXED AND COMPLETE.** Root cause was a per-landmark MATLAB↔Python
   round-trip leak (468 landmarks × 2 attribute reads/frame as separate calls leaked
@@ -478,6 +484,48 @@ scale any of these up, that is a new, explicit decision, not an automatic next s
       `results/metrics/segment12_task2_gaussian_vs_abpf_comparison.csv`,
       `results/metrics/segment12_task2b_gaussian_alpha_sweep.csv`,
       `results/figures/segment12_task2*.png` (4 figures).
+- [x] **Segment 13 — root-cause the Gaussian-filter (alpha=0.15) 17-subject regression
+      from Segment 12 Task 2, and fix it if a clean factor emerges.** **Done 2026-09-13.
+      Clean factor found; a gated fix built and verified beats both ingredients; NOT
+      adopted into production, per the brief.** **Action 1 (root cause)**: pulled
+      per-subject results from Segment 10/11/12's own already-validated CSVs (no video
+      reprocessed), checked five hypotheses, reported all: dataset (weak, small-N only),
+      device/source (inapplicable, no variation in this pool), HR range (overlapping,
+      not a separator), skin-colour angle (ruled out, regressor median inside the pool's
+      own IQR) — and baseline ABPF pass/fail status, a **clean separator**: all 17/17
+      severe regressors were subjects ABPF already passed (>0.3 confidence) before any
+      Gaussian filter; 0/76 ABPF-failing subjects showed a severe regression. Conditional
+      rate: 17/24 (71%) of ABPF-passing subjects regress severely under Gaussian(0.15);
+      0/76 (0%) of ABPF-failing subjects do. Mechanism: several regressors sit at
+      `notchDetectIEM.m`'s own documented confidence-clip ceiling (1.000), which has more
+      room to fall than a low-confidence subject has room to rise; waveform correlation
+      (uncapped) does NOT show the same one-sided pattern for these same subjects.
+      **Action 2 (gated fix)**: new `morphology/harmonicFilterConfidenceGate.m` (generic,
+      reusable, never wired into `pipeline/estimateVitalsAndMorphology.m` or any
+      production call site) — keep ABPF wherever it already passes; substitute
+      Gaussian(0.15) only where ABPF fails. Evaluated on REAL freshly recomputed signals
+      (not just cached-CSV arithmetic): pass rate 24%(ABPF)/31%(Gaussian alone)/**47%
+      (gated)**, median notch conf 0.058/0.090/**0.235**, median waveform corr
+      0.519/0.523/**0.522**, harmonic confusion 5%/3%/**3%**, severe regressions vs. ABPF
+      17(Gaussian alone)/**0 (gated, by construction)**. Honest cost still on record:
+      among the 76 substituted subjects, corr improves for 45, regresses for 31 (not
+      severe by the notch metric, since none were passing to begin with). **Also tested
+      and explicitly warned against**: a multi-candidate variant (pick whichever of
+      several Gaussian alphas self-reports the highest confidence) pushes pass rate to
+      64% but its median corr (0.508) is the WORST of every method compared — a
+      demonstrated selection-bias artifact from repeatedly picking the highest of several
+      noisy self-scores, not a real gain; the new gate function's own header states this
+      warning so it isn't rediscovered later. **Recommendation: the safe gate is the
+      best-supported single result in the whole cPACE/mid-band/Gaussian-filter
+      investigation line, but stays gated and off-by-default, not adopted, per the
+      brief.** Full detail:
+      `matlab/docs/Segment13_Task1_Gaussian_Regression_Root_Cause_and_Gate.md`. Outputs:
+      `matlab/src/morphology/harmonicFilterConfidenceGate.m`,
+      `matlab/scripts/run_segment13_task1_regression_root_cause.m`,
+      `matlab/scripts/run_segment13_task2_gated_selection_evaluation.m`,
+      `results/metrics/segment13_task1_regression_root_cause.csv`,
+      `results/metrics/segment13_task2_gated_evaluation.csv`,
+      `results/figures/segment13_task1_*.png`, `results/figures/segment13_task2_*.png`.
 
 ---
 
@@ -952,3 +1000,33 @@ Maintenance Protocol rule 3.)*
   `results/metrics/segment12_task2b_gaussian_alpha_sweep.csv`,
   `results/figures/segment12_*.png`. `cpaceProjection.m`, `computeCrossROIPLV.m`, and
   `residualAdaptiveKalmanHR.m` were not touched, per this session's own instruction.
+- **2026-09-13** (new session) — Segment 13: closed the open thread from Segment 12
+  Task 2 (the 17-subject regression under `harmonicSelectiveGaussianFilter.m` at
+  alpha=0.15, previously measured but not explained). **Action 1**: pulled per-subject
+  results from Segment 10/11/12's own existing, already-validated CSVs (no video
+  reprocessed) and checked five hypotheses, reporting all — dataset (weak/small-N),
+  device/source (inapplicable, no variation in this pool), HR range (not a separator),
+  skin-colour angle (ruled out) — and found a clean one: **all 17/17 severe
+  regressors were subjects the current ABPF comb already passed** (0/76 ABPF-failing
+  subjects regressed). Several sit exactly at `notchDetectIEM.m`'s own documented
+  confidence-clip ceiling (1.000), consistent with a "more room to fall than to rise"
+  mechanism; waveform correlation (uncapped) doesn't show the same pattern for the same
+  subjects. **Action 2**: built and evaluated (on real, freshly recomputed signals, not
+  cached-CSV arithmetic) a new gated function, `morphology/harmonicFilterConfidenceGate.m`
+  — keep ABPF wherever it already passes, substitute Gaussian(0.15) only where it
+  fails. Result: pass rate 24%→31%(Gaussian alone)→**47% (gated)**, median corr
+  0.519→0.523→**0.522**, harmonic confusion 5%→3%→**3%**, **zero severe regressions**
+  (structural, not just empirical). Also tested and explicitly warned against in the
+  new function's own header: a multi-candidate "pick the highest self-reported
+  confidence" variant hits 64% pass rate but its median corr (0.508) is the WORST of
+  every method compared — a demonstrated selection-bias artifact, flagged so it isn't
+  mistaken for a real gain later. **Not adopted into production** — the gate stays a
+  new, gated, off-by-default utility, per the brief; `cpaceProjection.m`,
+  `computeCrossROIPLV.m`, `residualAdaptiveKalmanHR.m`, and the `'wide'` bandpass
+  default were all left untouched. Full detail:
+  `matlab/docs/Segment13_Task1_Gaussian_Regression_Root_Cause_and_Gate.md`. Outputs:
+  `matlab/src/morphology/harmonicFilterConfidenceGate.m`,
+  `matlab/scripts/run_segment13_task1_regression_root_cause.m`,
+  `matlab/scripts/run_segment13_task2_gated_selection_evaluation.m`,
+  `results/metrics/segment13_task1_regression_root_cause.csv`,
+  `results/metrics/segment13_task2_gated_evaluation.csv`, `results/figures/segment13_*.png`.
