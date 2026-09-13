@@ -73,7 +73,14 @@ step 1 of the protocol above.)*
   citation) gets 4/5 UBFC subjects above the 0.3 notch-confidence bar, vs. 1/5 for the
   flat-band baseline. This is this project's current best-supported single intervention
   for the notch. Small-N (5 subjects) caveat applies, same as everywhere else in this
-  project.
+  project. **[2026-09-13] Still the production choice after two head-to-head challenges
+  on the full 100-subject pool**: `morphology/harmonicSelectiveGaussianFilter.m` (NEW,
+  gated, Segment 12 Task 2) underperforms it at the source paper's own parameter and
+  only beats it at a tuned parameter with a real 17-subject regression cost, not
+  adopted; `bandpassMorphology.m`'s existing `'mid'` mode as the shared-f0 input
+  (Segment 12 Task 1) gives a small strictly-non-regressive win untargeted at the
+  hypothesis that motivated testing it, also not adopted as the new default. See
+  the Active Work Queue entries below for both.
 - ~~**⚠️ BROKEN, not yet usable**: Segment 7 Task J ran but produced empty output.~~
   **[2026-09-12] FIXED AND COMPLETE.** Root cause was a per-landmark MATLAB↔Python
   round-trip leak (468 landmarks × 2 attribute reads/frame as separate calls leaked
@@ -351,7 +358,10 @@ scale any of these up, that is a new, explicit decision, not an automatic next s
       wide-band `bandpassMorphology.m` (0.5-8Hz) preserves ~97-100% of it when it can run
       — but at a true 16fps (Nyquist=8Hz), that wide-band filter and every 8/10/12Hz
       order-2 variant is literally inadmissible (Nyquist), a real structural gap affecting
-      21% of Task 1's own VIPL pool, not a tuning question. Order (2 vs 3) is not the
+      ~~21%~~ **46% (recount corrected 2026-09-13, Segment 12 Task 1 — the
+      original count was a genuine error, likely conflated with Segment 6 Task L's
+      unrelated 20-subject v5-scenario figure)** of Task 1's own VIPL pool, not a
+      tuning question. Order (2 vs 3) is not the
       dominant driver; upper cutoff is, matching Lapitan et al. **Action 4 (POS cardiac
       angle) — SUPPORTED**: measured actual cardiac angle on 25 subjects (5 UBFC-D1 + 20
       VIPL) via PCA on `posCombine.m`'s own un-combined S1/S2 projections (pure
@@ -407,6 +417,67 @@ scale any of these up, that is a new, explicit decision, not an automatic next s
       `results/metrics/segment11_cpace_before_after.csv`,
       `results/metrics/segment11_cpace_skin_angle_per_subject.csv`,
       `results/figures/segment11_*.png` (4 figures).
+- [x] **Segment 12 Task 1 — evaluate `bandpassMorphology.m`'s existing but unused
+      `'mid'` mode (0.6-6.0Hz) for the Nyquist-margin problem.** **Done 2026-09-13. Small
+      strictly non-regressive win, NOT adopted as default (mechanism doesn't match the
+      original hypothesis).** **Correction made first**: Task 3's own "20 of 95 (21%)"
+      affected-subject figure was a genuine counting error (~~20~~ **44 of 95, 46%**) —
+      corrected in `docs/Segment10_Task3_Tier0_Diagnostics.md` and this file with
+      strikethrough. Checked first, per the brief's own instruction: today's `'wide'`
+      mode does NOT error for the affected group (real fps is always fractionally above
+      the exact 16.0fps that would trip the guard), but runs with a razor-thin margin
+      (0.033-0.322Hz) vs. `'mid'`'s comfortable ~2.0-2.3Hz. Regression check: fresh
+      `'wide'` recompute matches Task 1's own cached numbers 100/100. Result: only 6/100
+      subjects show ANY difference between `'wide'`/`'mid'` (fftHeartRate's fixed
+      0.7-4Hz search band is insensitive to this specific band-edge choice for almost
+      everyone); of those, 3 flip from failing to passing the 0.3 notch-confidence bar,
+      zero flip the other way — but only 1 of the 3 is in the "affected" near-Nyquist
+      group (2 of 3 are in the "safe" group), so the improvement is NOT the
+      Nyquist-margin fix originally hypothesized, just a small scattered harmonic-lock-
+      escape effect. One flip (`VIPL_p14`) shows notch confidence improve while waveform
+      correlation regresses — a real per-metric disagreement, stated not hidden.
+      **Recommendation: keep production on `'wide'`** (evidence for switching is real
+      but weak and untargeted); `'mid'` is now a genuinely validated (not just
+      theoretical) low-risk alternative available via `bandpassMorphology.m`'s own
+      existing `bandMode` argument, no new file needed. Full detail:
+      `matlab/docs/Segment12_Task1_Mid_Band_Evaluation.md`. Outputs:
+      `matlab/scripts/run_segment12_task1_mid_band_evaluation.m`,
+      `results/metrics/segment12_task1_mid_band_comparison.csv`,
+      `results/figures/segment12_task1_*.png` (3 figures).
+- [x] **Segment 12 Task 2 — implement and evaluate Harmonic-Selective Gaussian
+      Filtering (Dominguez-Hernandez, Paez & Padilla, Sensors 26(12):3710, 2026) as a
+      gated alternative to `adaptiveHarmonicFilter.m`'s ABPF comb.** **Done 2026-09-13.
+      NOT adopted at the paper's own default parameter; a tuned parameter shows promise
+      but has a real per-subject cost, also NOT adopted.** New
+      `morphology/harmonicSelectiveGaussianFilter.m` (full formula read from the primary
+      source, PMC13307314, this session — not the earlier literature-search summary
+      alone), never wired into production. Regression check: fresh ABPF recompute
+      matches Task 1's own cached notchConfidence/corr 100/100. **At the paper's own
+      literal alpha=0.5 ("a practical compromise" per its authors): underperforms ABPF
+      on every metric except a small harmonic-confusion win** — pass rate 20% vs. ABPF's
+      24%, median waveform corr 0.383 vs. 0.519 (57-65% of subjects regress on the two
+      headline metrics). **Mechanism identified and visualized**: at alpha=0.5, each
+      harmonic's Gaussian full-width (~1.18*f0) exceeds the harmonic spacing (f0) itself
+      at this pool's typical HR, so adjacent harmonics overlap heavily and the filter
+      stops being meaningfully "selective." **Follow-up alpha sweep (0.10-0.50, not in
+      the original brief, run because the mechanism predicted it would matter) finds
+      alpha=0.15 beats ABPF on all three metrics at once** (pass rate 31% vs 24%, median
+      corr 0.523 vs 0.519, harmonic confusion 3% vs 5%) — **but 17/100 subjects show a
+      severe notch-confidence regression even as the pool median improves** (several
+      dropping from ~1.0 to near-zero), reported plainly rather than only citing the
+      favorable median. **Recommendation: adopt neither** — alpha=0.5 is a clear loss,
+      alpha=0.15's pool-level win comes with an unexplained 17-subject severe-regression
+      tail this project's own evaluation-honesty standard won't paper over. Flagged as
+      the most promising unresolved lead in the whole document for a future session
+      (investigate the regression-tail subjects, try adaptive/per-subject alpha, or
+      combine a tighter alpha with more harmonics). Full detail:
+      `matlab/docs/Segment12_Task2_Harmonic_Selective_Gaussian_Filter.md`. Outputs:
+      `matlab/src/morphology/harmonicSelectiveGaussianFilter.m`,
+      `matlab/scripts/run_segment12_task2_gaussian_harmonic_filter_evaluation.m`,
+      `matlab/scripts/run_segment12_task2b_gaussian_alpha_sweep.m`,
+      `results/metrics/segment12_task2_gaussian_vs_abpf_comparison.csv`,
+      `results/metrics/segment12_task2b_gaussian_alpha_sweep.csv`,
+      `results/figures/segment12_task2*.png` (4 figures).
 
 ---
 
@@ -797,7 +868,8 @@ Maintenance Protocol rule 3.)*
   `bandpassMorphology.m` preserves ~97-100% of it when it can run — but also
   demonstrates directly that at a true 16fps that wide-band filter (and every wider
   order-2 variant tried) is literally inadmissible on Nyquist grounds, a real
-  structural gap hitting 21% of Task 1's own VIPL pool. Action 4 (POS cardiac-angle
+  structural gap hitting ~~21%~~ **46% (recount corrected 2026-09-13, see that
+  day's own changelog entry)** of Task 1's own VIPL pool. Action 4 (POS cardiac-angle
   measurement, pure measurement, `posCombine.m` untouched) IS supported: measured
   median cardiac angle 109.5° (VIPL 121.4°, UBFC 97.8°) on 25 subjects, landing inside
   Kaur et al.'s own reported 96.6-115.5° range and nowhere near POS's assumed 57° —
@@ -839,3 +911,44 @@ Maintenance Protocol rule 3.)*
   `results/metrics/segment11_cpace_before_after.csv`,
   `results/metrics/segment11_cpace_skin_angle_per_subject.csv`,
   `results/figures/segment11_*.png`.
+- **2026-09-13** (new session) — Segment 12: the two remaining Tier 1/2/3 candidates
+  from Segment 10 Task 2's literature search, both as separate gated/additive changes,
+  no other candidate started. **First, a correction**: re-deriving Task 3's "20 of 95
+  VIPL subjects (21%) run at a true ~16fps" figure from the same CSV found 44 of 95
+  (46%) instead — a genuine counting error, not a different definition (likely
+  conflated with Segment 6 Task L's unrelated 20-subject v5-scenario figure). Corrected
+  in `docs/Segment10_Task3_Tier0_Diagnostics.md` and this file with strikethrough.
+  **Task 1 (mid-band mode)**: checked first, per the brief's instruction, whether
+  today's `'wide'` mode actually errors for the affected subjects — it does NOT (real
+  fps is always fractionally above the exact 16.0fps that would trip the guard), though
+  it runs with a razor-thin 0.033-0.322Hz margin vs. `'mid'`'s comfortable ~2.0-2.3Hz.
+  Regression check passed (fresh `'wide'` recompute matches Task 1's own cached numbers
+  100/100) before trusting the `'mid'` numbers built the same way. Result: only 6/100
+  subjects show any difference at all (fftHeartRate's fixed 0.7-4Hz search band is
+  insensitive to this band-edge choice for almost everyone); 3 flip from failing to
+  passing the 0.3 notch-confidence bar, 0 regress — but only 1 of 3 is in the
+  hypothesized near-Nyquist "affected" group, so the mechanism is NOT what Task 3
+  predicted. Kept production on `'wide'`; `'mid'` is now a validated, low-risk,
+  available alternative, not promoted to default. Full detail:
+  `docs/Segment12_Task1_Mid_Band_Evaluation.md`. **Task 2 (Harmonic-Selective Gaussian
+  Filtering)**: new `morphology/harmonicSelectiveGaussianFilter.m`, full formula read
+  from the primary source (PMC13307314) this session. At the paper's own literal
+  alpha=0.5, underperforms the current ABPF comb on pass rate (20% vs 24%) and median
+  waveform correlation (0.383 vs 0.519), with a verified mechanistic explanation
+  (adjacent harmonics' Gaussians overlap heavily at this pool's typical HR, so the
+  filter stops being selective — visualized directly). A follow-up alpha sweep
+  (0.10-0.50) found alpha=0.15 beats ABPF on all three metrics at once (31% pass rate,
+  0.523 median corr, 3% harmonic confusion) — but 17/100 subjects show a severe
+  notch-confidence regression even as the pool median improves, reported plainly rather
+  than only citing the favorable median. Neither parameter adopted; flagged as the most
+  promising open lead in the whole document. Full detail:
+  `docs/Segment12_Task2_Harmonic_Selective_Gaussian_Filter.md`. Outputs:
+  `matlab/src/morphology/harmonicSelectiveGaussianFilter.m`,
+  `matlab/scripts/run_segment12_task1_mid_band_evaluation.m`,
+  `matlab/scripts/run_segment12_task2_gaussian_harmonic_filter_evaluation.m`,
+  `matlab/scripts/run_segment12_task2b_gaussian_alpha_sweep.m`,
+  `results/metrics/segment12_task1_mid_band_comparison.csv`,
+  `results/metrics/segment12_task2_gaussian_vs_abpf_comparison.csv`,
+  `results/metrics/segment12_task2b_gaussian_alpha_sweep.csv`,
+  `results/figures/segment12_*.png`. `cpaceProjection.m`, `computeCrossROIPLV.m`, and
+  `residualAdaptiveKalmanHR.m` were not touched, per this session's own instruction.
