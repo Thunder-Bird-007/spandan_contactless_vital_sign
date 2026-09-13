@@ -319,10 +319,20 @@ this script rather than crashing past it. All three order-2 8/10/12Hz
 variants are equally unusable at 16fps for the same reason. **Every filter
 config in this test wider than the narrow 0.7–4Hz HR-band is structurally
 unavailable for any subject running at a true ~16fps** — and Action 1's own
-data confirms 20 of Task 1's 95 VIPL subjects (21%) are in exactly that
-regime. This is not a tuning problem to sweep away; it is a hard ceiling
-imposed by the recording, independent of anything this project's own code
-does.
+data confirms ~~20 of Task 1's 95 VIPL subjects (21%) are in exactly that
+regime~~ **[CORRECTED 2026-09-13, Segment 12 Task 1] a recount from the same
+CSV finds 44 of 95 (46%)** are in exactly that regime (frameRate < 17Hz;
+the true ~16fps band runs 16.07–16.65fps with a large, clean gap to the
+next subject at 18.09fps, so any threshold in that gap gives the same
+count). The original "20 (21%)" figure was a genuine counting error, not a
+different definition — most likely a conflation with Segment 6 Task L's
+*unrelated* v5-scenario 20-subject figure (a different scenario, v5 dark,
+not this v1/source1 pool). Flagged and corrected here per this project's
+own error-handling convention rather than silently fixed; the qualitative
+verdict below is unaffected (if anything, a larger affected fraction makes
+the finding MORE consequential, not less). This is not a tuning problem to
+sweep away; it is a hard ceiling imposed by the recording, independent of
+anything this project's own code does.
 
 ### Honest caveats
 
@@ -352,9 +362,10 @@ Filtering genuinely explains a real, sizeable chunk of Task 1 finding (4)
 already essentially solves it when it can run, and upper cutoff — not
 order — is confirmed as the dominant lever, matching both literature
 anchors. But the 16fps Nyquist wall is real and already affects a
-non-trivial fraction (21%) of the exact pool Task 1 audited — any Tier 1
-work on Branch 2's filter for VIPL should treat "what does the ~16fps
-subset even run" as a first-class question, not an edge case.
+non-trivial fraction (~~21%~~ **46%, corrected 2026-09-13 — see Finding D**)
+of the exact pool Task 1 audited — any Tier 1 work on Branch 2's filter for
+VIPL should treat "what does the ~16fps subset even run" as a first-class
+question, not an edge case.
 
 ---
 
@@ -457,9 +468,9 @@ needs revising in light of these four results, not simply confirmed.**
   filtering explains a real, sizeable, but *partial* share of Task 1
   finding (4), that the already-adopted wide-band Branch 2 filter already
   addresses most of it when it can run, and surfaces a concrete, previously
-  uncharacterized-in-this-exact-pool constraint: ~21% of Task 1's own VIPL
-  subjects run at a true fps where Branch 2's own filter is literally
-  inadmissible (Nyquist).
+  uncharacterized-in-this-exact-pool constraint: ~~~21%~~ **46% (corrected
+  2026-09-13, see Finding D)** of Task 1's own VIPL subjects run at a true
+  fps where Branch 2's own filter is literally inadmissible (Nyquist).
 
 **Concrete recommendation for the next session, in cheapest-first order:**
 
