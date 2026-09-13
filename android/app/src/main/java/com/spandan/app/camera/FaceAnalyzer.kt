@@ -40,6 +40,24 @@ class FaceAnalyzer(
             .build()
     )
 
+    // --- Segment 7 Task G's own Action C2 proposal (android/docs/
+    // Segment7_Task_G_Throughput_Profiling.md section 3), now implemented:
+    // ML Kit detector.process() measured at ~98.5% of per-frame cost
+    // (71.84ms of 72.91ms mean, real on-device capture, Galaxy A35) --
+    // running it only every DETECT_EVERY_N_FRAMES-th frame and reusing the
+    // last known face box on the frames in between is the doc's own
+    // proposed lever. Bounded staleness: at N=3 and the measured ~72.9ms
+    // real-detection cost, the face box can go up to ~2*72.9=146ms stale
+    // between real detections (frames 2/3 of each cycle skip; frame 1 is
+    // always fresh) -- well under normal head-motion speed for a forehead
+    // ROI, same reasoning the doc's own sketch used. No new dependency
+    // (no optical-flow/KLT tracker -- matlab/docs/Segment7_Task_D_Landmark_
+    // ROI.md already found a KLT-tracked ROI net-regresses accuracy, a
+    // caution against reaching for a heavier tracker here too, quoted
+    // directly from the doc's own sketch).
+    private var frameCounter = 0
+    private var lastFaceBoxRotated: Rect? = null
+
     @ExperimentalGetImage
     override fun analyze(imageProxy: ImageProxy) {
         val mediaImage = imageProxy.image
@@ -49,7 +67,6 @@ class FaceAnalyzer(
         }
 
         val rotationDegrees = imageProxy.imageInfo.rotationDegrees
-        val inputImage = InputImage.fromMediaImage(mediaImage, rotationDegrees)
 
         // InputImage.fromMediaImage(...).width/height report the RAW,
         // unrotated sensor-buffer dimensions -- NOT swapped for 90/270
@@ -70,6 +87,20 @@ class FaceAnalyzer(
             rotatedImageHeight = imageProxy.height
         }
 
+        frameCounter++
+        val staleFaceBox = lastFaceBoxRotated
+        val shouldSkipDetection = staleFaceBox != null && frameCounter % DETECT_EVERY_N_FRAMES != 0
+
+        if (shouldSkipDetection) {
+            // Reuse the last known face box entirely -- no detector.process()
+            // call this frame, the ~98.5%-of-cost operation Task G measured.
+            emitFaceDetected(staleFaceBox!!, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
+            imageProxy.close()
+            return
+        }
+
+        val inputImage = InputImage.fromMediaImage(mediaImage, rotationDegrees)
+
         detector.process(inputImage)
             .addOnSuccessListener { faces ->
                 // Always take the largest detected face, not faces[0] -- a
@@ -79,38 +110,60 @@ class FaceAnalyzer(
                 val face = faces.maxByOrNull { it.boundingBox.width().toLong() * it.boundingBox.height() }
 
                 if (face == null) {
+                    lastFaceBoxRotated = null
                     onResult(FaceAnalysisResult.NoFace)
                     imageProxy.close()
                     return@addOnSuccessListener
                 }
 
-                val faceBoxRotated = face.boundingBox
-                val roiBoxRotated = RoiCalculator.foreheadRoiFrom(faceBoxRotated)
-
-                val roiBoxSensor = CoordinateMapper.rotatedRectToSensorRect(
-                    roiBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height
-                )
-                val rgbSample = RoiPixelAverager.averageRgb(imageProxy, roiBoxSensor)
-
-                onResult(
-                    FaceAnalysisResult.FaceDetected(
-                        faceBoxRotated = faceBoxRotated,
-                        roiBoxRotated = roiBoxRotated,
-                        rotatedImageWidth = rotatedImageWidth,
-                        rotatedImageHeight = rotatedImageHeight,
-                        rgbSample = rgbSample
-                    )
-                )
+                lastFaceBoxRotated = face.boundingBox
+                emitFaceDetected(face.boundingBox, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
                 imageProxy.close()
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Face detection failed for this frame", e)
+                lastFaceBoxRotated = null
                 onResult(FaceAnalysisResult.NoFace)
                 imageProxy.close()
             }
     }
 
+    /** Shared ROI/coordinate-mapping/averaging tail for both a fresh detection
+     *  and a reused (skipped-detection) face box -- identical math either
+     *  way, just a different source for [faceBoxRotated]. */
+    @ExperimentalGetImage
+    private fun emitFaceDetected(
+        faceBoxRotated: Rect,
+        rotationDegrees: Int,
+        rotatedImageWidth: Int,
+        rotatedImageHeight: Int,
+        imageProxy: ImageProxy
+    ) {
+        val roiBoxRotated = RoiCalculator.foreheadRoiFrom(faceBoxRotated)
+
+        val roiBoxSensor = CoordinateMapper.rotatedRectToSensorRect(
+            roiBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height
+        )
+        val rgbSample = RoiPixelAverager.averageRgb(imageProxy, roiBoxSensor)
+
+        onResult(
+            FaceAnalysisResult.FaceDetected(
+                faceBoxRotated = faceBoxRotated,
+                roiBoxRotated = roiBoxRotated,
+                rotatedImageWidth = rotatedImageWidth,
+                rotatedImageHeight = rotatedImageHeight,
+                rgbSample = rgbSample
+            )
+        )
+    }
+
     companion object {
         private const val TAG = "FaceAnalyzer"
+
+        /** Run real ML Kit detection on every Nth frame; reuse the last known
+         *  face box on the frames in between. N=3 per Segment 7 Task G's own
+         *  proposal range (N=2 or 3) -- see this class's own comment above
+         *  for the staleness-bound reasoning. */
+        private const val DETECT_EVERY_N_FRAMES = 3
     }
 }

@@ -1,5 +1,6 @@
 package com.spandan.app.camera
 
+import android.graphics.Rect
 import android.os.SystemClock
 import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
@@ -13,10 +14,21 @@ import java.util.concurrent.atomic.AtomicLong
 
 /**
  * NEW FILE -- Segment 7 Task G (throughput profiling). Additive only: this
- * does not modify FaceAnalyzer.kt, RoiPixelAverager.kt, or RoiCalculator.kt.
- * It duplicates FaceAnalyzer's analyze() logic (same detector config, same
+ * does not modify RoiPixelAverager.kt or RoiCalculator.kt. It duplicates
+ * FaceAnalyzer's analyze() logic (same detector config, same
  * ROI/coordinate-mapping/pixel-averaging calls, same "largest face" rule)
  * with SystemClock.elapsedRealtimeNanos() timing split into three phases:
+ *
+ * [2026-09-13] UPDATED to also mirror FaceAnalyzer.kt's Action C2 frame-skip
+ * optimization (DETECT_EVERY_N_FRAMES=3, reuse lastFaceBoxRotated on the
+ * frames in between) -- this file's own class doc previously said it
+ * "duplicates FaceAnalyzer's analyze() logic", which had gone stale the
+ * moment FaceAnalyzer.kt gained the skip logic; kept in sync here so this
+ * profiler actually measures the CURRENT production code path, not the
+ * pre-optimization baseline. On a skipped frame, detectMs is logged as 0.0
+ * (no detector.process() call happens) and roiMs/otherMs are still real,
+ * so parsing the same SPANDAN_PROFILE lines the same way still gives an
+ * honest post-optimization steady-state fps.
  *
  *   1. detectMs   -- wall-clock time from calling detector.process(inputImage)
  *                    to the success/failure listener firing. This is an
@@ -58,6 +70,11 @@ class ProfilingFaceAnalyzer(
     )
 
     private val frameIndex = AtomicLong(0)
+
+    // Mirrors FaceAnalyzer.kt's own frame-skip state -- see this file's
+    // class KDoc "[2026-09-13] UPDATED" note above.
+    private var frameCounter = 0
+    private var lastFaceBoxRotated: Rect? = null
 
     // Running aggregates per phase -- crude (no percentiles), intended only
     // as a live sanity check while a capture is running. The authoritative
@@ -113,6 +130,41 @@ class ProfilingFaceAnalyzer(
             rotatedImageHeight = imageProxy.height
         }
 
+        frameCounter++
+        val staleFaceBox = lastFaceBoxRotated
+        val shouldSkipDetection = staleFaceBox != null && frameCounter % DETECT_EVERY_N_FRAMES != 0
+
+        if (shouldSkipDetection) {
+            // Reuse the last known face box, no detector.process() call this
+            // frame -- same skip condition as FaceAnalyzer.kt. detectMs=0.0
+            // logged honestly (not measured, because nothing ran).
+            val roiStartNanos = SystemClock.elapsedRealtimeNanos()
+
+            val roiBoxRotated = RoiCalculator.foreheadRoiFrom(staleFaceBox!!)
+            val roiBoxSensor = CoordinateMapper.rotatedRectToSensorRect(
+                roiBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height
+            )
+            val rgbSample: RgbSample? = RoiPixelAverager.averageRgb(imageProxy, roiBoxSensor)
+
+            val roiEndNanos = SystemClock.elapsedRealtimeNanos()
+            val roiMs = (roiEndNanos - roiStartNanos) / 1_000_000.0
+
+            onResult(
+                FaceAnalysisResult.FaceDetected(
+                    faceBoxRotated = staleFaceBox,
+                    roiBoxRotated = roiBoxRotated,
+                    rotatedImageWidth = rotatedImageWidth,
+                    rotatedImageHeight = rotatedImageHeight,
+                    rgbSample = rgbSample
+                )
+            )
+            imageProxy.close()
+
+            val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
+            logFrame(frameIndex.incrementAndGet(), detectMs = 0.0, roiMs = roiMs, totalMs = totalMs, faceFound = true)
+            return
+        }
+
         val detectStartNanos = SystemClock.elapsedRealtimeNanos()
 
         detector.process(inputImage)
@@ -123,12 +175,15 @@ class ProfilingFaceAnalyzer(
                 val face = faces.maxByOrNull { it.boundingBox.width().toLong() * it.boundingBox.height() }
 
                 if (face == null) {
+                    lastFaceBoxRotated = null
                     val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
                     logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, totalMs = totalMs, faceFound = false)
                     onResult(FaceAnalysisResult.NoFace)
                     imageProxy.close()
                     return@addOnSuccessListener
                 }
+
+                lastFaceBoxRotated = face.boundingBox
 
                 val roiStartNanos = SystemClock.elapsedRealtimeNanos()
 
@@ -160,6 +215,7 @@ class ProfilingFaceAnalyzer(
                 val detectEndNanos = SystemClock.elapsedRealtimeNanos()
                 val detectMs = (detectEndNanos - detectStartNanos) / 1_000_000.0
                 Log.w(TAG, "Face detection failed for this frame", e)
+                lastFaceBoxRotated = null
                 val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
                 logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, totalMs = totalMs, faceFound = false)
                 onResult(FaceAnalysisResult.NoFace)
@@ -200,5 +256,10 @@ class ProfilingFaceAnalyzer(
 
     companion object {
         private const val TAG = "ProfilingFaceAnalyzer"
+
+        /** Must match FaceAnalyzer.kt's own DETECT_EVERY_N_FRAMES exactly --
+         *  this is a profiling mirror of that production constant, not an
+         *  independent choice. */
+        private const val DETECT_EVERY_N_FRAMES = 3
     }
 }

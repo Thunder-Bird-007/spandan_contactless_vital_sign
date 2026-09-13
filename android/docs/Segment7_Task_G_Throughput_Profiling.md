@@ -276,8 +276,60 @@ in-between frames.**
   more tightly — and should be re-derived from that real data rather than
   from this document's untested guess.
 
-**Not implemented, per this task's scope** — this section is a proposal
-only.
+~~**Not implemented, per this task's scope** — this section is a proposal
+only.~~
+
+**Update 2026-09-13: implemented.** `FaceAnalyzer.kt` now runs real ML Kit detection
+every `DETECT_EVERY_N_FRAMES = 3`rd frame and reuses `lastFaceBoxRotated` (updated on
+every real detection, cleared on `NoFace`/failure) on the frames in between, sharing ROI
+math via a new small `emitFaceDetected()` helper. `gradlew assembleDebug` confirms this
+compiles clean (`BUILD SUCCESSFUL`).
+
+~~**Re-measurement status: BLOCKED, not yet done.**~~
+
+**[2026-09-13] RE-MEASURED, real number captured.** A physical device was attached this
+session (`adb devices` -> one device). Per this doc's own Section 1 capture method:
+`ProfilingFaceAnalyzer.kt` was first updated to mirror `FaceAnalyzer.kt`'s frame-skip
+logic exactly (it had gone stale -- it still called `detector.process()` on every frame,
+which would have re-measured the pre-optimization baseline, not the frame-skip build),
+then temporarily wired into `MainActivity.kt` in place of `FaceAnalyzer`, rebuilt
+(`gradlew assembleDebug`), installed (`adb install -r`), and run for a live ~171-second
+capture with a face continuously in frame. Immediately after, the wiring was **reverted**
+back to `FaceAnalyzer` and the app rebuilt/reinstalled to confirm the revert -- same
+bounded/reverted-diagnostic discipline as Section 1.
+
+**Real before/after, both steady-state (last 60s of their own capture):**
+
+| | detectMs mean | totalMs mean | fps |
+|---|---|---|---|
+| Before (baseline, detect every frame) | 71.84 | 72.91 | **13.44** |
+| After (frame-skip, N=3) | 29.13 | 31.13 | **21.40** |
+
+Full-run (not just steady-state) fps was 22.24 over the whole ~171s capture (3809 frames,
+97.0% face-found). Skip ratio actually achieved: 60.4% of frames skipped real detection
+in the steady-state window (776 of 1284) -- close to, but a little under, N=3's ideal
+66.7%, because `lastFaceBoxRotated` must already be non-null for a skip to fire (the
+first frame of any face-loss recovery is always a real detection).
+
+**Reported plainly, not rounded up: this is a real ~1.59x speedup (13.44 -> 21.40fps
+steady-state), a genuine and non-trivial improvement -- but well short of the naive
+"N x baseline" projection this doc's own Section 3 speculated toward (3 x 13.44 =
+40.3fps) and short of the 25-30Hz target.** The gap is because `detectMs` is not the
+only cost in the loop: `roiMs`/`otherMs` (already small at baseline) become a
+proportionally larger share of each now-shorter frame, and the app's other concurrent
+work (`RealHeartRateEstimator`/`LiveSpo2Estimator` on the same buffered window, both
+still running throughout this capture, same as the original baseline capture -- an
+apples-to-apples comparison, not a confound unique to this run) shares the same
+device. Both the before and after numbers came from a live device, not a projection --
+the "N x" framing in Section 3 below is now known to be an overestimate for this
+specific optimization on this hardware, stated as a finding rather than silently
+corrected.
+
+Files touched for this re-measurement: `ProfilingFaceAnalyzer.kt` (updated permanently
+to mirror `FaceAnalyzer.kt`'s frame-skip logic, so future re-profiling stays in sync with
+production code -- not reverted, since it is a diagnostic-only file never wired into the
+shipped app by default); `MainActivity.kt` (temporarily swapped, then reverted -- final
+committed state unchanged, confirmed by a post-revert `assembleDebug` + reinstall).
 
 ## 4. Explicit scope boundary respected
 
@@ -307,6 +359,19 @@ touched HR/SpO2 display logic, `SignalBuffer.kt` (its `WINDOW_DURATION_SECONDS
   **reverted back to `FaceAnalyzer { ... }`** immediately after, and the
   app rebuilt/reinstalled to confirm the revert. The file's committed
   state is unchanged from before this task.
+
+**[2026-09-13] Files touched for the frame-skip RE-measurement (Section 3):**
+`ProfilingFaceAnalyzer.kt` was updated (permanently kept, not reverted -- it is a
+diagnostic-only file, never wired into the shipped app by default) to mirror
+`FaceAnalyzer.kt`'s `DETECT_EVERY_N_FRAMES=3` skip-and-reuse logic, since it had gone
+stale (still detecting every frame) the moment `FaceAnalyzer.kt` gained that
+optimization -- without this update the profiler would have re-measured the
+pre-optimization baseline again, not the actual frame-skip build. `MainActivity.kt` was
+again temporarily swapped to `ProfilingFaceAnalyzer` for this capture and **reverted
+back to `FaceAnalyzer`** immediately after (confirmed by a post-revert
+`gradlew assembleDebug` + `adb install -r`), same as the Section 1 discipline above.
+`FaceAnalyzer.kt` itself was NOT touched by this re-measurement, consistent with
+Section 4's scope boundary.
 
 **Wiring note — now done (superseded).** The one-line swap this note
 previously described as deliberately not-yet-made was carried out for the
