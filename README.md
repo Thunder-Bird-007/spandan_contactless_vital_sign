@@ -102,14 +102,25 @@ spandan/
                          Segment 6 refinement scripts (not ported to
                          Android -- see android/docs/Defense_Readiness_
                          Checklist.md's standing decision on Tasks L/N/O/P)
-      pulseextraction/ - chromCombine.m, posCombine.m
+      pulseextraction/ - chromCombine.m, posCombine.m, plus
+                         cpaceProjection.m (Segment 11 Task 1 -- OPTIONAL,
+                         off-by-default cPACE Stage 1 pre-step; see
+                         docs/Segment11_Task1_cPACE_Stage1_and_PLV_Metric.md
+                         before enabling it -- verified to be an exact
+                         algebraic no-op for POS and a modest empirical
+                         regression for CHROM on this project's own pool)
       heartrate/       - fftHeartRate.m, windowedHeartRate.m (Task P)
       spo2/            - ratioOfRatios.m, calibrateSpO2.m -- ported live
                          to Android, see android/docs/
                          SpO2_Live_Implementation.md
       validation/      - runLOSO.m, computeMetrics.m, blandAltman.m,
                          plus later Segment 6 region-agreement/
-                         harmonic-consistency scripts
+                         harmonic-consistency scripts, plus
+                         computeCrossROIPLV.m (Segment 11 Task 1 -- a
+                         fidelity metric that needs NO ground truth at all;
+                         reach for this whenever a subject has Segment 6
+                         Task N's cached multi-region traces but no contact-
+                         PPG ground truth)
       pipeline/        - estimateVitals.m (chains the whole pipeline)
     scripts/           - run_pipeline_demo.m, batch_process_dataset.m,
                          plus per-Task Segment 6 batch/eval scripts

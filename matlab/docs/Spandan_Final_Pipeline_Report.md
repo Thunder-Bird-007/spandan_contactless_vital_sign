@@ -54,6 +54,24 @@ unimplemented placeholder and is not used anywhere in the current system;
 
 ### 3.1 Method
 
+**[2026-09-13] PROMOTED TO DEFAULT**: `filtering/waveletDenoise.m` (DWT
+wavelet-shrinkage, db4, 3-level, Donoho-Johnstone universal soft-threshold)
+now runs on each raw R(t)/G(t)/B(t) channel as step 0, immediately before
+step 1 below -- see `docs/Segment8_Task4_Wavelet_Denoise_Ablation.md` for
+the full-pool ablation that justified this (pooled CHROM MAE 9.10->7.83bpm,
+POS MAE 8.68->7.22bpm, both Pearson r nearly doubling; updated table in
+Section 3.2 below). ~~Previously documented as an "available additive
+option", not yet the default~~ -- it is wired into
+`scripts/run_segment3_filtering_batch.m` and
+`scripts/run_vipl_integration_batch.m` behind a `useWaveletDenoise` toggle
+(default `true`), so pre-wavelet numbers stay reproducible by flipping that
+one flag rather than editing the pipeline. **Known caveat, kept on the
+record, not "fixed" away**: 7 of 112 subjects regress by >10bpm on CHROM
+even as the pool improves (worst: VIPL p85, 0.44->45.81bpm) -- see the
+ablation doc for the full per-subject accounting. `pulseextraction/
+chromCombine.m`, `pulseextraction/posCombine.m`, and
+`heartrate/fftHeartRate.m` remain unmodified; only the pre-step changed.
+
 1. `filtering/detrendSignal.m` (cubic detrend) on each of R(t)/G(t)/B(t).
 2. `filtering/bandpassClean.m`, a 2nd-order Butterworth bandpass, 0.7-4.0 Hz
    (42-240 bpm), zero-phase (`filtfilt`).
@@ -77,20 +95,38 @@ unimplemented placeholder and is not used anywhere in the current system;
 **Heart rate**, pooled across all 112 available ground-truth subjects (5
 UBFC DATASET_1 + 107 VIPL-HR v1), `results/metrics/segment6_hr_pooled_metrics.csv`:
 
+**[2026-09-13] PROMOTED TO DEFAULT**: the table below is now WITH wavelet
+denoising (the pipeline default as of Section 3.1 above). ~~The pre-wavelet
+table previously here~~ is preserved verbatim in
+`results/metrics/segment6_hr_pooled_metrics_prewavelet.csv` for direct
+comparison (pre-wavelet: CHROM MAE 9.0969/RMSE 18.0047/r 0.31448, POS MAE
+8.6795/RMSE 16.4537/r 0.28091, pooled N=112) -- not deleted, per this
+project's own "mark superseded, don't delete" convention. Green-only is
+UNCHANGED (Action 4's ablation never covered it -- it is a diagnostic
+lower-bound method, never the shipped result, so there is no
+wavelet-denoised number to promote for it; see
+`scripts/run_segment8_action2_promote_wavelet_default.m`'s own header for
+why).
+
 | Method | Scope | N   | MAE    | RMSE    | Pearson r |
 |--------|-------|-----|--------|---------|-----------|
-| CHROM  | pooled| 112 | 9.0969 | 18.0047 | 0.31448   |
-| CHROM  | UBFC  | 5   | 3.7723 | 6.1541  | 0.94019   |
-| CHROM  | VIPL  | 107 | 9.3458 | 18.3724 | 0.27755   |
-| POS    | pooled| 112 | 8.6795 | 16.4537 | 0.28091   |
+| CHROM  | pooled| 112 | 7.8344 | 11.8676 | 0.53187   |
+| CHROM  | UBFC  | 5   | 3.2622 | 5.0546  | 0.96398   |
+| CHROM  | VIPL  | 107 | 8.0481 | 12.0925 | 0.47953   |
+| POS    | pooled| 112 | 7.2217 | 10.8493 | 0.62341   |
 | POS    | UBFC  | 5   | 3.7723 | 6.1541  | 0.94019   |
-| POS    | VIPL  | 107 | 8.9089 | 16.7811 | 0.21745   |
+| POS    | VIPL  | 107 | 7.3829 | 11.0198 | 0.58425   |
 | Green  | pooled| 112 | 14.9832| 19.4896 | 0.086979  |
 
 CHROM and POS both clearly beat the uncombined green-channel baseline; POS
 has a slightly lower pooled MAE/RMSE, CHROM a slightly higher pooled
 Pearson r. Both are reported as this project's production HR estimators;
-neither is dropped in favor of the other.
+neither is dropped in favor of the other. Both improved substantially with
+wavelet denoising promoted to default (RMSE down ~6bpm, r nearly doubling
+for both) -- not uniformly across every subject: see
+`docs/Segment8_Task4_Wavelet_Denoise_Ablation.md` for the 7-subject
+CHROM regression caveat, which still applies to this now-default pipeline
+and is not resolved by promoting it.
 
 **SpO2**, Task H3 stratified (within-dataset-only) leave-one-subject-out
 cross-validation, the trustworthy result identified in
