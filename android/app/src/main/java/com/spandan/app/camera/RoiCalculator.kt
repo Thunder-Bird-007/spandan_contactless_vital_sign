@@ -35,4 +35,48 @@ object RoiCalculator {
             faceBox.top + (BOTTOM_FRACTION * h).toInt()
         )
     }
+
+    // --- Exploratory pilot (Spandan Field Guide "still open" list), Action 1.
+    // Feasibility prototype only -- NOT wired into the live HR pipeline (see
+    // MultiRegionProfilingFaceAnalyzer.kt, a debug-only analyzer this is used
+    // from). Cheek fractions ported directly from
+    // matlab/src/roi/extractROISignals.m's `computeRegionBBoxes`, 'cheek'
+    // mode: x:[0.10,0.35] (left) / [0.65,0.90] (right), y:[0.55,0.75] of the
+    // face box -- same reconciled-against-MATLAB discipline as
+    // foreheadRoiFrom's own header. Cheek (not glabella/malar) was picked
+    // because Segment6_Task_N/Task_Q found forehead+cheek are the two
+    // regions that are "not bad everywhere" -- glabella/malar lost to both
+    // across every Task N scenario.
+    private const val CHEEK_LEFT_X_LO = 0.10f
+    private const val CHEEK_LEFT_X_HI = 0.35f
+    private const val CHEEK_RIGHT_X_LO = 0.65f
+    private const val CHEEK_RIGHT_X_HI = 0.90f
+    private const val CHEEK_Y_LO = 0.55f
+    private const val CHEEK_Y_HI = 0.75f
+
+    /** Returns (leftCheekRoi, rightCheekRoi), both face-box-relative, same
+     *  fractions matlab/src/roi/extractROISignals.m uses for its bilateral
+     *  'cheek' roiMode. Callers pool both rects' pixels together BEFORE
+     *  averaging (see RoiPixelAverager.averageRgbMultiRect), matching that
+     *  file's own "concatenate-then-average" convention -- not two
+     *  independent per-side means. */
+    fun cheekRoisFrom(faceBox: Rect): Pair<Rect, Rect> {
+        val w = faceBox.width()
+        val h = faceBox.height()
+        val top = faceBox.top + (CHEEK_Y_LO * h).toInt()
+        val bottom = faceBox.top + (CHEEK_Y_HI * h).toInt()
+        val left = Rect(
+            faceBox.left + (CHEEK_LEFT_X_LO * w).toInt(),
+            top,
+            faceBox.left + (CHEEK_LEFT_X_HI * w).toInt(),
+            bottom
+        )
+        val right = Rect(
+            faceBox.left + (CHEEK_RIGHT_X_LO * w).toInt(),
+            top,
+            faceBox.left + (CHEEK_RIGHT_X_HI * w).toInt(),
+            bottom
+        )
+        return left to right
+    }
 }

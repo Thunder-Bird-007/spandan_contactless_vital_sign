@@ -86,4 +86,79 @@ object RoiPixelAverager {
             blue = sumB.toFloat() / count
         )
     }
+
+    /**
+     * Exploratory pilot (Spandan Field Guide "still open" list), Action 1.
+     * Pools pixels from MULTIPLE rects (e.g. left+right cheek) into ONE
+     * spatial mean, matching matlab/src/roi/extractROISignals.m's own
+     * bilateral-region convention ("the left and right pixel arrays are
+     * concatenated into a single pool BEFORE averaging... not the mean of
+     * two per-patch means" -- that file's own header comment). Used only by
+     * MultiRegionProfilingFaceAnalyzer.kt (a debug-only, not-live-wired
+     * analyzer) -- [averageRgb] above, single-rect, remains the one used by
+     * the real FaceAnalyzer.kt/production pipeline, unmodified.
+     */
+    @ExperimentalGetImage
+    fun averageRgbMultiRect(imageProxy: ImageProxy, roiSensorRects: List<Rect>): RgbSample? {
+        val image = imageProxy.image ?: return null
+        val width = imageProxy.width
+        val height = imageProxy.height
+
+        val yPlane = image.planes[0]
+        val uPlane = image.planes[1]
+        val vPlane = image.planes[2]
+        val yBuffer = yPlane.buffer
+        val uBuffer = uPlane.buffer
+        val vBuffer = vPlane.buffer
+
+        var sumR = 0L
+        var sumG = 0L
+        var sumB = 0L
+        var count = 0
+
+        for (roiSensorRect in roiSensorRects) {
+            val left = roiSensorRect.left.coerceIn(0, width - 1)
+            val top = roiSensorRect.top.coerceIn(0, height - 1)
+            val right = roiSensorRect.right.coerceIn(left + 1, width)
+            val bottom = roiSensorRect.bottom.coerceIn(top + 1, height)
+            if (right <= left || bottom <= top) continue
+
+            var y = top
+            while (y < bottom) {
+                var x = left
+                while (x < right) {
+                    val yIndex = y * yPlane.rowStride + x * yPlane.pixelStride
+                    val uvRow = y / 2
+                    val uvCol = x / 2
+                    val uIndex = uvRow * uPlane.rowStride + uvCol * uPlane.pixelStride
+                    val vIndex = uvRow * vPlane.rowStride + uvCol * vPlane.pixelStride
+
+                    if (yIndex < yBuffer.capacity() && uIndex < uBuffer.capacity() && vIndex < vBuffer.capacity()) {
+                        val yVal = yBuffer.get(yIndex).toInt() and 0xFF
+                        val uVal = (uBuffer.get(uIndex).toInt() and 0xFF) - 128
+                        val vVal = (vBuffer.get(vIndex).toInt() and 0xFF) - 128
+
+                        val r = yVal + 1.402 * vVal
+                        val g = yVal - 0.344136 * uVal - 0.714136 * vVal
+                        val b = yVal + 1.772 * uVal
+
+                        sumR += r.coerceIn(0.0, 255.0).toLong()
+                        sumG += g.coerceIn(0.0, 255.0).toLong()
+                        sumB += b.coerceIn(0.0, 255.0).toLong()
+                        count++
+                    }
+                    x += SAMPLE_STRIDE
+                }
+                y += SAMPLE_STRIDE
+            }
+        }
+
+        if (count == 0) return null
+        return RgbSample(
+            timestampMs = System.currentTimeMillis(),
+            red = sumR.toFloat() / count,
+            green = sumG.toFloat() / count,
+            blue = sumB.toFloat() / count
+        )
+    }
 }
