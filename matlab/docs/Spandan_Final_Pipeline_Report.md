@@ -31,9 +31,15 @@ branches, both implemented in `pipeline/estimateVitalsAndMorphology.m`:
   (`filtering/bandpassClean.m`), tuned for a clean FFT peak at the cardiac
   fundamental.
 - **Branch 2 (waveform morphology)** -- a wide 0.5-8 Hz bandpass
-  (`morphology/bandpassMorphology.m`) plus a harmonic-comb filter
-  (`morphology/adaptiveHarmonicFilter.m`), tuned to preserve the higher
-  harmonics that carry the dicrotic notch.
+  (`morphology/bandpassMorphology.m`) plus ~~a harmonic-comb filter
+  (`morphology/adaptiveHarmonicFilter.m`)~~ **[2026-09-13] a confidence-gated
+  choice between two harmonic filters** (`morphology/
+  harmonicFilterConfidenceGate.m`, default as of Segment 14 Task 2): the
+  harmonic-comb filter (`morphology/adaptiveHarmonicFilter.m`, ABPF) is kept
+  wherever its own notch confidence already clears this project's 0.3 bar,
+  and a Gaussian-tapered alternative (`morphology/
+  harmonicSelectiveGaussianFilter.m`, alpha=0.15) is substituted only where
+  it fails -- see Section 4.3.
 
 These two filter choices are not interchangeable. The wide band and
 harmonic comb that Branch 2 needs to see a notch at all measurably **hurt**
@@ -156,9 +162,19 @@ MATLAB-side reporting deliverable, not an app feature (Section 1).
    mode), CHROM-combined, and `heartrate/fftHeartRate.m` reads its peak
    frequency. All three channels are then filtered around this ONE shared
    f0 rather than three independently-noisy per-channel estimates.
-3. `morphology/adaptiveHarmonicFilter.m`: a harmonic-comb filter, keeping
+3. ~~`morphology/adaptiveHarmonicFilter.m`: a harmonic-comb filter, keeping
    only narrow FFT bins around f0 and its next 5 harmonics (6 harmonics
-   total) per channel, everything else zeroed.
+   total) per channel, everything else zeroed.~~ **[2026-09-13, Segment 14
+   Task 2]** `morphology/adaptiveHarmonicFilter.m` (the harmonic-comb
+   filter above, still computed first, unchanged) is now followed by
+   `morphology/harmonicFilterConfidenceGate.m`: if ABPF's own notch
+   confidence already exceeds 0.3, its output is kept as-is; otherwise
+   `morphology/harmonicSelectiveGaussianFilter.m` (a Gaussian-tapered
+   comb, alpha=0.15, Dominguez-Hernandez/Paez/Padilla, *Sensors*
+   26(12):3710, 2026) is computed and substituted. Gated behind
+   `pipeline/estimateVitalsAndMorphology.m`'s `opts.useConfidenceGate`
+   (default `true`; set `false` for the exact pre-promotion ABPF-only
+   behavior).
 4. `pulseextraction/chromCombine.m` combines the three harmonic-filtered
    channels into one pulse.
 5. Polarity is anchored against the ground-truth contact PPG
@@ -181,12 +197,12 @@ MATLAB-side reporting deliverable, not an app feature (Section 1).
    `heartrate/fftHeartRate.m` call on the resampled signal (beatSamples *
    hrBpm/60).
 
-### 4.2 Results
+### 4.2 Results (the original ABPF-only condition, `useConfidenceGate=false`)
 
 Notch detection on all 5 UBFC DATASET_1 ground-truth subjects,
 `results/metrics/segment7_task_b_notch_branch2.csv` ('adaptiveHarmonic'
-rows -- the condition adopted into `pipeline/estimateVitalsAndMorphology.m`
-Branch 2):
+rows -- byte-identical before and after the Section 4.3 promotion below,
+since these 5 subjects are unaffected by it, see 4.3):
 
 | Subject         | Notch detected | Position (cycle frac.) | Depth  | Confidence |
 |-----------------|:---:|:---:|:---:|:---:|
@@ -204,6 +220,32 @@ pool (n=5) -- the same "thin data" caveat that applies to every UBFC-only
 number in this project applies here too; it is reported as this project's
 morphology-branch result, not claimed as a general-population notch-
 detection rate.
+
+### 4.3 Confidence-gated default (Segment 14 Task 2, 2026-09-13)
+
+`morphology/harmonicFilterConfidenceGate.m` is now the production default
+(Section 2). It was derived and validated on a much larger scale than
+Section 4.2's 5-subject pool: Segment 10 Task 1's 100-subject audit pool
+(5 UBFC-D1 + 95 VIPL v1/source1) and, for a genuinely held-out check,
+UBFC DATASET_2 (33 of 42 subjects scored -- see
+`docs/Segment14_Task1_UBFC_D2_Held_Out_Validation.md` for the 9 excluded
+and why).
+
+| Pool | n | ABPF pass rate | **Gate pass rate** | ABPF median corr | **Gate median corr** | Severe regressions (gate) |
+|---|---|---|---|---|---|---|
+| Segment 10 Task 1 audit pool | 100 | 24% | **47%** | 0.519 | **0.522** | **0** |
+| Segment 14 Task 1 held-out (UBFC-D2) | 33 | 45% | **58%** | 0.364 | **0.520** | **0** |
+
+The gate's defining property -- it never turns an already-passing subject
+into a failing one -- held on every one of 133 subjects checked across
+both pools. **On this section's own 5-subject legacy pool specifically,
+the gate makes no difference** (still 4/5 pass; the one eligible subject,
+`after-exercise`, is substituted but not rescued, 0.1582 -> 0.0011) --
+N=5 with only one eligible subject is too small to show the effect seen at
+scale, stated plainly rather than implied to have improved. Full detail:
+`docs/Segment13_Task1_Gaussian_Regression_Root_Cause_and_Gate.md`,
+`docs/Segment14_Task1_UBFC_D2_Held_Out_Validation.md`,
+`docs/Segment14_Task2_Confidence_Gate_Production_Promotion.md`.
 
 ## 5. Orchestrator and demo
 
@@ -241,6 +283,11 @@ scripts, before this file existed:
 - **Branch 2 notch** (all 5 UBFC subjects): notch
   detected/position/depth/confidence match
   `results/metrics/segment7_task_b_notch_branch2.csv`'s 'adaptiveHarmonic'
-  row for every subject.
+  row for every subject. **[2026-09-13, Segment 14 Task 2]** This part now
+  explicitly calls `estimateVitalsAndMorphology.m` with
+  `'useConfidenceGate', false`, since it is testing the ABPF-only
+  `'adaptiveHarmonic'` condition BY NAME -- independent of
+  `opts.useConfidenceGate`'s own default, which is now `true` (Section
+  4.3). Re-run this session after that default changed: still passes.
 
 All three parts passed on the run this report is based on.

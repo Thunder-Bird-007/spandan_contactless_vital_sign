@@ -125,6 +125,38 @@ function result = estimateVitalsAndMorphology(videoInput, groundTruth, calibPara
 %                    subjectID - string/char, echoed back in
 %                                result.subjectID purely for
 %                                figure/report labeling. Default ''.
+%                    useConfidenceGate - logical, default true (Segment 14
+%                                Task 2 promotion, 2026-09-13). When true,
+%                                Branch 2 additionally computes
+%                                morphology/harmonicSelectiveGaussianFilter.m
+%                                (alpha=0.15) and uses
+%                                morphology/harmonicFilterConfidenceGate.m
+%                                to decide between it and
+%                                morphology/adaptiveHarmonicFilter.m's ABPF
+%                                comb: keep ABPF wherever its OWN notch
+%                                confidence already clears this project's
+%                                0.3 bar (computed once, cheaply, before
+%                                deciding whether the Gaussian candidate is
+%                                even needed), substitute the Gaussian
+%                                candidate only where ABPF fails. This is
+%                                Segment 13's own settled gate logic,
+%                                re-derived nowhere in this file -- see
+%                                docs/Segment13_Task1_Gaussian_Regression_
+%                                Root_Cause_and_Gate.md and
+%                                docs/Segment14_Task2_Confidence_Gate_
+%                                Production_Promotion.md for the full
+%                                evidence (100-subject audit-pool result:
+%                                pass rate 24%->47%, median waveform corr
+%                                0.519->0.522, harmonic confusion 5%->3%,
+%                                zero severe regressions BY CONSTRUCTION,
+%                                plus a held-out UBFC DATASET_2 check).
+%                                Set to false to reproduce the exact
+%                                pre-2026-09-13 ABPF-only behavior (this is
+%                                what tests/segment7_task_f_regression_
+%                                test.m's own Part 3 does, since it tests
+%                                the 'adaptiveHarmonic' condition BY NAME,
+%                                independent of whatever the production
+%                                default is).
 %
 % Outputs:
 %   result - struct with fields:
@@ -154,7 +186,14 @@ function result = estimateVitalsAndMorphology(videoInput, groundTruth, calibPara
 %       fftHeartRate.m call used only to convert beatSamples -> an
 %       effective Hz for notchDetectIEM.m), effectiveFsHz, notchDetected,
 %       notchPositionNormalized, notchDepth, notchConfidence,
-%       notchConfidenceRaw.
+%       notchConfidenceRaw. When opts.useConfidenceGate is true (default):
+%       harmonicMethodUsed ('adaptiveHarmonic' or 'gaussian015' -- which
+%       candidate the gate actually kept for this subject),
+%       gateSubstituted (logical, true if the Gaussian candidate replaced
+%       ABPF), abpfNotchConfidence (ABPF's OWN notch confidence, preserved
+%       even when substituted, so a caller can see what was being
+%       overridden), gaussianNotchConfidence (NaN if the gate never needed
+%       to compute the Gaussian candidate, i.e. ABPF already passed).
 
 if nargin < 2
     groundTruth = [];
@@ -178,6 +217,10 @@ end
 
 if ~isfield(opts, 'subjectID')
     opts.subjectID = '';
+end
+
+if ~isfield(opts, 'useConfidenceGate') || isempty(opts.useConfidenceGate)
+    opts.useConfidenceGate = true; % Segment 14 Task 2 promotion -- see Branch 2 section below
 end
 
 % === Shared input stage: decode + extract ROI at most once. ===
@@ -241,9 +284,15 @@ branch1.Rvalue = Rvalue;
 branch1.spo2Pct = spo2Pct;
 branch1.calibParamsUsed = calibParams;
 
-% === Branch 2: morphology (notch), UNCHANGED sequence -- byte-identical
-% to scripts/run_segment7_task_b_branch2_batch.m's "adaptiveHarmonic"
-% condition. ===
+% === Branch 2: morphology (notch). ABPF sequence UNCHANGED -- byte-
+% identical to scripts/run_segment7_task_b_branch2_batch.m's
+% "adaptiveHarmonic" condition, exactly as before this promotion. When
+% opts.useConfidenceGate is true (default), a second candidate
+% (morphology/harmonicSelectiveGaussianFilter.m, alpha=0.15) is computed
+% ONLY if ABPF's own notch confidence fails the 0.3 bar (cheap: the common
+% already-passing case never touches the Gaussian path at all), and
+% morphology/harmonicFilterConfidenceGate.m -- Segment 13's own settled
+% logic, not re-derived here -- decides whether to substitute it. ===
 [R_wide, ~, ~] = bandpassMorphology(R_detrended, frameRate, 'wide');
 [G_wide, ~, ~] = bandpassMorphology(G_detrended, frameRate, 'wide');
 [B_wide, ~, ~] = bandpassMorphology(B_detrended, frameRate, 'wide');
@@ -272,6 +321,57 @@ hrBpmUsed = fftHeartRate(sigAdaptiveUniform, fsAdaptiveUniform);
 effectiveFsHz = numel(prototype.trimmedMean) * (hrBpmUsed / 60);
 [notchDetected, notchPositionNormalized, notchDepth, notchConfidence, notchConfidenceRaw] = notchDetectIEM(prototype.trimmedMean, effectiveFsHz);
 
+abpfNotchConfidence = notchConfidence; % preserved even if substituted below
+harmonicMethodUsed = 'adaptiveHarmonic';
+gateSubstituted = false;
+gaussianNotchConfidence = NaN;
+confidenceGateBar = 0.3; % this project's own standing notch-confidence bar
+
+if opts.useConfidenceGate && abpfNotchConfidence <= confidenceGateBar
+    [R_gau, ~, ~] = harmonicSelectiveGaussianFilter(R_detrended, frameRate, 6, sharedF0Hz, 0.15);
+    [G_gau, ~, ~] = harmonicSelectiveGaussianFilter(G_detrended, frameRate, 6, sharedF0Hz, 0.15);
+    [B_gau, ~, ~] = harmonicSelectiveGaussianFilter(B_detrended, frameRate, 6, sharedF0Hz, 0.15);
+    pulseGaussian = chromCombine(R_gau, G_gau, B_gau, R, G, B);
+
+    if useGroundTruth
+        [pulseGaussianFixed, wasFlippedGaussian] = fixPolarityByGroundTruth(pulseGaussian, roiTimestamps, groundTruth.ppg, groundTruth.timestamp);
+    else
+        [pulseGaussianFixed, wasFlippedGaussian, ~] = fixPolarity(pulseGaussian, frameRate);
+    end
+
+    [sigGaussianUniform, timeUniformGaussian, fsGaussianUniform] = resampleUniform(pulseGaussianFixed, roiTimestamps);
+    [prototypeGaussian, iqrBandGaussian, beatMatrixGaussian, beatStatsGaussian] = ensembleAverageBeats(sigGaussianUniform, fsGaussianUniform, opts.beatOpts);
+    hrBpmUsedGaussian = fftHeartRate(sigGaussianUniform, fsGaussianUniform);
+    effectiveFsHzGaussian = numel(prototypeGaussian.trimmedMean) * (hrBpmUsedGaussian / 60);
+    [notchDetectedGaussian, notchPositionNormalizedGaussian, notchDepthGaussian, notchConfidenceGaussian, notchConfidenceRawGaussian] = ...
+        notchDetectIEM(prototypeGaussian.trimmedMean, effectiveFsHzGaussian);
+    gaussianNotchConfidence = notchConfidenceGaussian;
+
+    [~, harmonicMethodUsed, ~, gateSubstituted] = harmonicFilterConfidenceGate( ...
+        pulseAdaptiveFixed, abpfNotchConfidence, 'adaptiveHarmonic', ...
+        {pulseGaussianFixed}, notchConfidenceGaussian, {'gaussian015'}, confidenceGateBar);
+
+    if gateSubstituted
+        pulseAdaptive = pulseGaussian;
+        pulseAdaptiveFixed = pulseGaussianFixed;
+        wasFlipped = wasFlippedGaussian;
+        sigAdaptiveUniform = sigGaussianUniform;
+        timeUniform = timeUniformGaussian;
+        fsAdaptiveUniform = fsGaussianUniform;
+        prototype = prototypeGaussian;
+        iqrBand = iqrBandGaussian;
+        beatMatrix = beatMatrixGaussian;
+        beatStats = beatStatsGaussian;
+        hrBpmUsed = hrBpmUsedGaussian;
+        effectiveFsHz = effectiveFsHzGaussian;
+        notchDetected = notchDetectedGaussian;
+        notchPositionNormalized = notchPositionNormalizedGaussian;
+        notchDepth = notchDepthGaussian;
+        notchConfidence = notchConfidenceGaussian;
+        notchConfidenceRaw = notchConfidenceRawGaussian;
+    end
+end
+
 branch2 = struct();
 branch2.sharedF0Hz = sharedF0Hz;
 branch2.pulseAdaptive = pulseAdaptive;
@@ -292,6 +392,10 @@ branch2.notchPositionNormalized = notchPositionNormalized;
 branch2.notchDepth = notchDepth;
 branch2.notchConfidence = notchConfidence;
 branch2.notchConfidenceRaw = notchConfidenceRaw;
+branch2.harmonicMethodUsed = harmonicMethodUsed;
+branch2.gateSubstituted = gateSubstituted;
+branch2.abpfNotchConfidence = abpfNotchConfidence;
+branch2.gaussianNotchConfidence = gaussianNotchConfidence;
 
 % === Combined result struct: shared inputs, both branches' full detail,
 % plus flat top-level convenience fields (hrBpm, spo2Pct, prototype,
@@ -316,6 +420,7 @@ result.notch.position = notchPositionNormalized;
 result.notch.depth = notchDepth;
 result.notch.confidence = notchConfidence;
 result.notch.confidenceRaw = notchConfidenceRaw;
+result.notch.methodUsed = harmonicMethodUsed; % 'adaptiveHarmonic' or 'gaussian015' -- see branch2 for the full gate detail
 
 result.branch1 = branch1;
 result.branch2 = branch2;

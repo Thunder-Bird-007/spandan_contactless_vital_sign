@@ -113,6 +113,27 @@ spandan/
       spo2/            - ratioOfRatios.m, calibrateSpO2.m -- ported live
                          to Android, see android/docs/
                          SpO2_Live_Implementation.md
+      morphology/      - Branch 2 (waveform morphology / dicrotic notch,
+                         NOT ported to Android -- see android/docs/
+                         Defense_Readiness_Checklist.md and
+                         Segment7_Task_G_Throughput_Profiling.md's own
+                         explicit scope boundary). Default as of
+                         2026-09-13 (Segment 14 Task 2):
+                         harmonicFilterConfidenceGate.m -- keeps
+                         adaptiveHarmonicFilter.m's ABPF comb wherever its
+                         own notch confidence already clears this
+                         project's 0.3 bar, substitutes
+                         harmonicSelectiveGaussianFilter.m (alpha=0.15,
+                         gated, NOT a default on its own) only where ABPF
+                         fails; see docs/Segment14_Task2_Confidence_Gate_
+                         Production_Promotion.md for the promotion
+                         evidence (100-subject audit-pool result plus a
+                         held-out UBFC DATASET_2 check) and
+                         docs/Segment13_Task1_Gaussian_Regression_Root_
+                         Cause_and_Gate.md for the gate's own derivation.
+                         Set opts.useConfidenceGate=false on
+                         pipeline/estimateVitalsAndMorphology.m to get the
+                         pre-2026-09-13 ABPF-only behavior exactly.
       validation/      - runLOSO.m, computeMetrics.m, blandAltman.m,
                          plus later Segment 6 region-agreement/
                          harmonic-consistency scripts, plus
@@ -121,7 +142,12 @@ spandan/
                          reach for this whenever a subject has Segment 6
                          Task N's cached multi-region traces but no contact-
                          PPG ground truth)
-      pipeline/        - estimateVitals.m (chains the whole pipeline)
+      pipeline/        - estimateVitals.m (unimplemented stub, never
+                         called -- see its own header); the real
+                         orchestrator both branches actually run through
+                         is estimateVitalsAndMorphology.m (Segment 7 Task
+                         F), which chains Branch 1 (HR/SpO2) and Branch 2
+                         (morphology/notch) off one shared ROI extraction
     scripts/           - run_pipeline_demo.m, batch_process_dataset.m,
                          plus per-Task Segment 6 batch/eval scripts
     docs/              - Segment 6 Task-by-task investigation write-ups

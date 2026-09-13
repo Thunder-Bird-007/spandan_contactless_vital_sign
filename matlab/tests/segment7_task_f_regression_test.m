@@ -207,8 +207,14 @@ for subjectPos = 1:numSubjects
     rgbData = load(rgbMatPath);
     gt = loadGroundTruth(gtPath, 'dataset1');
 
+    % useConfidenceGate explicitly FALSE: this part tests the
+    % 'adaptiveHarmonic' condition BY NAME (against
+    % segment7_task_b_notch_branch2.csv's own 'adaptiveHarmonic' rows),
+    % independent of whatever opts.useConfidenceGate's own default is --
+    % see Segment 14 Task 2's promotion, docs/Segment14_Task2_Confidence_
+    % Gate_Production_Promotion.md.
     videoInput = struct('R', rgbData.R, 'G', rgbData.G, 'B', rgbData.B, 'fs', rgbData.fs);
-    resultThis = estimateVitalsAndMorphology(videoInput, gt, [], struct('subjectID', subjectID));
+    resultThis = estimateVitalsAndMorphology(videoInput, gt, [], struct('subjectID', subjectID, 'useConfidenceGate', false));
 
     rowMask = strcmp(notchTable.subjectID, subjectID) & strcmp(notchTable.method, 'adaptiveHarmonic');
     if ~any(rowMask)

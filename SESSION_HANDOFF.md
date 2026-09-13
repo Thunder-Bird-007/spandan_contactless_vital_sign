@@ -82,11 +82,35 @@ step 1 of the protocol above.)*
   hypothesis that motivated testing it, also not adopted as the new default. See
   the Active Work Queue entries below for both. **[2026-09-13, Segment 13]** The
   Gaussian filter's own 17-subject regression (at its best tested parameter,
-  alpha=0.15) has a clean root cause (every regressor was a subject ABPF already
-  passed) and a well-supported fix (`morphology/harmonicFilterConfidenceGate.m`,
-  new, gated) that beats BOTH ABPF and plain Gaussian(0.15) on pass rate (47% vs.
-  24%/31%) with zero severe regressions by construction — still NOT adopted into
-  production, see the new Active Work Queue entry.
+  alpha=0.15) has a clean root cause: every regressor was a subject ABPF already
+  passed (17/24 ABPF-pass subjects regress severely vs. 0/76 ABPF-fail subjects) —
+  four other hypotheses (dataset, device/source, HR range, skin-colour angle) were
+  checked and ruled out/inapplicable. A well-supported gated fix followed:
+  `morphology/harmonicFilterConfidenceGate.m` (new — keep ABPF wherever it already
+  passes, substitute Gaussian(0.15) only where ABPF fails) beats BOTH ingredients
+  on every metric at once — pass rate 24%(ABPF)/31%(Gaussian alone)/**47% (gated)**,
+  median waveform corr 0.519/0.523/**0.522**, harmonic confusion 5%/3%/**3%**, and
+  **zero severe regressions by construction**. A supplementary multi-candidate
+  variant (pick whichever of several alphas self-reports highest confidence) was
+  tested and explicitly rejected — 64% pass rate but median corr (0.508) the WORST
+  of any method, a demonstrated selection-bias artifact, not a real gain. **This
+  gated fix is this project's best-supported single Branch 2 result to date** —
+  ~~still NOT adopted into production (stays a gated, off-by-default utility, per
+  the task's own instruction)~~ **[2026-09-13, Segment 14] PROMOTED TO PRODUCTION
+  DEFAULT** after a genuinely held-out validation (UBFC DATASET_2, 42 subjects,
+  never touched by any prior segment) replicated the gate's own defining property
+  — zero severe regressions — across 133 total subjects (100-subject audit pool +
+  33 valid held-out subjects), with pass rate improving on both (24%→47% audit
+  pool, 45%→58% held-out). `pipeline/estimateVitalsAndMorphology.m`'s
+  `opts.useConfidenceGate` now defaults to `true`; the one honest caveat is that
+  this makes NO difference on the tiny 5-subject legacy UBFC-D1 benchmark (still
+  4/5 pass, since only 1 of 5 subjects is even eligible for substitution, and it
+  isn't rescued) — stated plainly, not smoothed over. Android unaffected (Branch 2
+  was never ported there, confirmed from existing docs, not guessed). See the
+  Segment 13 and Segment 14 Active Work Queue entries and
+  `matlab/docs/Segment13_Task1_Gaussian_Regression_Root_Cause_and_Gate.md`,
+  `matlab/docs/Segment14_Task1_UBFC_D2_Held_Out_Validation.md`,
+  `matlab/docs/Segment14_Task2_Confidence_Gate_Production_Promotion.md`.
 - ~~**⚠️ BROKEN, not yet usable**: Segment 7 Task J ran but produced empty output.~~
   **[2026-09-12] FIXED AND COMPLETE.** Root cause was a per-landmark MATLAB↔Python
   round-trip leak (468 landmarks × 2 attribute reads/frame as separate calls leaked
@@ -526,6 +550,60 @@ scale any of these up, that is a new, explicit decision, not an automatic next s
       `results/metrics/segment13_task1_regression_root_cause.csv`,
       `results/metrics/segment13_task2_gated_evaluation.csv`,
       `results/figures/segment13_task1_*.png`, `results/figures/segment13_task2_*.png`.
+- [x] **Segment 14 — held-out validation and production promotion of the confidence
+      gate.** **Done 2026-09-13. PROMOTED.** `pipeline/estimateVitalsAndMorphology.m`'s
+      `opts.useConfidenceGate` now defaults to `true`, replacing plain ABPF as Branch 2's
+      production default. **Action 1 (held-out data)**: found and used UBFC DATASET_2 (42
+      subjects, real ground-truth PPG, confirmed via `docs/DATA_FORMAT.md` and Segment 7
+      Task K's own changelog entry to have NEVER been extracted/decoded/evaluated anywhere
+      in this project) — extracted via the same targeted per-entry zip technique this
+      project uses for VIPL (44GB used, 44GB still free afterward). Ran the exact Segment
+      13 comparison (ABPF/Gaussian015/gate) unmodified. Found and root-caused a genuine
+      data-quality issue along the way: 9/42 subjects' own `ground_truth.txt` files
+      contain a duplicate timestamp, tripping `resampleUniform.m`'s `interp1(...,'pchip')`
+      (an existing, unmodified function — not a bug introduced here) — excluded, not
+      silently worked around, leaving n=33 valid. **Result: the gate's defining property
+      (zero severe regressions) replicated exactly on held-out data** — pass rate
+      45%(ABPF)→58%(gate), median corr 0.364→0.520, vs. plain Gaussian(0.15) alone's 13
+      severe regressions out of 33 (39%, proportionally worse than the audit pool's 17%).
+      Full detail: `matlab/docs/Segment14_Task1_UBFC_D2_Held_Out_Validation.md`.
+      **Action 2 (wiring)**: checked first, per the brief — `run_segment3_filtering_batch.m`
+      / `run_vipl_integration_batch.m` do NOT call `adaptiveHarmonicFilter.m` at all (they're
+      Branch 1-only); `run_spandan_interactive.m` has its own standalone embedded copy, left
+      untouched (demo script, not a production metrics source). The real orchestrator,
+      `pipeline/estimateVitalsAndMorphology.m`, got the new `opts.useConfidenceGate`
+      (default `true`) toggle: Gaussian(0.15) is computed and the gate consulted ONLY when
+      ABPF's own confidence fails the 0.3 bar (cheap in the common case). New provenance
+      fields (`harmonicMethodUsed`, `gateSubstituted`, `abpfNotchConfidence`,
+      `gaussianNotchConfidence`) added to `branch2`/`result.notch`.
+      `tests/segment7_task_f_regression_test.m` updated to pin its ABPF-specific Part 3
+      check to `useConfidenceGate=false` (testing that condition BY NAME) — **re-run,
+      confirmed all 3 parts (Branch 1 HR, Branch 1 SpO2, Branch 2 notch) still PASS**.
+      `run_segment7_task_b_branch2_batch.m` (the script generating the cited
+      `segment7_task_b_notch_branch2.csv`) updated additively with a new `confidenceGate`
+      condition row per subject; old file preserved as
+      `segment7_task_b_notch_branch2_preconfidencegate.csv`. **Honest finding on that same
+      5-subject legacy benchmark: the gate makes ZERO difference (still 4/5 pass)** — only
+      1 of 5 subjects (`after-exercise`) is even eligible for substitution (ABPF already
+      passes the other 4), and that one isn't rescued either (0.1582→0.0011, still
+      failing) — stated plainly, not implied to have improved. **Action 3 (Android)**:
+      checked, not guessed — confirmed directly from `android/docs/
+      Defense_Readiness_Checklist.md` and `Segment7_Task_G_Throughput_Profiling.md` that
+      Branch 2 (`adaptiveHarmonicFilter`, `ensembleAverageBeats`, `notchDetectIEM`) has
+      NEVER been ported to Android, by deliberate prior scope decision — no Android work
+      needed or attempted, this promotion is MATLAB-only. Full detail:
+      `matlab/docs/Segment14_Task2_Confidence_Gate_Production_Promotion.md`. Outputs:
+      `matlab/scripts/run_segment14_task1_ubfc_d2_held_out_validation.m`,
+      `results/metrics/segment14_task1_ubfc_d2_held_out_validation.csv`,
+      `results/figures/segment14_task1_held_out_summary.png`,
+      `data/raw/UBFC-rPPG/DATASET_2/` (42 subjects, newly extracted),
+      `data/processed/UBFC_D2_subject*_rgb_traces.mat` (42 subjects, newly cached),
+      `results/metrics/segment7_task_b_notch_branch2.csv` (regenerated),
+      `results/metrics/segment7_task_b_notch_branch2_preconfidencegate.csv` (snapshot).
+      Modified: `matlab/src/pipeline/estimateVitalsAndMorphology.m`,
+      `matlab/tests/segment7_task_f_regression_test.m`,
+      `matlab/scripts/run_segment7_task_b_branch2_batch.m`, `README.md`,
+      `matlab/docs/Spandan_Final_Pipeline_Report.md`.
 
 ---
 
@@ -680,11 +758,14 @@ result — verify against the named output files first.
 `pulseextraction/posCombine.m`, `heartrate/fftHeartRate.m`, `morphology/adaptiveHarmonicFilter.m`'s
 existing behavior, `filtering/waveletDenoise.m`'s internals (now a production default, not
 just an ablation — its math is verified, only its call sites should ever change),
-`android/.../signal/WaveletDenoise.kt`'s internals (same reason), `FaceAnalyzer.kt`'s
-frame-skip logic (measured and adopted, not a draft), `BandpassFilter.kt`'s `filtfilt`
-implementation (confirmed zero-phase/correct), anything marked done in
-`android/docs/Defense_Readiness_Checklist.md` — except where an action above explicitly
-adds an alternative alongside it.
+`morphology/harmonicFilterConfidenceGate.m`'s own gating logic (now a production default as
+of Segment 14 Task 2 — its 0.3-bar/ABPF-primary/Gaussian-0.15-fallback design is settled and
+validated on 133 held-out+audit-pool subjects; re-tune only with a new, explicit ablation,
+same discipline as everything else in this project), `android/.../signal/WaveletDenoise.kt`'s
+internals (same reason), `FaceAnalyzer.kt`'s frame-skip logic (measured and adopted, not a
+draft), `BandpassFilter.kt`'s `filtfilt` implementation (confirmed zero-phase/correct),
+anything marked done in `android/docs/Defense_Readiness_Checklist.md` — except where an
+action above explicitly adds an alternative alongside it.
 
 ---
 
@@ -1030,3 +1111,33 @@ Maintenance Protocol rule 3.)*
   `matlab/scripts/run_segment13_task2_gated_selection_evaluation.m`,
   `results/metrics/segment13_task1_regression_root_cause.csv`,
   `results/metrics/segment13_task2_gated_evaluation.csv`, `results/figures/segment13_*.png`.
+- **2026-09-13** (new session) — Segment 14: promoted
+  `morphology/harmonicFilterConfidenceGate.m` from a gated utility (Segment 13) to Branch
+  2's production default. **Action 1**: found genuinely held-out ground-truth data — UBFC
+  DATASET_2, 42 subjects, confirmed never touched by any prior segment — extracted it
+  (targeted per-entry zip extraction, matching the VIPL precedent) and ran Segment 13's
+  exact comparison unmodified. Found and root-caused a real data-quality issue (9/42
+  subjects have a duplicate ground-truth timestamp, tripping `resampleUniform.m`'s
+  `pchip` interpolation — an existing function, not touched), excluded those 9 rather than
+  working around them, leaving n=33. Result: the gate's zero-severe-regression property
+  replicated exactly on held-out data (pass rate 45%→58%, median corr 0.364→0.520), while
+  plain Gaussian(0.15) alone showed 13/33 (39%) severe regressions — proportionally worse
+  than the audit pool. Full detail:
+  `docs/Segment14_Task1_UBFC_D2_Held_Out_Validation.md`. **Action 2**: checked first (per
+  the brief) whether Branch 2 runs through `run_segment3_filtering_batch.m`/
+  `run_vipl_integration_batch.m` — it does not (Branch 1-only scripts); wired the new
+  `opts.useConfidenceGate` (default `true`) into the real orchestrator,
+  `pipeline/estimateVitalsAndMorphology.m`, instead, computing the Gaussian candidate only
+  when ABPF's own confidence fails the 0.3 bar. Updated
+  `tests/segment7_task_f_regression_test.m` to pin its ABPF-specific check to
+  `useConfidenceGate=false`; re-ran it, all 3 parts still pass. Regenerated
+  `results/metrics/segment7_task_b_notch_branch2.csv` with an additive `confidenceGate`
+  condition (old file preserved as `..._preconfidencegate.csv`) — found and reported
+  honestly that the gate makes literally no difference on this original 5-subject
+  benchmark (still 4/5 pass), since only 1 subject is eligible and it isn't rescued.
+  **Action 3**: confirmed directly from existing Android docs (not guessed) that Branch 2
+  was never ported to Android — no Android work done. Full detail:
+  `docs/Segment14_Task2_Confidence_Gate_Production_Promotion.md`. `README.md` and
+  `docs/Spandan_Final_Pipeline_Report.md` updated to describe the new default.
+  `cpaceProjection.m`, `computeCrossROIPLV.m`, `residualAdaptiveKalmanHR.m`, and the
+  `'wide'`/`'mid'` bandpass default were all untouched, per this session's own scope.

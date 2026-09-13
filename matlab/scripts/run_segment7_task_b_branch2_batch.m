@@ -13,6 +13,24 @@
 % scripts/run_segment7_morphology_batch.m (Task A), or
 % scripts/run_segment7_task_b_notch_batch.m (Task B baseline) -- this is
 % a new, additive script producing new, separately-named outputs.
+%
+% [2026-09-13, Segment 14 Task 2] ADDITIVE UPDATE for the confidence-gate
+% production promotion: a THIRD method row, 'confidenceGate', is now
+% written per subject alongside the existing 'adaptiveHarmonic' and
+% 'tiledROI' rows -- exactly
+% pipeline/estimateVitalsAndMorphology.m's own opts.useConfidenceGate=true
+% default (Segment 13's settled gate: keep ABPF wherever its own notch
+% confidence already clears the 0.3 bar, substitute
+% morphology/harmonicSelectiveGaussianFilter.m alpha=0.15 only where ABPF
+% fails). The existing 'adaptiveHarmonic'/'tiledROI' computations are
+% BYTE-IDENTICAL to before this update -- nothing about them changed, only
+% a new condition was added to the same per-subject loop. A snapshot of
+% the pre-promotion CSV is preserved as
+% results/metrics/segment7_task_b_notch_branch2_preconfidencegate.csv,
+% same "old numbers preserved alongside" convention Segment 8 Action 7
+% used for the wavelet-denoising promotion. See
+% docs/Segment14_Task2_Confidence_Gate_Production_Promotion.md for the
+% regenerated numbers.
 
 FIG_SUBJECT_ID = '5-gt';
 subjectList = {'5-gt', '6-gt', '7-gt', '12-gt', 'after-exercise'};
@@ -31,7 +49,22 @@ if ~isfolder(metricsRoot)
 end
 
 csvPath = fullfile(metricsRoot, 'segment7_task_b_notch_branch2.csv');
-headerLine = "subjectID,method,notchDetected,notchPositionNormalized,notchDepth,confidence,effectiveFsHz,hrBpmUsed,beatsAveraged";
+
+% [2026-09-13, Segment 14 Task 2] Snapshot the pre-promotion file before
+% it is overwritten below -- "old numbers preserved alongside, not
+% overwritten," same convention Segment 8 Action 7 used for the
+% wavelet-denoising promotion. The 'adaptiveHarmonic'/'tiledROI' rows this
+% script regenerates below are byte-identical to what this snapshot
+% already holds; only the new 'confidenceGate' rows are actually new.
+if isfile(csvPath)
+    preGateCsvPath = fullfile(metricsRoot, 'segment7_task_b_notch_branch2_preconfidencegate.csv');
+    if ~isfile(preGateCsvPath)
+        copyfile(csvPath, preGateCsvPath);
+        disp(['Snapshot saved: ' preGateCsvPath]);
+    end
+end
+
+headerLine = "subjectID,method,notchDetected,notchPositionNormalized,notchDepth,confidence,effectiveFsHz,hrBpmUsed,beatsAveraged,harmonicMethodUsed,gateSubstituted";
 writelines(headerLine, csvPath);
 
 numSubjects = numel(subjectList);
@@ -42,8 +75,12 @@ adaptiveDetectedCount = 0;
 adaptiveConfidentCount = 0;
 tiledDetectedCount = 0;
 tiledConfidentCount = 0;
+gateDetectedCount = 0;
+gatePassCount = 0; % this project's own 0.3 bar, NOT confidenceThreshold below
+gateSubstitutedCount = 0;
 
 confidenceThreshold = 1.0; % see docs/Segment7_Task_B_Notch_Quantification.md for why
+confidenceGateBar = 0.3; % this project's own standing notch-confidence bar (Segment 7 Task B/C)
 
 for subjectPos = 1:numSubjects
     subjectID = subjectList{subjectPos};
@@ -104,7 +141,7 @@ for subjectPos = 1:numSubjects
 
         disp(['Subject ' subjectID ' adaptive-harmonic: notchDetected=' num2str(adaptiveDetected) ', pos=' num2str(adaptivePos, '%.4f') ', depth=' num2str(adaptiveDepth, '%.4f') ', confidence=' num2str(adaptiveConf, '%.4f')]);
 
-        rowAdaptive = {subjectID, 'adaptiveHarmonic', num2str(adaptiveDetected), num2str(adaptivePos, '%.4f'), num2str(adaptiveDepth, '%.4f'), num2str(adaptiveConf, '%.4f'), num2str(fsProtoAdaptive, '%.4f'), num2str(hrAdaptive, '%.4f'), num2str(statsAdaptive.beatsAveraged)};
+        rowAdaptive = {subjectID, 'adaptiveHarmonic', num2str(adaptiveDetected), num2str(adaptivePos, '%.4f'), num2str(adaptiveDepth, '%.4f'), num2str(adaptiveConf, '%.4f'), num2str(fsProtoAdaptive, '%.4f'), num2str(hrAdaptive, '%.4f'), num2str(statsAdaptive.beatsAveraged), 'adaptiveHarmonic', '0'};
         writelines(strjoin(rowAdaptive, ','), csvPath, 'WriteMode', 'append');
 
         if adaptiveDetected
@@ -112,6 +149,67 @@ for subjectPos = 1:numSubjects
             if adaptiveConf >= confidenceThreshold
                 adaptiveConfidentCount = adaptiveConfidentCount + 1;
             end
+        end
+
+        % === [2026-09-13, Segment 14 Task 2] Confidence-gate condition:
+        % exactly pipeline/estimateVitalsAndMorphology.m's own
+        % opts.useConfidenceGate=true logic, reproduced here so this
+        % script's own production CSV carries the new default's real
+        % numbers too. Gaussian candidate computed ONLY if ABPF's own
+        % confidence fails the 0.3 bar (same efficiency reasoning as the
+        % pipeline function). ===
+        gateHarmonicMethodUsed = 'adaptiveHarmonic';
+        gateWasSubstituted = false;
+        gateDetected = adaptiveDetected;
+        gatePos = adaptivePos;
+        gateDepth = adaptiveDepth;
+        gateConf = adaptiveConf;
+        gateFsProto = fsProtoAdaptive;
+        gateHr = hrAdaptive;
+        gateBeatsAveraged = statsAdaptive.beatsAveraged;
+
+        if adaptiveConf <= confidenceGateBar
+            [R_gau, ~, ~] = harmonicSelectiveGaussianFilter(R_detrended, frameRate, 6, sharedF0Hz, 0.15);
+            [G_gau, ~, ~] = harmonicSelectiveGaussianFilter(G_detrended, frameRate, 6, sharedF0Hz, 0.15);
+            [B_gau, ~, ~] = harmonicSelectiveGaussianFilter(B_detrended, frameRate, 6, sharedF0Hz, 0.15);
+            pulseGaussian = chromCombine(R_gau, G_gau, B_gau, R, G, B);
+
+            [pulseGaussianFixed, ~] = fixPolarityByGroundTruth(pulseGaussian, roiTimestamps, gt.ppg, gt.timestamp);
+            [sigGaussianUniform, ~, fsGaussianUniform] = resampleUniform(pulseGaussianFixed, roiTimestamps);
+            [protoGaussian, ~, ~, statsGaussian] = ensembleAverageBeats(sigGaussianUniform, fsGaussianUniform);
+
+            hrGaussian = fftHeartRate(sigGaussianUniform, fsGaussianUniform);
+            fsProtoGaussian = numel(protoGaussian.trimmedMean) * (hrGaussian / 60);
+            [gaussianDetected, gaussianPos, gaussianDepth, gaussianConf] = notchDetectIEM(protoGaussian.trimmedMean, fsProtoGaussian);
+
+            [~, gateHarmonicMethodUsed, ~, gateWasSubstituted] = harmonicFilterConfidenceGate( ...
+                pulseAdaptiveFixed, adaptiveConf, 'adaptiveHarmonic', ...
+                {pulseGaussianFixed}, gaussianConf, {'gaussian015'}, confidenceGateBar);
+
+            if gateWasSubstituted
+                gateDetected = gaussianDetected;
+                gatePos = gaussianPos;
+                gateDepth = gaussianDepth;
+                gateConf = gaussianConf;
+                gateFsProto = fsProtoGaussian;
+                gateHr = hrGaussian;
+                gateBeatsAveraged = statsGaussian.beatsAveraged;
+            end
+        end
+
+        disp(['Subject ' subjectID ' confidence-gate: notchDetected=' num2str(gateDetected) ', pos=' num2str(gatePos, '%.4f') ', depth=' num2str(gateDepth, '%.4f') ', confidence=' num2str(gateConf, '%.4f') ', methodUsed=' gateHarmonicMethodUsed ', substituted=' num2str(gateWasSubstituted)]);
+
+        rowGate = {subjectID, 'confidenceGate', num2str(gateDetected), num2str(gatePos, '%.4f'), num2str(gateDepth, '%.4f'), num2str(gateConf, '%.4f'), num2str(gateFsProto, '%.4f'), num2str(gateHr, '%.4f'), num2str(gateBeatsAveraged), gateHarmonicMethodUsed, num2str(gateWasSubstituted)};
+        writelines(strjoin(rowGate, ','), csvPath, 'WriteMode', 'append');
+
+        if gateDetected
+            gateDetectedCount = gateDetectedCount + 1;
+        end
+        if gateConf > confidenceGateBar
+            gatePassCount = gatePassCount + 1;
+        end
+        if gateWasSubstituted
+            gateSubstitutedCount = gateSubstitutedCount + 1;
         end
 
         % === Tiled ROI condition (own decode) ===
@@ -127,7 +225,7 @@ for subjectPos = 1:numSubjects
 
         disp(['Subject ' subjectID ' tiled-ROI: notchDetected=' num2str(tiledDetected) ', pos=' num2str(tiledPos, '%.4f') ', depth=' num2str(tiledDepth, '%.4f') ', confidence=' num2str(tiledConf, '%.4f')]);
 
-        rowTiled = {subjectID, 'tiledROI', num2str(tiledDetected), num2str(tiledPos, '%.4f'), num2str(tiledDepth, '%.4f'), num2str(tiledConf, '%.4f'), num2str(fsProtoTiled, '%.4f'), num2str(hrTiled, '%.4f'), num2str(statsTiled.beatsAveraged)};
+        rowTiled = {subjectID, 'tiledROI', num2str(tiledDetected), num2str(tiledPos, '%.4f'), num2str(tiledDepth, '%.4f'), num2str(tiledConf, '%.4f'), num2str(fsProtoTiled, '%.4f'), num2str(hrTiled, '%.4f'), num2str(statsTiled.beatsAveraged), 'n/a', '0'};
         writelines(strjoin(rowTiled, ','), csvPath, 'WriteMode', 'append');
 
         if tiledDetected
@@ -199,6 +297,7 @@ end
 numSucceeded = numSubjects - numel(failedSubjects);
 disp(['Adaptive-harmonic notch detection rate: ' num2str(adaptiveDetectedCount) '/' num2str(numSucceeded) ' (confident, conf>=' num2str(confidenceThreshold) ': ' num2str(adaptiveConfidentCount) '/' num2str(numSucceeded) ')']);
 disp(['Tiled-ROI notch detection rate:         ' num2str(tiledDetectedCount) '/' num2str(numSucceeded) ' (confident, conf>=' num2str(confidenceThreshold) ': ' num2str(tiledConfidentCount) '/' num2str(numSucceeded) ')']);
+disp(['Confidence-gate notch detection rate:   ' num2str(gateDetectedCount) '/' num2str(numSucceeded) ' (pass, conf>' num2str(confidenceGateBar) ': ' num2str(gatePassCount) '/' num2str(numSucceeded) '; substituted ' num2str(gateSubstitutedCount) '/' num2str(numSucceeded) ')']);
 
 disp(['Saved ' csvPath]);
 
