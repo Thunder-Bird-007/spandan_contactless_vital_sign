@@ -9,9 +9,17 @@
          The old per-field "● LIVE — CHROM/POS + FFT" status chip string
          (hr_status_real) was removed along with its TextView in
          activity_main.xml for a cleaner UI; see that layout's own top
-         comment. -->
-    <string name="hr_format">HR: %.0f bpm</string>
-    <string name="hr_placeholder_default">HR: -- bpm</string>
+         comment.
+
+         Segment 16 Task 3, found via a real on-device screenshot (not
+         guessed): the original "HR: %.0f bpm" wrapped onto two lines at the
+         redesigned card's 34sp bold size inside a half-width column ("HR: 73"
+         / "bpm" on separate lines). The "HR"/"SpO2" prefix is redundant
+         anyway now that the card has its own "HEART RATE"/"BLOOD OXYGEN"
+         caption above the value, so it was dropped rather than just shrinking
+         the font, fixing the wrap and the redundancy at once. -->
+    <string name="hr_format">%.0f bpm</string>
+    <string name="hr_placeholder_default">-- bpm</string>
 
     <!-- SpO2 is a real computation (signal/LiveSpo2Estimator.kt: ratio-of-ratios
          + the uncentered production linear calibration from
@@ -32,6 +40,25 @@
          with its TextView in activity_main.xml for a cleaner UI; same
          caveats still documented in LiveSpo2Estimator.kt's KDoc and
          docs/SpO2_Live_Implementation.md, just not shown on-screen anymore. -->
-    <string name="spo2_format">SpO2: %.2f%%</string>
-    <string name="spo2_placeholder_default">SpO2: -- %</string>
+    <!-- Segment 16 Task 3: same prefix-drop fix as hr_format above, same
+         reason (redundant with the card's own "BLOOD OXYGEN" caption, and
+         contributed to the two-line wrap seen on a real device). -->
+    <string name="spo2_format">%.2f%%</string>
+    <string name="spo2_placeholder_default">-- %</string>
+
+    <!-- Segment 16 Task 3: status-pill labels driving the redesigned
+         vitals card, one label per signal.EstimatorStatus value plus a
+         UI-only NO_FACE case (see MainActivity's own status-resolution
+         logic). Deliberately short: these sit inside a small pill next to a
+         large number, not a paragraph. -->
+    <string name="hr_label">HEART RATE</string>
+    <string name="spo2_label">BLOOD OXYGEN</string>
+    <string name="status_ok_hr">Live — CHROM/POS + FFT</string>
+    <string name="status_ok_spo2">Estimate — narrow reference range (87–99%)</string>
+    <string name="status_warming_up">Warming up…</string>
+    <string name="status_low_signal">Low signal quality</string>
+    <string name="status_no_face">No face detected</string>
+    <string name="no_face_banner_title">No face detected</string>
+    <string name="no_face_banner_subtitle">Center your face in frame, hold still, and make sure your forehead is well lit.</string>
+    <string name="chart_label">LIVE SIGNAL</string>
 </resources>

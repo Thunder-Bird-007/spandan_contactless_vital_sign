@@ -51,6 +51,30 @@ class LiveSpo2Estimator {
     private var lastComputeMs = 0L
     private var cachedSpo2: Double? = null
 
+    /** Segment 16 Task 1/3 -- see [EstimatorStatus]'s own KDoc. Purely
+     *  additive, same contract as [RealHeartRateEstimator.lastStatus]. */
+    var lastStatus: EstimatorStatus = EstimatorStatus.WARMING_UP
+        private set
+
+    /**
+     * Segment 16 Task 2 -- the per-channel perfusion index (PI = AC/DC, the
+     * same quantity `ratioOfRatios.m`'s R formula already divides through by)
+     * from the most recent successful computation, exposed for logging/
+     * future thresholding. NOT currently used to gate [lastStatus] beyond
+     * the existing hard near-zero guard below -- see
+     * docs/Segment16_Task2_SpO2_Research_and_Audit.md for why a graded
+     * numeric cutoff was not added this session (no real device capture
+     * available to derive a defensible threshold from; recent literature,
+     * e.g. arXiv:2607.08001, uses perfusion index as a calibration/quality
+     * signal but on a different modality -- wrist IR/red contact PPG, not
+     * facial RGB rPPG -- so its own numeric thresholds do not transfer
+     * directly). Null until the first successful computation.
+     */
+    var lastPerfusionIndexRed: Double? = null
+        private set
+    var lastPerfusionIndexBlue: Double? = null
+        private set
+
     /** Returns the latest clamped SpO2 percentage, or null if not enough
      *  buffered data yet (mirrors RealHeartRateEstimator.update()'s warm-up
      *  behavior: returns the last cached value rather than a fabricated one
@@ -61,15 +85,22 @@ class LiveSpo2Estimator {
         }
         lastComputeMs = nowMs
 
-        if (samples.size < MIN_SAMPLES) return cachedSpo2
+        if (samples.size < MIN_SAMPLES) {
+            lastStatus = EstimatorStatus.WARMING_UP
+            return cachedSpo2
+        }
         val windowSeconds = (samples.last().timestampMs - samples.first().timestampMs) / 1000.0
-        if (windowSeconds < MIN_WINDOW_SECONDS) return cachedSpo2
+        if (windowSeconds < MIN_WINDOW_SECONDS) {
+            lastStatus = EstimatorStatus.WARMING_UP
+            return cachedSpo2
+        }
 
         // Runtime-measured fs from real sample timestamps -- never hardcoded, same
         // discipline as RealHeartRateEstimator/BandpassFilter/HeartRateFft.
         val fs = (samples.size - 1) / windowSeconds
         if (fs <= 2.0 * BandpassFilter.HIGH_HZ) {
             Log.w(TAG, "Measured fs=$fs Hz too low for the 0.7-4Hz band; skipping this window")
+            lastStatus = EstimatorStatus.LOW_SIGNAL_QUALITY
             return cachedSpo2
         }
 
@@ -93,8 +124,17 @@ class LiveSpo2Estimator {
             // Degenerate window (e.g. a completely flat/black ROI) -- fail soft
             // rather than divide by zero / propagate NaN to the UI.
             Log.w(TAG, "Degenerate DC/AC value (dcR=$dcR dcB=$dcB acB=$acB); skipping this window")
+            lastStatus = EstimatorStatus.LOW_SIGNAL_QUALITY
             return cachedSpo2
         }
+
+        // Perfusion index per channel (Segment 16 Task 2) -- the same AC/DC
+        // terms ratioOfRatios.m's R already divides through by, exposed here
+        // as their own values rather than only the combined ratio. See this
+        // class's own KDoc above for why this is logged/exposed but not yet
+        // used as a graded confidence threshold.
+        lastPerfusionIndexRed = acR / dcR
+        lastPerfusionIndexBlue = acB / dcB
 
         // ratioOfRatios.m: R = (AC_R/DC_R) / (AC_B/DC_B)
         val ratioOfRatios = (acR / dcR) / (acB / dcB)
@@ -114,12 +154,13 @@ class LiveSpo2Estimator {
 
         Log.d(
             TAG,
-            "R=%.4f rawSpo2=%.2f%% clampedSpo2=%.2f%% fs=%.2fHz n=%d".format(
-                ratioOfRatios, rawSpo2, clampedSpo2, fs, samples.size
+            "R=%.4f rawSpo2=%.2f%% clampedSpo2=%.2f%% fs=%.2fHz n=%d PI_red=%.4f PI_blue=%.4f".format(
+                ratioOfRatios, rawSpo2, clampedSpo2, fs, samples.size, lastPerfusionIndexRed, lastPerfusionIndexBlue
             )
         )
 
         cachedSpo2 = clampedSpo2
+        lastStatus = EstimatorStatus.OK
         return clampedSpo2
     }
 

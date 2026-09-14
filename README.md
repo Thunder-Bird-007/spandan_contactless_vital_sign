@@ -108,7 +108,16 @@ spandan/
                          docs/Segment11_Task1_cPACE_Stage1_and_PLV_Metric.md
                          before enabling it -- verified to be an exact
                          algebraic no-op for POS and a modest empirical
-                         regression for CHROM on this project's own pool)
+                         regression for CHROM on this project's own pool),
+                         plus cpaceEigenExtract.m + cpaceHomodyneNormalize.m
+                         (Segment 15 Tasks 1-2 -- OPTIONAL, off-by-default
+                         cPACE Stages 2-3, chained after cpaceProjection.m;
+                         see docs/Segment15_Task4_Evaluation.md before
+                         enabling -- the full Stage1+2+3 pipeline is a real
+                         HR MAE regression vs. production POS/CHROM on this
+                         project's 100-subject pool at every eigen-window
+                         bw value tested, with a slight cross-ROI PLV gain;
+                         NOT adopted, kept off by default)
       heartrate/       - fftHeartRate.m, windowedHeartRate.m (Task P)
       spo2/            - ratioOfRatios.m, calibrateSpO2.m -- ported live
                          to Android, see android/docs/

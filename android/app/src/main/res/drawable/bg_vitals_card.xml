@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Segment 16 Task 3: the rounded, semi-transparent panel behind the
+     HR/SpO2 readouts, replacing the old flat android:background="#000000"
+     row. A hairline top border (via a slightly larger background shape
+     with the border color, layered under an inset fill) gives the card a
+     visible edge against a bright/busy camera feed without needing a real
+     elevation shadow (which barely reads against black anyway). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_card_border" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    <item android:top="1dp" android:left="1dp" android:right="1dp" android:bottom="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_card" />
+            <corners android:radius="19dp" />
+        </shape>
+    </item>
+</layer-list>

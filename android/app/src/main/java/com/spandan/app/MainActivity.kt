@@ -2,6 +2,7 @@ package com.spandan.app
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -23,6 +24,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.spandan.app.camera.CoordinateMapper
 import com.spandan.app.camera.FaceAnalysisResult
 import com.spandan.app.camera.FaceAnalyzer
+import com.spandan.app.signal.DisplaySmoother
+import com.spandan.app.signal.EstimatorStatus
 import com.spandan.app.signal.LiveSpo2Estimator
 import com.spandan.app.signal.RealHeartRateEstimator
 import com.spandan.app.signal.SignalBuffer
@@ -48,13 +51,36 @@ class MainActivity : AppCompatActivity() {
     private lateinit var hrText: TextView
     private lateinit var spo2Text: TextView
     private lateinit var permissionDeniedView: View
+    private lateinit var noFaceBanner: View
+    private lateinit var hrStatusDot: View
+    private lateinit var hrStatusLabel: TextView
+    private lateinit var spo2StatusDot: View
+    private lateinit var spo2StatusLabel: TextView
 
     private val signalBuffer = SignalBuffer(windowSeconds = SignalBuffer.WINDOW_DURATION_SECONDS)
     private val heartRateEstimator = RealHeartRateEstimator()
     private val spo2Estimator = LiveSpo2Estimator()
+
+    // Segment 16 Task 1 -- DISPLAY-LEVEL smoothing only (see DisplaySmoother's
+    // own KDoc for why this is not a re-introduction of the RAKF/Kalman
+    // approach MATLAB already rejected). ON by default as of 2026-09-14,
+    // after a real on-device A/B capture showed a genuine reduction in
+    // tick-to-tick jitter with no accuracy cost -- see
+    // ENABLE_HR_DISPLAY_SMOOTHING_DEFAULT's own KDoc below and
+    // docs/Segment16_Task1_HR_Stability.md for the full result/caveats.
+    private val hrDisplaySmoother = DisplaySmoother(mode = DisplaySmoother.Mode.ROLLING_MEDIAN)
+    private val enableHrDisplaySmoothing = ENABLE_HR_DISPLAY_SMOOTHING_DEFAULT
+
     private var cameraProvider: ProcessCameraProvider? = null
     private val analysisExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val uiHandler = Handler(Looper.getMainLooper())
+
+    // Segment 16 Task 3 -- when a face was last seen, for the "No face
+    // detected" banner's debounce (see handleAnalysisResult/refreshUi
+    // below). A single missed frame is normal (FaceAnalyzer's own
+    // every-Nth-frame detection-skip design, plus ordinary detector noise)
+    // and must NOT flash the banner -- only a SUSTAINED gap should.
+    private var lastFaceSeenMs: Long = 0L
 
     // Tracks the permission state as of the last time we actually acted on it
     // (onCreate or a resume), so onResume can tell "still the same state" apart
@@ -77,6 +103,11 @@ class MainActivity : AppCompatActivity() {
         hrText = findViewById(R.id.hrText)
         spo2Text = findViewById(R.id.spo2Text)
         permissionDeniedView = findViewById(R.id.permissionDeniedView)
+        noFaceBanner = findViewById(R.id.noFaceBanner)
+        hrStatusDot = findViewById(R.id.hrStatusDot)
+        hrStatusLabel = findViewById(R.id.hrStatusLabel)
+        spo2StatusDot = findViewById(R.id.spo2StatusDot)
+        spo2StatusLabel = findViewById(R.id.spo2StatusLabel)
 
         // App targets SDK 35, where edge-to-edge is enforced -- content draws
         // behind system bars by default. Without this, the bottom HR/SpO2
@@ -189,6 +220,8 @@ class MainActivity : AppCompatActivity() {
             is FaceAnalysisResult.NoFace -> overlayView.update(null, null)
 
             is FaceAnalysisResult.FaceDetected -> {
+                lastFaceSeenMs = System.currentTimeMillis()
+
                 val viewWidth = previewView.width
                 val viewHeight = previewView.height
 
@@ -224,15 +257,31 @@ class MainActivity : AppCompatActivity() {
         val samples = signalBuffer.snapshot()
         chartView.updateValues(samples.map { it.green })
 
+        // Segment 16 Task 3 -- "No face detected" banner, debounced so a
+        // single missed detection (normal noise, or one of FaceAnalyzer's
+        // own every-Nth-frame skipped-detection cycles) doesn't flash it.
+        val msSinceFace = System.currentTimeMillis() - lastFaceSeenMs
+        val noFaceSustained = lastFaceSeenMs == 0L || msSinceFace > NO_FACE_DEBOUNCE_MS
+        noFaceBanner.visibility = if (noFaceSustained) View.VISIBLE else View.GONE
+
         // HR: real pipeline (detrend -> bandpass -> CHROM/POS -> FFT), see
         // signal/RealHeartRateEstimator.kt. Null until enough of the buffer window
         // has filled.
-        val hrBpm = heartRateEstimator.update(samples)
+        val hrRaw = heartRateEstimator.update(samples)
+        // Segment 16 Task 1 -- display-level smoothing only, gated off by
+        // default (see the field's own KDoc above). When disabled this is a
+        // pure passthrough (DisplaySmoother.Mode.NONE-equivalent), so hrBpm
+        // is byte-for-byte hrRaw unless explicitly enabled.
+        val hrBpm = if (enableHrDisplaySmoothing) hrDisplaySmoother.smooth(hrRaw) else hrRaw
         hrText.text = if (hrBpm != null) {
             getString(R.string.hr_format, hrBpm)
         } else {
             getString(R.string.hr_placeholder_default)
         }
+        applyStatusPill(
+            dot = hrStatusDot, label = hrStatusLabel, noFace = noFaceSustained,
+            status = heartRateEstimator.lastStatus, okText = getString(R.string.status_ok_hr)
+        )
 
         // SpO2: real ratio-of-ratios + linear calibration, see
         // signal/LiveSpo2Estimator.kt. Independent call on the same samples
@@ -243,6 +292,29 @@ class MainActivity : AppCompatActivity() {
         } else {
             getString(R.string.spo2_placeholder_default)
         }
+        applyStatusPill(
+            dot = spo2StatusDot, label = spo2StatusLabel, noFace = noFaceSustained,
+            status = spo2Estimator.lastStatus, okText = getString(R.string.status_ok_spo2)
+        )
+    }
+
+    /**
+     * Segment 16 Task 1/2/3 -- maps an [EstimatorStatus] (plus the UI-only
+     * "no face" case, which isn't one of the estimators' own states) onto a
+     * status-pill color + label. Presentation-only: this function is never
+     * called from, and never influences, either estimator's own computation.
+     */
+    private fun applyStatusPill(dot: View, label: TextView, noFace: Boolean, status: EstimatorStatus, okText: String) {
+        val (color, text) = when {
+            noFace -> R.color.status_no_face to getString(R.string.status_no_face)
+            status == EstimatorStatus.WARMING_UP -> R.color.status_warming to getString(R.string.status_warming_up)
+            status == EstimatorStatus.LOW_SIGNAL_QUALITY -> R.color.status_low_quality to getString(R.string.status_low_signal)
+            else -> R.color.status_ok to okText
+        }
+        val tint = ColorStateList.valueOf(ContextCompat.getColor(this, color))
+        dot.backgroundTintList = tint
+        label.text = text
+        label.setTextColor(ContextCompat.getColor(this, color))
     }
 
     override fun onDestroy() {
@@ -253,5 +325,29 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG = "SpandanMainActivity"
+
+        /** Segment 16 Task 3 -- how long since a face was last detected
+         *  before the "No face detected" banner appears. 1200ms is a few
+         *  multiples of FaceAnalyzer's own DETECT_EVERY_N_FRAMES=3 skip
+         *  cycle at this project's measured ~13-21fps range (a few hundred
+         *  ms per cycle), so an ordinary skip cycle or one failed detection
+         *  never flashes the banner, but a real sustained absence (phone
+         *  set down, face turned away) shows it within about a second. Not
+         *  tuned against a real on-device capture this session -- flagged
+         *  for the on-device test alongside Task 1's smoothing evaluation. */
+        private const val NO_FACE_DEBOUNCE_MS = 1200L
+
+        /** Segment 16 Task 1 -- PROMOTED TO ON 2026-09-14 after a real
+         *  on-device A/B capture (Galaxy A35, 83 distinct recomputes over
+         *  ~66s): rolling-median smoothing cut mean tick-to-tick jump from
+         *  17.46bpm to 5.49bpm (~69% reduction) and stdev from 24.63 to
+         *  20.54bpm, with no accuracy cost (the raw switched value is still
+         *  computed and logged unchanged; smoothing is display-only). Real
+         *  bug found and fixed during that same test -- see
+         *  DisplaySmoother.kt's own header -- before this result was
+         *  trustworthy. Single session, single subject, no manual-pulse
+         *  cross-check this round -- see docs/Segment16_Task1_HR_
+         *  Stability.md for the full caveats and the remaining test ideas. */
+        private const val ENABLE_HR_DISPLAY_SMOOTHING_DEFAULT = true
     }
 }

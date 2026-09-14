@@ -55,6 +55,13 @@ class RealHeartRateEstimator(
     private var lastComputeMs = 0L
     private var cached: Estimate? = null
 
+    /** Segment 16 Task 1/3 -- names WHY the last [update] call did/didn't
+     *  produce a value; see [EstimatorStatus]'s own KDoc. Purely additive:
+     *  read this AFTER calling [update]; it never changes what [update]
+     *  itself returns. */
+    var lastStatus: EstimatorStatus = EstimatorStatus.WARMING_UP
+        private set
+
     /** Returns the latest displayed bpm (CHROM or POS, per the switching rule), or
      *  null if not enough buffered data yet (early in a session, or fs momentarily
      *  unmeasurable). */
@@ -64,9 +71,15 @@ class RealHeartRateEstimator(
         }
         lastComputeMs = nowMs
 
-        if (samples.size < MIN_SAMPLES) return cached?.displayedBpm
+        if (samples.size < MIN_SAMPLES) {
+            lastStatus = EstimatorStatus.WARMING_UP
+            return cached?.displayedBpm
+        }
         val windowSeconds = (samples.last().timestampMs - samples.first().timestampMs) / 1000.0
-        if (windowSeconds < MIN_WINDOW_SECONDS) return cached?.displayedBpm
+        if (windowSeconds < MIN_WINDOW_SECONDS) {
+            lastStatus = EstimatorStatus.WARMING_UP
+            return cached?.displayedBpm
+        }
 
         // Runtime-measured fs from real sample timestamps -- never hardcoded, same
         // discipline as bandpassClean.m/fftHeartRate.m's own "frameRate must not be
@@ -74,6 +87,7 @@ class RealHeartRateEstimator(
         val fs = (samples.size - 1) / windowSeconds
         if (fs <= 2.0 * HeartRateFft.HIGH_BAND_HZ) {
             Log.w(TAG, "Measured fs=$fs Hz too low for the 0.7-4Hz band; skipping this window")
+            lastStatus = EstimatorStatus.LOW_SIGNAL_QUALITY
             return cached?.displayedBpm
         }
 
@@ -114,6 +128,7 @@ class RealHeartRateEstimator(
 
         if (chromResult == null || posResult == null) {
             Log.w(TAG, "No FFT bin fell inside 0.7-4Hz for fs=$fs n=${samples.size}; keeping last estimate")
+            lastStatus = EstimatorStatus.LOW_SIGNAL_QUALITY
             return cached?.displayedBpm
         }
 
@@ -136,6 +151,7 @@ class RealHeartRateEstimator(
         )
 
         cached = Estimate(chromResult.bpm, posResult.bpm, displayedBpm, relativeDisagreement, usedPos)
+        lastStatus = EstimatorStatus.OK
         return displayedBpm
     }
 

@@ -996,3 +996,98 @@ Section 6), don't present this as a general accuracy fix on-device
 either -- it's one more useful signal alongside the existing "LIVE" chip,
 not a resolution of the window-to-window jitter documented throughout
 this README.
+
+## Segment 16 -- HR/PPG stability, SpO2 rigor, UI/UX pass
+
+Run 2026-09-14. Three independent tracks, evaluated separately, per the
+brief. Started with **no physical test device** -- the local Pixel_7 AVD
+emulator was tried as a substitute and never finished booting (left running
+20+ minutes, `adb devices` stayed `offline` throughout despite the
+emulator's own hardware-acceleration checks all passing -- see
+`docs/Segment16_Task3_UI_UX_Pass.md` Section 4 for the full detail). **A
+physical device (the same Galaxy A35 used throughout this project) became
+available partway through the session**, so most of what follows IS
+real-device-verified, not just built/unit-tested -- each task's section
+below says exactly which.
+
+**Task 1 (HR/PPG stability)**: built `signal/DisplaySmoother.kt` --
+display-level-only rolling-median/EMA smoothing of the already-computed,
+already-CHROM/POS-switched bpm value, applied strictly after the pipeline
+has already produced its answer (never fed back into it). Deliberately NOT
+a re-implementation of RAKF/Kalman smoothing, which `matlab/docs/
+Segment6_Task5_RAKF_Kalman_Smoothing.md` already tested and found the worst
+of six methods on real data -- see the new doc's own Section 1 for the
+explicit distinction. **Real on-device A/B capture (Galaxy A35, 83 distinct
+recomputes over ~66s)**: rolling-median smoothing cut the mean tick-to-tick
+jump from 17.46bpm to 5.49bpm (-69%) and stdev from 24.63 to 20.54, at zero
+accuracy cost (the raw switched value is still computed/logged unchanged).
+**A real bug was found and fixed via that same capture before trusting the
+result**: `MainActivity`'s UI refreshes 5x faster than the pipeline
+recomputes, so the same raw value was being pushed into the "5-tick" median
+window up to 5x, meaning the window barely spanned one real measurement --
+fixed by de-duplicating consecutive identical inputs inside
+`DisplaySmoother` itself. Unit tests grew from 6 to 8 to cover it.
+**Promoted `ENABLE_HR_DISPLAY_SMOOTHING_DEFAULT` to `true`** on this real
+evidence (single session/subject, stated as a caveat, not hidden). Also
+worked out the DSP theory behind the frame-skip throughput question: FFT
+bin resolution is `1/(window duration)` regardless of sampling rate, so a
+higher fps does NOT by itself sharpen resolution the way a longer window
+does -- it helps via more per-window sample averaging and a larger Nyquist
+margin instead. `SignalBuffer.WINDOW_DURATION_SECONDS` stays at 25.0 (that
+specific re-test was not run this session -- time went to the smoothing
+test and the bug it surfaced). Full detail:
+`docs/Segment16_Task1_HR_Stability.md`.
+
+**Task 2 (SpO2 audit + research)**: confirmed both at the code level AND,
+once the device arrived, live on real hardware -- SpO2 chip visibly
+updating (`96.81%` alongside `HR: 130bpm`; the capture itself was deleted
+at the user's request), `logcat` showing real R/SpO2 co-movement (e.g.
+`R=0.8229 rawSpo2=96.82% fs=17.44Hz
+PI_red=0.0313 PI_blue=0.0380`), zero crashes across every capture. 2023+
+literature search (RGB/webcam PPG SpO2 specifically, VERIFIED-FULL/
+VERIFIED-INDEX/BLOCKED discipline) found no independently-validated
+calibration this segment could responsibly adopt: the strongest recent
+lead (perfusion-guided calibration, arXiv:2607.08001) uses coefficients
+trained on a different modality (wrist IR/red contact PPG) that don't
+transfer, and this segment's own scope (no `matlab/` changes, no reference
+oximeter) rules out refitting a new one honestly. **No calibration change
+was made.** What WAS added: per-channel perfusion index
+(`lastPerfusionIndexRed`/`lastPerfusionIndexBlue`, the same AC/DC terms
+`ratioOfRatios.m` already computes) is now exposed/logged -- and real
+values now exist for the first time (0.007-0.038 observed this session,
+still too few to set a defensible confidence threshold from) -- and the
+existing degenerate-signal guard is now a named `LOW_SIGNAL_QUALITY` status
+instead of a silent log line. Full detail:
+`docs/Segment16_Task2_SpO2_Research_and_Audit.md`.
+
+**Task 3 (UI/UX pass)**: `activity_main.xml` redesigned -- HR/SpO2 moved
+into a rounded "vitals card" with larger/bolder values, small captions, and
+a per-metric colored status pill driven by the new shared
+`signal.EstimatorStatus` enum (`OK`/`WARMING_UP`/`LOW_SIGNAL_QUALITY`) plus
+a UI-only `NO_FACE` case; a debounced "No face detected" banner now appears
+over the preview after a sustained gap (1200ms). New `colors.xml` extracts
+a small palette from colors that already existed inline in
+`OverlayView.kt`/`SignalChartView.kt` so the new UI matches the existing
+camera-overlay look. Presentation-only: no camera/signal/calibration code
+touched. **Real before/after captures taken on-device** (git-stashing this
+task's changes to rebuild the genuine pre-redesign layout for the "before"
+shot): flat 20sp text/no status feedback -> rounded card with color-coded
+pills, captured in all three of its live/warming-up/no-face states. **A
+real bug found via the first capture** -- the value text wrapped onto two
+lines at 34sp bold inside the card's half-width column -- fixed by
+dropping the now-redundant "HR:"/"SpO2:" prefix (the caption already says
+"HEART RATE"/"BLOOD OXYGEN") rather than just shrinking the font;
+re-verified on a second capture. **No screenshot files are retained** --
+deleted at the user's request after verification (2026-09-14); they were
+never committed to git and never reached GitHub. Full detail:
+`docs/Segment16_Task3_UI_UX_Pass.md`.
+
+**Files added**: `signal/DisplaySmoother.kt`, `signal/EstimatorStatus.kt`,
+`app/src/test/.../DisplaySmootherTest.kt`, `values/colors.xml`,
+`drawable/bg_vitals_card.xml`, `drawable/bg_status_pill.xml`,
+`drawable/bg_no_face_banner.xml`, `drawable/shape_status_dot.xml`,
+`docs/Segment16_Task{1,2,3}_*.md`. **Files modified**: `signal/RealHeartRateEstimator.kt` and
+`signal/LiveSpo2Estimator.kt` (additive `lastStatus`/perfusion-index
+properties only -- numeric logic byte-for-byte unchanged), `MainActivity.kt`
+(status-pill wiring, no-face debounce, display-smoother hook now ON by
+default), `layout/activity_main.xml`, `values/strings.xml`.

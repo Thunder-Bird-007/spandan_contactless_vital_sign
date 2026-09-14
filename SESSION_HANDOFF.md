@@ -44,7 +44,7 @@ already uses (see README.md's own "mark superseded, don't delete" convention):
 
 ## Current State
 
-*(Last updated: 2026-09-13. If you are reading this later and nothing below has been
+*(Last updated: 2026-09-14. If you are reading this later and nothing below has been
 touched since, treat it with suspicion — either nothing happened, or someone skipped
 step 1 of the protocol above.)*
 
@@ -153,7 +153,21 @@ step 1 of the protocol above.)*
   3x projection — see Active Work Queue Action 6a, now closed). Separately, DWT
   wavelet-shrinkage denoising (`WaveletDenoise.kt`) is now also the default Branch 1
   HR pre-step on Android, matching the MATLAB promotion above — see Active Work Queue
-  Action 7.
+  Action 7. **[2026-09-14, Segment 16]** HR display-level smoothing built
+  (not RAKF/Kalman — see below), SpO2 calibration audited + a 2023+
+  literature search done (no adoptable replacement found, none forced), and
+  a UI/UX redesign shipped (vitals card, per-metric status pills, no-face
+  banner). Started with no physical device (local emulator never finished
+  booting, 20+ minutes, never past `offline`) but **a real device became
+  available partway through and most of this IS on-device-verified**: a
+  real A/B capture found smoothing cuts mean tick-to-tick HR jitter ~69%
+  (now promoted to on-by-default), a real bug in that same capture's
+  smoothing window was found and fixed, real before/after captures verified
+  the UI redesign (including a real text-wrap bug found and fixed; no
+  screenshot files retained — deleted at the user's request, never
+  committed/pushed), and the SpO2 chip/logcat were freshly re-confirmed
+  live. See the Segment 16 Active Work Queue entry for exactly what was and
+  wasn't verified.
 - **Data location note — read this before assuming "only 107 VIPL subjects exist"**:
   the working pipeline reads VIPL-HR from `spandan/data/raw/VIPL-HR/` (untouched,
   unchanged, no code path affected by anything below). The **original full VIPL-HR raw
@@ -181,7 +195,13 @@ step 1 of the protocol above.)*
   Segment 10 Task 3 Actions 2 and 4; ~~not yet acted on as a fix~~ **their cPACE Stage 1
   fix implemented and evaluated 2026-09-13 (Segment 11 Task 1) — proven an exact
   algebraic no-op for POS and a modest empirical regression for CHROM on this project's
-  own pool, NOT adopted, see Active Work Queue entry**); Debnath & Kim, *PLOS ONE*
+  own pool, NOT adopted, see Active Work Queue entry**; ~~Stages 2-3 not attempted~~
+  **their cPACE Stages 2-3 (eigenvector extraction + homodyne normalization)
+  implemented and evaluated 2026-09-14 (Segment 15) — the full Stage1+2+3 pipeline
+  regresses HR MAE vs. production at every eigen-window bw value tested (best: 8.66bpm
+  at bw=0.15 vs. production's 7.86-7.87bpm), with a small cross-ROI PLV gain; 42/100
+  subjects regress >1bpm, 24/100 severely (>10bpm), NOT adopted, see Active Work Queue
+  entry**); Debnath & Kim, *PLOS ONE*
   21(1):e0340097 (2026, DWT denoising — ~~NOT yet tried~~ **adopted as the Branch 1
   default**; residual-adaptive Kalman/RAKF from the same paper — **tested and
   rejected**, worst of 6 methods compared, see Archive Actions 4/5/7); Chen, Lin &
@@ -604,6 +624,143 @@ scale any of these up, that is a new, explicit decision, not an automatic next s
       `matlab/tests/segment7_task_f_regression_test.m`,
       `matlab/scripts/run_segment7_task_b_branch2_batch.m`, `README.md`,
       `matlab/docs/Spandan_Final_Pipeline_Report.md`.
+- [x] **Segment 15 — cPACE Stages 2-3 (eigenvector selection + homodyne normalization),
+      built on top of Segment 11 Task 1's Stage 1.** **Done 2026-09-14. NOT adopted,
+      kept gated/off-by-default.** Briefed as "Segment 14" — corrected to Segment 15
+      before writing any code, since Segment 14 (above) already exists and is
+      unrelated. **Two things checked against the actual paper (both PDFs — main
+      paper and Supplement 1 — are in `Research Paper/`, read directly, not assumed
+      from the brief) before implementing**: (1) the brief's claim that the paper has
+      "no second candidate" for eigenvector selection is WRONG — Section 4.2 describes
+      a two-candidate multi-ROI PLV consensus (cPACE-v1 vs. cPACE-absorption); asked
+      the user directly, decided to implement dominant-eigenvector-only anyway (Table
+      S2's own literal row, and this project only has multi-ROI data for a 20-subject
+      pool, not the full 100). (2) The paper's own Table S2 parameters (bw=0.30Hz,
+      fenv=0.30Hz, kappa=2, 0.7-3.0Hz cardiac band, order-4/order-2 filters, etc.) were
+      verified directly against the real Table S2 in Supplement 1 — all matched the
+      brief exactly. **New functions**: `pulseextraction/cpaceEigenExtract.m` (seed
+      from green-channel PSD peak, narrowband seed+/-bw covariance, dominant
+      eigenvector) and `cpaceHomodyneNormalize.m` (Hilbert envelope/phase, envelope
+      lowpassed at fenv, demodulated with gate exponent kappa). **One real ambiguity
+      found and fixed via real-data testing**: a first implementation, following the
+      paper's Eq. 9 literally (`s(t) = v1^T x_c(t)`, the WIDE 0.7-3.0Hz signal),
+      gave HR MAE 16.2bpm (vs. production ~7.9bpm) because a 2.3Hz-wide signal isn't
+      close enough to monocomponent for Hilbert instantaneous phase to be
+      meaningful — the same precondition `computeCrossROIPLV.m`'s own header already
+      documents. Fixed by projecting the narrowband seed+/-bw signal (the same one v1
+      was derived from) instead — MAE improved to 10.1bpm at bw=0.30, still a net
+      regression but no longer clearly broken. Documented as a resolved ambiguity in
+      the function's own header, since Table S2 is silent on which signal feeds this
+      step. **Task 3 (bw sweep, {0.15, 0.30, 0.50}Hz, real 100-subject pool, per-subject
+      not just pooled)**: confirms bw is the sensitive parameter the paper's own
+      Supplement flags, but the real per-subject swings (up to ~40bpm for two UBFC-D1
+      subjects at bw=0.50) are far larger than the paper's own reported pooled
+      0.99-2.88bpm swing — a pooled table alone would have hidden this, the same
+      lesson as Segment 12's 17-subject regression. Narrower (bw=0.15) is pooled-best
+      on this project's mostly-resting cohort, consistent with the paper's own caution
+      that a fixed narrow eigen-window fits a narrow-HR-range cohort well but may not
+      generalize. **Task 4 (full pipeline vs. production/Stage-1-only)**: full cPACE
+      does not beat production POS/CHROM at any bw tested (best pooled: 8.66bpm at
+      bw=0.15 vs. 7.86-7.87bpm production); 42/100 subjects regress >1bpm vs. POS,
+      24/100 severely (>10bpm) — several already-accurate (<3bpm) subjects made badly
+      wrong. Cross-ROI PLV (20-subject VIPL pool) DOES improve slightly at every bw
+      (0.279-0.295 vs. production's 0.254-0.271) — a genuine phase-coherence gain even
+      though HR-MAE regresses on this light-skinned, low-motion cohort, consistent with
+      Segment 11's own finding that this project's cohort sits in the paper's
+      least-favorable (low skin-colour-angle) regime. **Kept gated/off-by-default**,
+      same discipline as `cpaceProjection.m` and the gate's own multi-candidate mode.
+      Full detail: `matlab/docs/Segment15_Task1_cPACE_Eigen_Extract.md`,
+      `Segment15_Task2_cPACE_Homodyne.md`, `Segment15_Task3_Hyperparameter_Sweep.md`,
+      `Segment15_Task4_Evaluation.md`. Outputs:
+      `matlab/src/pulseextraction/cpaceEigenExtract.m`,
+      `matlab/src/pulseextraction/cpaceHomodyneNormalize.m`,
+      `matlab/scripts/run_segment15_task3_task4_cpace_full_evaluation.m`,
+      `results/metrics/segment15_cpace_full_per_subject_hr.csv`,
+      `results/metrics/segment15_cpace_full_summary_hr.csv`,
+      `results/metrics/segment15_cpace_full_per_subject_plv.csv`,
+      `results/metrics/segment15_cpace_full_summary_plv.csv`,
+      `results/metrics/segment15_task3_bw_sweep_per_subject_regressions.csv`,
+      `results/metrics/segment15_task4_vs_production_per_subject_regressions.csv`,
+      `results/figures/segment15_*.png` (3 figures). `README.md` folder-structure
+      listing updated.
+- [x] **Segment 16 — Android app: HR/PPG stability, SpO2 rigor, UI/UX pass.** **Done
+      2026-09-14. Android-only, per the brief — `matlab/` untouched.** Three
+      independent tracks, evaluated separately. **Started with no physical device**
+      (the local Pixel_7 AVD emulator was tried and never finished booting, 20+
+      minutes, `adb devices` stayed `offline` the whole time despite the emulator's
+      own hardware-acceleration checks all passing) — **but a real device (the same
+      Galaxy A35, `RFCXC0FFFSN`, used throughout this project) became available
+      partway through the session, and most of the work below is real-device-
+      verified, not just built/unit-tested.** **Task 1**: built
+      `signal/DisplaySmoother.kt`, display-level-ONLY rolling-median/EMA smoothing
+      of the already-computed, already-CHROM/POS-switched bpm value — explicitly
+      NOT a re-implementation of RAKF/Kalman smoothing (`matlab/docs/
+      Segment6_Task5_RAKF_Kalman_Smoothing.md` already found that the worst of six
+      methods on real data). Unit tests (6/6, later 8/8) caught a null-handling bug
+      before any device work. **Real on-device A/B capture (83 distinct recomputes,
+      ~66s)**: rolling-median smoothing cut mean tick-to-tick HR jitter from
+      17.46bpm to 5.49bpm (**−69%**) and stdev from 24.63 to 20.54, at zero accuracy
+      cost. **A second real bug was found via that same capture and fixed before
+      trusting the result**: `MainActivity`'s UI ticks 5× faster than the pipeline
+      recomputes, so the same raw value was entering the "5-tick" median window up
+      to 5× — a window that barely spanned one real measurement, not five. Fixed by
+      de-duplicating consecutive identical inputs inside `DisplaySmoother`; 2 new
+      unit tests added (8/8 passing). **Promoted `ENABLE_HR_DISPLAY_SMOOTHING_
+      DEFAULT` to `true`** on this real, if single-session/single-subject, evidence.
+      Also derived the DSP theory the brief's fps/window-length question needed:
+      FFT bin resolution is `1/(window duration)`, independent of sampling rate —
+      the frame-skip optimization's fps gain does NOT by itself sharpen resolution;
+      it helps via per-window sample averaging and Nyquist margin instead.
+      `SignalBuffer.WINDOW_DURATION_SECONDS` left at 25.0 (that specific re-test was
+      not run this session — device time went to the smoothing test/bug instead).
+      **Task 2**: confirmed at the CODE level AND, once the device arrived, freshly
+      on real hardware — SpO2 chip visibly live (`96.81%` alongside `HR: 130bpm`),
+      `logcat` showing real R/SpO2 co-movement, zero crashes. Literature search
+      (2023+, RGB/webcam PPG SpO2 specifically, VERIFIED-FULL/VERIFIED-INDEX/
+      BLOCKED discipline, ~10 sources) found no independently-validated calibration
+      this segment could responsibly adopt: the strongest lead (perfusion-guided
+      calibration, arXiv:2607.08001) trains coefficients on a different modality
+      (wrist IR/red contact PPG) that don't transfer, and this segment's own scope
+      (no `matlab/` changes, no reference oximeter) rules out refitting a new one
+      honestly — **no calibration change made, said so plainly rather than forcing
+      one**. Added (zero-risk, additive): per-channel perfusion index now exposed/
+      logged from `LiveSpo2Estimator`'s own existing AC/DC terms — real values now
+      on record for the first time (0.007-0.038 observed this session, still too
+      few for a defensible graded threshold) — and its existing degenerate-signal
+      guard is now a named `LOW_SIGNAL_QUALITY` status instead of a silent log line.
+      **Task 3**: `activity_main.xml` redesigned into a rounded "vitals card"
+      (larger/bolder values, small captions, per-metric colored status pill driven
+      by the new shared `signal.EstimatorStatus` enum plus a UI-only `NO_FACE` case)
+      and a debounced "No face detected" banner — directly answering the brief's
+      "no face detected"/"low confidence"/"warming up" states request, which the
+      prior layout collapsed into one undifferentiated placeholder. New `colors.xml`
+      extracted from colors already used inline in `OverlayView.kt`/
+      `SignalChartView.kt`. Presentation-only — no camera/signal/calibration code
+      touched. One real XML build failure hit and fixed (`--` inside a comment, the
+      same pitfall this project's own Android README already documented once
+      before) — hit AGAIN later in the same task while fixing the text-wrap bug
+      below, same fix applied. **Real before/after captures verified on-device**
+      (git-stashed this task's changes to rebuild the genuine pre-redesign layout
+      for the "before" shot): flat 20sp text/no status feedback → rounded card with
+      color-coded pills, captured live/warming-up/no-face. **A real bug found via
+      the first capture**: the value text wrapped onto two lines at 34sp bold in
+      the card's half-width column — fixed by dropping the redundant "HR:"/"SpO2:"
+      prefix (the caption already says "HEART RATE"/"BLOOD OXYGEN"), re-verified on
+      a second capture. **No screenshot files retained** — deleted at the user's
+      request after verification (2026-09-14); confirmed never committed to git and
+      never pushed to GitHub (all were untracked local files at deletion time). Full
+      detail: `android/docs/Segment16_Task1_HR_Stability.md`,
+      `Segment16_Task2_SpO2_Research_and_Audit.md`, `Segment16_Task3_UI_UX_Pass.md`
+      (all three updated with real on-device results, not just the original
+      no-device plan).
+      Outputs: `android/app/src/main/java/com/spandan/app/signal/DisplaySmoother.kt`,
+      `EstimatorStatus.kt`, `app/src/test/.../DisplaySmootherTest.kt`,
+      `res/values/colors.xml`, `res/drawable/bg_vitals_card.xml`,
+      `bg_status_pill.xml`, `bg_no_face_banner.xml`, `shape_status_dot.xml`.
+      Modified (additive only, numeric logic unchanged):
+      `signal/RealHeartRateEstimator.kt`, `signal/LiveSpo2Estimator.kt`,
+      `MainActivity.kt`, `res/layout/activity_main.xml`, `res/values/strings.xml`,
+      `android/README.md`.
 
 ---
 
@@ -1141,3 +1298,103 @@ Maintenance Protocol rule 3.)*
   `docs/Spandan_Final_Pipeline_Report.md` updated to describe the new default.
   `cpaceProjection.m`, `computeCrossROIPLV.m`, `residualAdaptiveKalmanHR.m`, and the
   `'wide'`/`'mid'` bandpass default were all untouched, per this session's own scope.
+- **2026-09-14** (new session) — Segment 15: implemented and evaluated cPACE Stages
+  2-3 (eigenvector-based cardiac extraction + homodyne amplitude normalization) on top
+  of Segment 11 Task 1's Stage 1, per Kaur, Lakshminarayanan & Saini's paper. Briefed as
+  "Segment 14" — renumbered to 15 before writing code, since Segment 14 already exists
+  (above) and is a different, completed body of work; nothing was actually missing from
+  this file, the brief's own number was stale. **Two corrections made against the real
+  paper before implementing** (both the main paper PDF and Supplement 1 PDF are in
+  `Research Paper/`, read directly): (1) the brief asserted the paper has no
+  second-candidate eigenvector selection — false, Section 4.2 describes a two-candidate
+  multi-ROI PLV consensus (cPACE-v1 vs. cPACE-absorption); asked the user, decided to
+  implement dominant-eigenvector-only anyway (matches Table S2's literal row; this
+  project only has multi-ROI data for 20 of the 100 subjects). (2) all of the brief's
+  quoted Table S2 parameter values (bw=0.30Hz, fenv=0.30Hz, kappa=2, 0.7-3.0Hz cardiac
+  band, filter orders, sensitivity-sweep ranges) were verified directly against the
+  real Table S2 and matched exactly. **New**: `pulseextraction/cpaceEigenExtract.m`,
+  `cpaceHomodyneNormalize.m`. **One real ambiguity found and fixed via real-data
+  testing, not assumed**: implementing the paper's Eq. 9 literally (projecting the WIDE
+  0.7-3.0Hz signal onto the dominant eigenvector before the Hilbert transform) gave HR
+  MAE 16.2bpm on this project's 100-subject pool — a clearly broken result, traced to
+  Hilbert instantaneous phase requiring a near-monocomponent input (the same
+  precondition `computeCrossROIPLV.m`'s own header already states), which a 2.3Hz-wide
+  signal is not. Fixed by projecting the already-narrowband seed+/-bw signal (the same
+  one the eigenvector was derived from) instead — MAE improved to 10.1bpm at the
+  default bw=0.30, a real but far more plausible result. Documented as a resolved
+  ambiguity (Table S2 is silent on which signal feeds this step), not a silent
+  deviation. **Task 3 (bw swept over {0.15, 0.30, 0.50}Hz, real 100-subject pool,
+  per-subject)**: confirms bw is the sensitive parameter the paper's own Supplement
+  flags, but per-subject swings (up to ~40bpm for 2 UBFC-D1 subjects at bw=0.50) are far
+  larger than the paper's own reported pooled 0.99-2.88bpm swing — the same
+  pooled-vs-per-subject lesson as Segment 12's 17-subject regression. Narrower
+  (bw=0.15) is pooled-best on this mostly-resting cohort, matching the paper's own
+  caution about narrow-HR-range cohorts. **Task 4 (full pipeline vs. production and
+  Stage-1-only)**: full cPACE does not beat production at any bw (best pooled: 8.66bpm
+  at bw=0.15 vs. production's 7.86-7.87bpm); 42/100 subjects regress >1bpm vs. POS,
+  24/100 severely (>10bpm), several already-accurate subjects made badly wrong.
+  Cross-ROI PLV (20-subject VIPL pool) DOES improve slightly at every bw tested
+  (0.279-0.295 vs. production's 0.254-0.271) — a genuine phase-coherence gain even as
+  HR-MAE regresses, on a cohort Segment 11 already found sits in the paper's
+  least-favorable (low skin-colour-angle) regime. **Kept gated/off-by-default**, same
+  discipline as `cpaceProjection.m` and the confidence gate's own multi-candidate mode
+  — this segment's job was an honest result, not a production promotion. Full detail:
+  `docs/Segment15_Task1_cPACE_Eigen_Extract.md`, `Segment15_Task2_cPACE_Homodyne.md`,
+  `Segment15_Task3_Hyperparameter_Sweep.md`, `Segment15_Task4_Evaluation.md`. Outputs:
+  `matlab/src/pulseextraction/cpaceEigenExtract.m`,
+  `matlab/src/pulseextraction/cpaceHomodyneNormalize.m`,
+  `matlab/scripts/run_segment15_task3_task4_cpace_full_evaluation.m`,
+  `results/metrics/segment15_cpace_full_per_subject_hr.csv`,
+  `results/metrics/segment15_cpace_full_summary_hr.csv`,
+  `results/metrics/segment15_cpace_full_per_subject_plv.csv`,
+  `results/metrics/segment15_cpace_full_summary_plv.csv`,
+  `results/metrics/segment15_task3_bw_sweep_per_subject_regressions.csv`,
+  `results/metrics/segment15_task4_vs_production_per_subject_regressions.csv`,
+  `results/figures/segment15_*.png` (3 figures). `README.md` updated.
+- **2026-09-14** (new session) — Segment 16: Android app, three independent tracks
+  (HR/PPG stability, SpO2 rigor, UI/UX), `matlab/` untouched per the brief. Started
+  with **no physical device** (the local Pixel_7 AVD emulator was tried and never
+  finished booting, 20+ minutes stuck `offline` despite passing its own
+  acceleration checks) — **a real device (the same Galaxy A35 this project has
+  always used) became available partway through, and most of this IS on-device-
+  verified, not just built/tested.** **Task 1**: `signal/DisplaySmoother.kt`,
+  display-level-ONLY rolling-median/EMA smoothing of the already-switched bpm
+  value, explicitly NOT RAKF/Kalman (`matlab/docs/Segment6_Task5_RAKF_Kalman_
+  Smoothing.md` already found that the worst of six methods on real MATLAB data).
+  Unit tests caught a null-handling bug before any device work. **Real on-device
+  A/B capture (83 distinct recomputes, ~66s): mean tick-to-tick HR jitter cut
+  17.46→5.49bpm (−69%), stdev 24.63→20.54, zero accuracy cost.** That same capture
+  surfaced a SECOND real bug (the UI ticks 5× faster than the pipeline recomputes,
+  so the "5-tick" median window was re-ingesting one value up to 5× instead of
+  spanning 5 independent measurements) — fixed via input de-duplication, unit
+  tests grew 6→8. **Promoted `ENABLE_HR_DISPLAY_SMOOTHING_DEFAULT` to `true`** on
+  this real (if single-session) evidence. Also derived the DSP fact the brief's
+  fps/window-length question needed: FFT bin resolution is `1/(window duration)`,
+  independent of sampling rate — window-length re-test itself not run this
+  session (device time went to the smoothing bug instead). **Task 2**: confirmed
+  live BOTH at the code level and freshly on real hardware (SpO2 chip visibly
+  updating, `logcat` showing real R/SpO2 co-movement, zero crashes). 2023+
+  literature search (VERIFIED-FULL/VERIFIED-INDEX/BLOCKED discipline, ~10 sources)
+  found no independently-validated calibration this segment could responsibly
+  adopt (strongest lead trains on a different modality, wrist IR/red contact PPG,
+  that doesn't transfer) — **no calibration change made, said so plainly**. Added
+  instead: per-channel perfusion index now exposed/logged (real values on record
+  for the first time, 0.007-0.038 observed), and the existing degenerate-signal
+  guard is now a named `LOW_SIGNAL_QUALITY` status. **Task 3**: `activity_main.xml`
+  redesigned into a rounded "vitals card" with per-metric status pills
+  (`EstimatorStatus` plus a UI-only `NO_FACE` case) and a debounced "No face
+  detected" banner — answering the brief's "no face detected"/"low confidence"/
+  "warming up" request directly. **Real before/after captures verified
+  on-device** (git-stashed to rebuild the genuine "before" layout), all three
+  states captured (live/warming-up/no-face); **a real text-wrap bug found via the
+  first capture and fixed** (redundant "HR:"/"SpO2:" prefix dropped). One XML
+  `--`-in-comment build failure hit twice and fixed both times (same pitfall this
+  project's Android README already documented once before). **[2026-09-14, later
+  same session] All screenshot files and the published gallery artifact deleted
+  at the user's request** (contained the subject's face) — confirmed never
+  committed to git and never reached GitHub (untracked local files at deletion
+  time; this project's actual last commit predates this task). Full detail:
+  `android/docs/Segment16_Task1_HR_Stability.md`,
+  `Segment16_Task2_SpO2_Research_and_Audit.md`, `Segment16_Task3_UI_UX_Pass.md` (all
+  three updated with real results, screenshot references removed).
+  `android/README.md` updated with a full Segment 16 summary.
