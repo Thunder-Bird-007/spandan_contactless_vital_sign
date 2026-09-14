@@ -78,14 +78,30 @@ function [pulseSignal, seedHz, eigVec, eigRatio, diagStruct] = cpaceEigenExtract
 %      eigenvalue as the cardiac direction v1 (Table S2 "Eigenvector
 %      selected" row) -- no second candidate, no absorption-direction
 %      geometry, no consensus voting, per the SCOPE NOTE above.
-%   6. Project x_c(t) (the CARDIAC-BAND signal from step 1, NOT the
-%      further-narrowed X_bp from step 3) onto v1 to get the scalar
-%      cardiac waveform s(t) = v1' * x_c(t) -- paper's own s(t) =
-%      v1^T x_c(t) (Section 4.3, first sentence). Using the wider
-%      cardiac-band signal here (rather than X_bp) is what lets s(t)
-%      retain in-band harmonic content and the amplitude structure that
-%      cpaceHomodyneNormalize.m's Stage 3 needs; X_bp is deliberately
-%      scoped to "for covariance" only, per Table S2's own note.
+%   6. Project X_bp (the SAME seed+/-bw narrowband signal from step 3,
+%      NOT the wider 0.7-3.0 Hz x_c(t) from step 1) onto v1 to get the
+%      scalar cardiac waveform s(t) = v1' * X_bp.
+%
+%      IMPLEMENTATION NOTE -- this deviates from a first literal reading
+%      of the paper's own s(t) = v1^T x_c(t) (Section 4.3, first
+%      sentence), which names the wider x_c(t), and was corrected here
+%      after empirical testing on Spandan's real 100-subject pool
+%      (docs/Segment15_Task4_Evaluation.md): projecting the WIDE
+%      (0.7-3.0 Hz) x_c(t) onto v1 and feeding that into
+%      cpaceHomodyneNormalize.m's Hilbert transform produced a severe HR
+%      MAE regression (~16 BPM vs. production's ~7.9 BPM), because a
+%      2.3 Hz-wide signal is not close enough to monocomponent for
+%      Hilbert instantaneous phase to be meaningful -- exactly the
+%      narrowband precondition this project's own
+%      validation/computeCrossROIPLV.m already documents in its own
+%      header ("Hilbert instantaneous phase is only meaningful for a
+%      signal that is already close to monocomponent"). Using the
+%      already-narrowband X_bp instead (the same signal v1 was derived
+%      from via PCA, a standard dominant-principal-component score) is
+%      internally consistent, satisfies that precondition, and is what
+%      is actually implemented and evaluated. Table S2 itself is silent
+%      on which of the two signals feeds Stage 5, so this is a resolved
+%      ambiguity, not a knowing deviation from an unambiguous spec.
 %
 % Inputs:
 %   Rc, Gc, Bc - 1 x N vectors, q_hat-projected RGB traces, EXACTLY
@@ -99,7 +115,9 @@ function [pulseSignal, seedHz, eigVec, eigRatio, diagStruct] = cpaceEigenExtract
 %
 % Outputs:
 %   pulseSignal - 1 x N vector, the scalar cardiac waveform s(t) =
-%                 v1' * x_c(t).
+%                 v1' * X_bp (the narrowband seed+/-bw signal -- see the
+%                 IMPLEMENTATION NOTE in step 6 above for why this is
+%                 X_bp and not the wider x_c(t)).
 %   seedHz      - scalar, the estimated seed frequency (Hz), for
 %                 provenance/reuse by cpaceHomodyneNormalize.m.
 %   eigVec      - 3 x 1 vector, the selected (dominant) eigenvector v1.
@@ -188,8 +206,9 @@ else
     eigRatio = Inf;
 end
 
-% --- Step 6: project the CARDIAC-BAND signal (not X_bp) onto v1. ---
-pulseSignal = (eigVec' * xCardiacBand); % 1 x N
+% --- Step 6: project the NARROWBAND signal X_bp (not the wider
+% cardiac-band x_c(t)) onto v1 -- see IMPLEMENTATION NOTE above. ---
+pulseSignal = (eigVec' * Xbp); % 1 x N
 
 diagStruct = struct();
 diagStruct.eigVals = eigVals;
