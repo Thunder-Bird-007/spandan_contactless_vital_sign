@@ -31,6 +31,16 @@ sealed class FaceAnalysisResult {
  * even after the real DSP algorithm is ported in.
  */
 class FaceAnalyzer(
+    /** Segment 18, Workstream 1 -- OFF by default (this project's standing
+     *  "evidence before promotion" convention). When true, skipped-detection
+     *  frames re-estimate the face box via [OpticalFlowFaceTracker] instead
+     *  of freezing it; see that class's own KDoc for the full rationale and
+     *  honest no-device-this-session caveat. When false (default), the code
+     *  path below is IDENTICAL to before this flag existed -- [motionTracker]
+     *  is null, [trackViaMotionEstimate] immediately returns null, and
+     *  `boxToUse` is always `staleFaceBox`, byte-for-byte the prior
+     *  behavior. */
+    private val useMotionTracking: Boolean = false,
     private val onResult: (FaceAnalysisResult) -> Unit
 ) : ImageAnalysis.Analyzer {
 
@@ -39,6 +49,8 @@ class FaceAnalyzer(
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
             .build()
     )
+
+    private val motionTracker = if (useMotionTracking) OpticalFlowFaceTracker() else null
 
     // --- Segment 7 Task G's own Action C2 proposal (android/docs/
     // Segment7_Task_G_Throughput_Profiling.md section 3), now implemented:
@@ -92,9 +104,15 @@ class FaceAnalyzer(
         val shouldSkipDetection = staleFaceBox != null && frameCounter % DETECT_EVERY_N_FRAMES != 0
 
         if (shouldSkipDetection) {
-            // Reuse the last known face box entirely -- no detector.process()
-            // call this frame, the ~98.5%-of-cost operation Task G measured.
-            emitFaceDetected(staleFaceBox!!, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
+            // Default (useMotionTracking=false): reuse the last known face
+            // box entirely -- no detector.process() call this frame, the
+            // ~98.5%-of-cost operation Task G measured. When useMotionTracking
+            // is true, try to re-estimate the box's position first (see
+            // OpticalFlowFaceTracker's own KDoc); fall back to the frozen box
+            // on any null (never worse than the default).
+            val boxToUse = trackViaMotionEstimate(imageProxy, rotationDegrees) ?: staleFaceBox!!
+            lastFaceBoxRotated = boxToUse
+            emitFaceDetected(boxToUse, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
             imageProxy.close()
             return
         }
@@ -111,21 +129,42 @@ class FaceAnalyzer(
 
                 if (face == null) {
                     lastFaceBoxRotated = null
+                    motionTracker?.clear()
                     onResult(FaceAnalysisResult.NoFace)
                     imageProxy.close()
                     return@addOnSuccessListener
                 }
 
                 lastFaceBoxRotated = face.boundingBox
+                if (motionTracker != null) {
+                    val sensorRect = CoordinateMapper.rotatedRectToSensorRect(
+                        face.boundingBox, rotationDegrees, imageProxy.width, imageProxy.height
+                    )
+                    motionTracker.reset(imageProxy, sensorRect)
+                }
                 emitFaceDetected(face.boundingBox, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
                 imageProxy.close()
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Face detection failed for this frame", e)
                 lastFaceBoxRotated = null
+                motionTracker?.clear()
                 onResult(FaceAnalysisResult.NoFace)
                 imageProxy.close()
             }
+    }
+
+    /** [useMotionTracking] path only -- returns an updated ROTATED-space
+     *  face box from [OpticalFlowFaceTracker], or null (no tracker, no
+     *  reference yet, or tracking failed this frame) for the caller to fall
+     *  back to the frozen last-known box. */
+    @ExperimentalGetImage
+    private fun trackViaMotionEstimate(imageProxy: ImageProxy, rotationDegrees: Int): Rect? {
+        val tracker = motionTracker ?: return null
+        val trackedSensorRect = tracker.track(imageProxy) ?: return null
+        return CoordinateMapper.sensorRectToRotatedRect(
+            trackedSensorRect, rotationDegrees, imageProxy.width, imageProxy.height
+        )
     }
 
     /** Shared ROI/coordinate-mapping/averaging tail for both a fresh detection

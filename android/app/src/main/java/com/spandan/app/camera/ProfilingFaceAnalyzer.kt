@@ -58,8 +58,19 @@ import java.util.concurrent.atomic.AtomicLong
  * though computing real mean/median/p90 from the raw per-frame Log.d lines
  * (same approach android/README.md's existing SPANDAN_TIMING diagnostic
  * used) is the more rigorous option if this is ever actually run.
+ *
+ * [2026-09-15] RE-SYNCED (Segment 18) to also mirror FaceAnalyzer.kt's new
+ * `useMotionTracking`/[OpticalFlowFaceTracker] path -- this file had NOT yet
+ * gone stale on that specific point (this update landed in the same commit
+ * as FaceAnalyzer.kt's own change, not a separate catch-up), but the
+ * "re-sync before trusting a capture" check this doc's own history calls
+ * for was still done explicitly, not skipped, per the task brief. When
+ * profiling the tracking path, [motionMs] adds a fourth timed phase (the
+ * [OpticalFlowFaceTracker.track] call itself, on skipped frames only) so a
+ * future capture can see its real cost alongside detectMs/roiMs/otherMs.
  */
 class ProfilingFaceAnalyzer(
+    private val useMotionTracking: Boolean = false,
     private val onResult: (FaceAnalysisResult) -> Unit
 ) : ImageAnalysis.Analyzer {
 
@@ -68,6 +79,8 @@ class ProfilingFaceAnalyzer(
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
             .build()
     )
+
+    private val motionTracker = if (useMotionTracking) OpticalFlowFaceTracker() else null
 
     private val frameIndex = AtomicLong(0)
 
@@ -98,6 +111,7 @@ class ProfilingFaceAnalyzer(
 
     private val detectStats = PhaseStats()
     private val roiStats = PhaseStats()
+    private val motionStats = PhaseStats()
     private val otherStats = PhaseStats()
     private val runStartNanos = SystemClock.elapsedRealtimeNanos()
 
@@ -135,12 +149,26 @@ class ProfilingFaceAnalyzer(
         val shouldSkipDetection = staleFaceBox != null && frameCounter % DETECT_EVERY_N_FRAMES != 0
 
         if (shouldSkipDetection) {
-            // Reuse the last known face box, no detector.process() call this
-            // frame -- same skip condition as FaceAnalyzer.kt. detectMs=0.0
-            // logged honestly (not measured, because nothing ran).
+            // Reuse the last known face box (default), or re-estimate it via
+            // OpticalFlowFaceTracker (useMotionTracking=true) -- same two
+            // paths as FaceAnalyzer.kt's own skip branch. detectMs=0.0 logged
+            // honestly either way (not measured, because detector.process()
+            // never runs on a skipped frame).
+            val motionStartNanos = SystemClock.elapsedRealtimeNanos()
+            val trackedSensorRect = motionTracker?.track(imageProxy)
+            val boxToUse = if (trackedSensorRect != null) {
+                CoordinateMapper.sensorRectToRotatedRect(
+                    trackedSensorRect, rotationDegrees, imageProxy.width, imageProxy.height
+                )
+            } else {
+                staleFaceBox!!
+            }
+            lastFaceBoxRotated = boxToUse
+            val motionMs = (SystemClock.elapsedRealtimeNanos() - motionStartNanos) / 1_000_000.0
+
             val roiStartNanos = SystemClock.elapsedRealtimeNanos()
 
-            val roiBoxRotated = RoiCalculator.foreheadRoiFrom(staleFaceBox!!)
+            val roiBoxRotated = RoiCalculator.foreheadRoiFrom(boxToUse)
             val roiBoxSensor = CoordinateMapper.rotatedRectToSensorRect(
                 roiBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height
             )
@@ -151,7 +179,7 @@ class ProfilingFaceAnalyzer(
 
             onResult(
                 FaceAnalysisResult.FaceDetected(
-                    faceBoxRotated = staleFaceBox,
+                    faceBoxRotated = boxToUse,
                     roiBoxRotated = roiBoxRotated,
                     rotatedImageWidth = rotatedImageWidth,
                     rotatedImageHeight = rotatedImageHeight,
@@ -161,7 +189,7 @@ class ProfilingFaceAnalyzer(
             imageProxy.close()
 
             val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
-            logFrame(frameIndex.incrementAndGet(), detectMs = 0.0, roiMs = roiMs, totalMs = totalMs, faceFound = true)
+            logFrame(frameIndex.incrementAndGet(), detectMs = 0.0, roiMs = roiMs, motionMs = motionMs, totalMs = totalMs, faceFound = true)
             return
         }
 
@@ -176,14 +204,21 @@ class ProfilingFaceAnalyzer(
 
                 if (face == null) {
                     lastFaceBoxRotated = null
+                    motionTracker?.clear()
                     val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
-                    logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, totalMs = totalMs, faceFound = false)
+                    logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, motionMs = 0.0, totalMs = totalMs, faceFound = false)
                     onResult(FaceAnalysisResult.NoFace)
                     imageProxy.close()
                     return@addOnSuccessListener
                 }
 
                 lastFaceBoxRotated = face.boundingBox
+                if (motionTracker != null) {
+                    val sensorRect = CoordinateMapper.rotatedRectToSensorRect(
+                        face.boundingBox, rotationDegrees, imageProxy.width, imageProxy.height
+                    )
+                    motionTracker.reset(imageProxy, sensorRect)
+                }
 
                 val roiStartNanos = SystemClock.elapsedRealtimeNanos()
 
@@ -209,31 +244,33 @@ class ProfilingFaceAnalyzer(
                 imageProxy.close()
 
                 val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
-                logFrame(frameIndex.incrementAndGet(), detectMs, roiMs, totalMs, faceFound = true)
+                logFrame(frameIndex.incrementAndGet(), detectMs, roiMs, motionMs = 0.0, totalMs, faceFound = true)
             }
             .addOnFailureListener { e ->
                 val detectEndNanos = SystemClock.elapsedRealtimeNanos()
                 val detectMs = (detectEndNanos - detectStartNanos) / 1_000_000.0
                 Log.w(TAG, "Face detection failed for this frame", e)
                 lastFaceBoxRotated = null
+                motionTracker?.clear()
                 val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
-                logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, totalMs = totalMs, faceFound = false)
+                logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, motionMs = 0.0, totalMs = totalMs, faceFound = false)
                 onResult(FaceAnalysisResult.NoFace)
                 imageProxy.close()
             }
     }
 
-    private fun logFrame(idx: Long, detectMs: Double, roiMs: Double, totalMs: Double, faceFound: Boolean) {
-        val otherMs = (totalMs - detectMs - roiMs).coerceAtLeast(0.0)
+    private fun logFrame(idx: Long, detectMs: Double, roiMs: Double, motionMs: Double, totalMs: Double, faceFound: Boolean) {
+        val otherMs = (totalMs - detectMs - roiMs - motionMs).coerceAtLeast(0.0)
         detectStats.record(detectMs)
         if (faceFound) roiStats.record(roiMs)
+        if (useMotionTracking) motionStats.record(motionMs)
         otherStats.record(otherMs)
 
         val elapsedSinceStartS = (SystemClock.elapsedRealtimeNanos() - runStartNanos) / 1_000_000_000.0
         Log.d(
             TAG,
-            "SPANDAN_PROFILE idx=$idx t=%.2fs face=%b detectMs=%.2f roiMs=%.2f otherMs=%.2f totalMs=%.2f"
-                .format(elapsedSinceStartS, faceFound, detectMs, roiMs, otherMs, totalMs)
+            "SPANDAN_PROFILE idx=$idx t=%.2fs face=%b detectMs=%.2f roiMs=%.2f motionMs=%.2f otherMs=%.2f totalMs=%.2f"
+                .format(elapsedSinceStartS, faceFound, detectMs, roiMs, motionMs, otherMs, totalMs)
         )
     }
 
@@ -250,6 +287,7 @@ class ProfilingFaceAnalyzer(
             "SPANDAN_PROFILE_SUMMARY frames=${detectStats.count} " +
                 "detect(mean=%.2f,min=%.2f,max=%.2f)ms ".format(detectStats.meanMs(), detectStats.minMs, detectStats.maxMs) +
                 "roi(mean=%.2f,min=%.2f,max=%.2f)ms ".format(roiStats.meanMs(), roiStats.minMs, roiStats.maxMs) +
+                (if (useMotionTracking) "motion(mean=%.2f,min=%.2f,max=%.2f)ms ".format(motionStats.meanMs(), motionStats.minMs, motionStats.maxMs) else "") +
                 "other(mean=%.2f,min=%.2f,max=%.2f)ms".format(otherStats.meanMs(), otherStats.minMs, otherStats.maxMs)
         )
     }

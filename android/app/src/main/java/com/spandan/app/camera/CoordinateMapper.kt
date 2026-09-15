@@ -62,6 +62,53 @@ object CoordinateMapper {
         return clampToBounds(mapped, sensorWidth, sensorHeight)
     }
 
+    /**
+     * The mathematical inverse of [rotatedRectToSensorRect]: maps a rect
+     * FROM the raw sensor buffer's space back INTO ML Kit's rotated-image
+     * space. Added for Segment 18's [OpticalFlowFaceTracker], which tracks
+     * face-box motion directly on sensor-space luma pixels (that's the only
+     * space the Y-plane data lives in) and needs to hand the result back to
+     * [FaceAnalyzer] as a rotated-space [Rect] (the space every other part
+     * of the pipeline -- [RoiCalculator], the overlay -- already expects).
+     *
+     * Derived by hand from [rotatedRectToSensorRect]'s own four branches
+     * (solve each branch's equations for the rotated-space coordinates
+     * given the sensor-space ones) -- verified by a round-trip property
+     * test ([CoordinateMapperTest]: forward then inverse returns the
+     * original rect, for random rects at all four rotation values), the
+     * same "verify before trusting" discipline as every other numeric port
+     * in this project, since no physical device was available this session
+     * to verify it any other way.
+     *
+     * `sensorWidth`/`sensorHeight` are the RAW sensor buffer's dimensions
+     * (same convention as [rotatedRectToSensorRect]'s own parameters of the
+     * same name -- NOT the rotated width/height).
+     */
+    fun sensorRectToRotatedRect(
+        rect: Rect,
+        rotationDegrees: Int,
+        sensorWidth: Int,
+        sensorHeight: Int
+    ): Rect {
+        val normalizedRotation = ((rotationDegrees % 360) + 360) % 360
+        return when (normalizedRotation) {
+            0 -> Rect(rect)
+            180 -> Rect(
+                sensorWidth - rect.right, sensorHeight - rect.bottom,
+                sensorWidth - rect.left, sensorHeight - rect.top
+            )
+            90 -> Rect(
+                sensorHeight - rect.bottom, rect.left,
+                sensorHeight - rect.top, rect.right
+            )
+            270 -> Rect(
+                rect.top, sensorWidth - rect.right,
+                rect.bottom, sensorWidth - rect.left
+            )
+            else -> Rect(rect)
+        }
+    }
+
     private fun clampToBounds(r: Rect, width: Int, height: Int): Rect {
         val left = r.left.coerceIn(0, width - 1)
         val top = r.top.coerceIn(0, height - 1)
