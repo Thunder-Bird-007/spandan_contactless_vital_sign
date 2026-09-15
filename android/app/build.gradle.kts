@@ -35,6 +35,22 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    // Segment 19 -- MorphologyWaveformEstimator (and RealHeartRateEstimator/
+    // LiveSpo2Estimator before it, just never previously exercised by a
+    // plain-JUnit test) call android.util.Log.d/.w directly. Log's real
+    // implementation throws "not mocked" under plain JUnit (unlike
+    // android.graphics.Rect, whose methods are plain Java with no native
+    // call, and so already worked fine in CoordinateMapperTest/
+    // OpticalFlowMatcherTest without this). This makes every unmocked
+    // android.* call return a harmless default (Log.d/.w return 0) instead
+    // of throwing, rather than wrapping every estimator's logging behind a
+    // new testable indirection layer for no other purpose.
+    testOptions {
+        unitTests {
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {

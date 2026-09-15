@@ -27,10 +27,12 @@ import com.spandan.app.camera.FaceAnalyzer
 import com.spandan.app.signal.DisplaySmoother
 import com.spandan.app.signal.EstimatorStatus
 import com.spandan.app.signal.LiveSpo2Estimator
+import com.spandan.app.signal.MorphologyWaveformEstimator
 import com.spandan.app.signal.RealHeartRateEstimator
 import com.spandan.app.signal.SignalBuffer
 import com.spandan.app.ui.OverlayView
 import com.spandan.app.ui.SignalChartView
+import com.spandan.app.ui.WaveformView
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -56,10 +58,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var hrStatusLabel: TextView
     private lateinit var spo2StatusDot: View
     private lateinit var spo2StatusLabel: TextView
+    private lateinit var morphologyWaveformView: WaveformView
+    private lateinit var morphologyStatusDot: View
+    private lateinit var morphologyStatusLabel: TextView
 
     private val signalBuffer = SignalBuffer(windowSeconds = SignalBuffer.WINDOW_DURATION_SECONDS)
     private val heartRateEstimator = RealHeartRateEstimator()
     private val spo2Estimator = LiveSpo2Estimator()
+
+    // Segment 19 -- Branch 2 (waveform morphology / dicrotic notch), reading
+    // the SAME signalBuffer snapshot as the two estimators above, completely
+    // independently (matches Branch 1/Branch 2's deliberate MATLAB-side
+    // separation -- see MorphologyWaveformEstimator's own KDoc).
+    private val morphologyEstimator = MorphologyWaveformEstimator()
 
     // Segment 16 Task 1 -- DISPLAY-LEVEL smoothing only (see DisplaySmoother's
     // own KDoc for why this is not a re-introduction of the RAKF/Kalman
@@ -108,6 +119,9 @@ class MainActivity : AppCompatActivity() {
         hrStatusLabel = findViewById(R.id.hrStatusLabel)
         spo2StatusDot = findViewById(R.id.spo2StatusDot)
         spo2StatusLabel = findViewById(R.id.spo2StatusLabel)
+        morphologyWaveformView = findViewById(R.id.morphologyWaveformView)
+        morphologyStatusDot = findViewById(R.id.morphologyStatusDot)
+        morphologyStatusLabel = findViewById(R.id.morphologyStatusLabel)
 
         // App targets SDK 35, where edge-to-edge is enforced -- content draws
         // behind system bars by default. Without this, the bottom HR/SpO2
@@ -296,6 +310,53 @@ class MainActivity : AppCompatActivity() {
             dot = spo2StatusDot, label = spo2StatusLabel, noFace = noFaceSustained,
             status = spo2Estimator.lastStatus, okText = getString(R.string.status_ok_spo2)
         )
+
+        // Segment 19 -- Branch 2 morphology, independent call on the same
+        // samples snapshot (does not read heartRateEstimator/spo2Estimator
+        // state or vice versa, matching Branch 1/Branch 2's deliberate
+        // MATLAB-side separation).
+        val morphologyEstimate = morphologyEstimator.update(samples)
+        morphologyWaveformView.update(
+            morphologyEstimate?.waveform,
+            morphologyEstimate?.notchDetected ?: false,
+            morphologyEstimate?.notchPositionNormalized ?: Double.NaN
+        )
+        applyMorphologyStatusPill(noFaceSustained, morphologyEstimator.lastStatus, morphologyEstimate)
+    }
+
+    /**
+     * Segment 19 -- like [applyStatusPill], but additionally surfaces the
+     * notch CONFIDENCE VALUE in the label text (per this task's own
+     * instruction: "surface the confidence score in the UI, not just a
+     * yes/no" -- [NotchDetectIEM]'s own boolean `detected` output is a
+     * near-useless gate at pool scale on the MATLAB side, so a bare
+     * "detected"/"not detected" label here would repeat that same mistake).
+     * When [status] is OK, the dot color additionally reflects whether the
+     * RAW confidence clears this project's own 0.3 bar (green) or not
+     * (amber) -- EstimatorStatus.OK alone only means "a value was computed
+     * this tick," not "that value was a confident notch."
+     */
+    private fun applyMorphologyStatusPill(noFace: Boolean, status: EstimatorStatus, estimate: MorphologyWaveformEstimator.Estimate?) {
+        val (color, text) = when {
+            noFace -> R.color.status_no_face to getString(R.string.status_no_face)
+            status == EstimatorStatus.WARMING_UP -> R.color.status_warming to getString(R.string.status_warming_up)
+            status == EstimatorStatus.LOW_SIGNAL_QUALITY -> R.color.status_low_quality to getString(R.string.status_low_signal)
+            estimate == null -> R.color.status_warming to getString(R.string.status_warming_up)
+            !estimate.notchDetected -> R.color.status_low_quality to getString(R.string.morphology_no_notch)
+            else -> {
+                val methodLabel = if (estimate.harmonicMethodUsed == "gaussian015") {
+                    getString(R.string.morphology_method_gaussian)
+                } else {
+                    getString(R.string.morphology_method_abpf)
+                }
+                val statusColor = if (estimate.notchConfidenceRaw > MORPHOLOGY_CONFIDENCE_BAR) R.color.status_ok else R.color.status_low_quality
+                statusColor to getString(R.string.morphology_status_format, methodLabel, estimate.notchConfidenceRaw)
+            }
+        }
+        val tint = ColorStateList.valueOf(ContextCompat.getColor(this, color))
+        morphologyStatusDot.backgroundTintList = tint
+        morphologyStatusLabel.text = text
+        morphologyStatusLabel.setTextColor(ContextCompat.getColor(this, color))
     }
 
     /**
@@ -349,5 +410,13 @@ class MainActivity : AppCompatActivity() {
          *  cross-check this round -- see docs/Segment16_Task1_HR_
          *  Stability.md for the full caveats and the remaining test ideas. */
         private const val ENABLE_HR_DISPLAY_SMOOTHING_DEFAULT = true
+
+        /** Segment 19 -- this project's own standing notch-confidence bar
+         *  (matches `morphology/harmonicFilterConfidenceGate.m`'s own
+         *  `confidenceThreshold` default and every MATLAB-side notch
+         *  pass/fail table), used here only to color the status pill --
+         *  the numeric confidence itself is always shown regardless of
+         *  which side of this bar it falls on. */
+        private const val MORPHOLOGY_CONFIDENCE_BAR = 0.3
     }
 }

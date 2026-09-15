@@ -143,6 +143,62 @@
             android:layout_height="110dp" />
     </LinearLayout>
 
+    <!-- Segment 19: Branch 2 (waveform morphology / dicrotic notch) card,
+         same visual language as the LIVE SIGNAL card above (caption + a
+         Canvas-drawn view inside a bg_vitals_card panel), plus a status
+         pill row matching the vitals card's own dot+label pattern. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_vitals_card"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/morphology_label"
+            android:textColor="@color/text_tertiary"
+            android:textSize="11sp"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="4dp" />
+
+        <!-- One ensemble-averaged cardiac cycle, with the detected notch
+             (if any) marked; see ui/WaveformView.kt. -->
+        <com.spandan.app.ui.WaveformView
+            android:id="@+id/morphologyWaveformView"
+            android:layout_width="match_parent"
+            android:layout_height="90dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_status_pill"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp">
+
+            <View
+                android:id="@+id/morphologyStatusDot"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/shape_status_dot" />
+
+            <TextView
+                android:id="@+id/morphologyStatusLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:text="@string/status_warming_up" />
+        </LinearLayout>
+    </LinearLayout>
+
     <!-- Vitals card -->
     <LinearLayout
         android:layout_width="match_parent"

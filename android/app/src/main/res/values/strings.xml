@@ -61,4 +61,17 @@
     <string name="no_face_banner_title">No face detected</string>
     <string name="no_face_banner_subtitle">Center your face in frame, hold still, and make sure your forehead is well lit.</string>
     <string name="chart_label">LIVE SIGNAL</string>
+
+    <!-- Segment 19: Branch 2 (waveform morphology / dicrotic notch) card.
+         methodLabel is built in MainActivity (maps
+         MorphologyWaveformEstimator.Estimate.harmonicMethodUsed's
+         "adaptiveHarmonic"/"gaussian015" to a readable name), confidence is
+         the RAW (unclipped) notch confidence: see NotchDetectIEM.kt's own
+         KDoc for why unclipped is the one worth showing, not the [0,1]
+         clipped value alone. -->
+    <string name="morphology_label">WAVEFORM MORPHOLOGY (BRANCH 2)</string>
+    <string name="morphology_status_format">%1$s · conf %2$.2f</string>
+    <string name="morphology_method_abpf">ABPF comb</string>
+    <string name="morphology_method_gaussian">Gaussian (α=0.15)</string>
+    <string name="morphology_no_notch">No notch detected this window</string>
 </resources>

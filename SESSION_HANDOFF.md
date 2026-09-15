@@ -168,6 +168,69 @@ step 1 of the protocol above.)*
   committed/pushed), and the SpO2 chip/logcat were freshly re-confirmed
   live. See the Segment 16 Active Work Queue entry for exactly what was and
   wasn't verified.
+- **[2026-09-14, Segment 17] `scripts/run_spandan_interactive.m` rewired to call the
+  CURRENT production pipeline, no longer a frozen snapshot.** This file was originally
+  built (Segment 7/8) as a deliberately standalone, dependency-free single .m file —
+  every pipeline function it used (`estimateVitalsAndMorphology`, `chromCombine`,
+  `adaptiveHarmonicFilter`, `notchDetectIEM`, 16 others) was copied verbatim as a local
+  function, by explicit design, so the file could be copied alone to a machine with no
+  repo checkout. That design's own header warned this would "silently go stale" — and it
+  did: Segments 10-16 (cPACE, the mid-band option, the harmonic-selective Gaussian
+  filter, and Segment 14's confidence gate, now the actual production default) were
+  never ported into those local copies, so this "single file that runs the pipeline"
+  was quietly running a Segment-7/8-era pipeline snapshot with no on-screen indication.
+  Abrar asked for a single file that runs the *current* pipeline and can pick any video
+  on the machine. Fix: the ~1200 lines of duplicated pipeline functions were deleted;
+  the file now self-locates `matlab/src/` (via `mfilename('fullpath')`, works from any
+  MATLAB current folder) and `addpath(genpath(...))`s it at the top, then calls
+  `pipeline/estimateVitalsAndMorphology.m` and every other function directly off the
+  path — the same functions every batch/report script here already uses, so it can
+  never silently go stale again. Cost, stated plainly: this file can no longer be
+  copied alone to a machine with no repo checkout (needs `matlab/src/` next to
+  `matlab/scripts/`, like every other script here). **One real piece of functionality
+  this drops, flagged, not silently lost**: the old file's own
+  `chooseHeuristicPolarityByNotchConfidence` (Cases 2/3, no ground truth) picked Branch
+  2's waveform polarity by running both orientations through `notchDetectIEM` and
+  keeping whichever scored higher confidence, instead of trusting
+  `morphology/fixPolarity.m`'s plain skewness rule — written after a live demo review
+  caught the skewness rule flipping a VIPL clip (p1/v1/source1) into an orientation
+  with no real notch (confidence 0.04 flipped vs. 0.92 as-is). That fix was never
+  ported into `matlab/src/`, so calling the real pipeline now means Cases 2/3 are back
+  to the plain skewness heuristic — the same one production/Android already use for
+  no-ground-truth input, arguably the more honest "current pipeline" answer, but the
+  underlying skewness bias (also documented in `fixPolarity.m`'s own header: flipped
+  all 5 UBFC subjects when only 3 of 5 needed it) is still unaddressed in `matlab/src/`.
+  Flagged as a real follow-up if it still matters: port a confidence-anchored polarity
+  choice into `morphology/fixPolarity.m` itself (or a new `opts.polarityMethod` hook
+  on `estimateVitalsAndMorphology.m`) as a proper validated segment — not done here.
+  The summary panel now also surfaces which Branch 2 filter the confidence gate
+  actually used per clip (ABPF vs. Gaussian(0.15)), since that gate is production
+  default now. Not run inside MATLAB from this session (no MATLAB available in the
+  environment that made this edit) — structurally verified (every `function`/`if`/
+  `for`/`while`/`switch`/`try` block balances against a standalone `end`, all removed-
+  function call sites confirmed to match `matlab/src/`'s real signatures
+  argument-for-argument) but **should be run once by Abrar to confirm** before relying
+  on it for a live demo.
+- **[2026-09-15/16, Segments 18-19] Android: camera throughput/tracking revisit, and
+  Branch 2 (waveform morphology/dicrotic notch) ported to Android for the first time.**
+  Real on-device verification, same Galaxy A35. **Segment 18**: a new gated
+  (`useMotionTracking`, default `false`, so behavior is unchanged) optical-flow-style
+  face-box tracker was built as an alternative to freezing the box between the existing
+  N=3 detection-skip's real detections — measured cost negligible (<1ms/frame) but a real
+  end-to-end throughput regression (~19-20fps → 16.33fps) was found and could NOT be fully
+  attributed to thermal/session drift (a controlling re-check ruled that out) — **NOT
+  adopted, stays off by default**, root cause flagged as an open question (likely
+  per-frame allocation/GC pressure, unverified — no profiling tooling available this
+  session). `SignalBuffer.WINDOW_DURATION_SECONDS` stays 25.0s (no new evidence to
+  revisit it). **Segment 19**: Branch 2 (~~"never ported to Android," true as of every
+  prior session~~ **no longer true**) is now a real, on-device-verified port —
+  `MorphologyWaveformEstimator.kt` and 9 supporting files, a new "WAVEFORM MORPHOLOGY
+  (BRANCH 2)" UI card, 49/49 unit tests passing, and a real ~40s on-device capture with
+  zero crashes that exercised BOTH the WIDE/MID band fallback and the ABPF/Gaussian
+  confidence-gate substitution on real data, confirmed Branch 1 unaffected. See the
+  Segment 18/19 Active Work Queue entries above and their own dedicated docs
+  (`android/docs/Segment18_Camera_Throughput_And_Buffer_Window.md`,
+  `android/docs/Segment19_Branch2_Morphology_Port.md`) for the full numbers and caveats.
 - **Data location note — read this before assuming "only 107 VIPL subjects exist"**:
   the working pipeline reads VIPL-HR from `spandan/data/raw/VIPL-HR/` (untouched,
   unchanged, no code path affected by anything below). The **original full VIPL-HR raw
@@ -609,9 +672,14 @@ scale any of these up, that is a new, explicit decision, not an automatic next s
       failing) — stated plainly, not implied to have improved. **Action 3 (Android)**:
       checked, not guessed — confirmed directly from `android/docs/
       Defense_Readiness_Checklist.md` and `Segment7_Task_G_Throughput_Profiling.md` that
-      Branch 2 (`adaptiveHarmonicFilter`, `ensembleAverageBeats`, `notchDetectIEM`) has
-      NEVER been ported to Android, by deliberate prior scope decision — no Android work
-      needed or attempted, this promotion is MATLAB-only. Full detail:
+      ~~Branch 2 (`adaptiveHarmonicFilter`, `ensembleAverageBeats`, `notchDetectIEM`) has
+      NEVER been ported to Android, by deliberate prior scope decision~~ **[2026-09-15/16,
+      Segment 19] SUPERSEDED — Branch 2 has now been ported** (new
+      `AdaptiveHarmonicFilter.kt`/`HarmonicSelectiveGaussianFilter.kt`/`NotchDetectIEM.kt`/
+      etc., orchestrated by `MorphologyWaveformEstimator.kt`, verified live on-device — see
+      the Segment 19 entry below). True as stated at the time this Segment 14 entry was
+      written (2026-09-13, when this promotion itself was correctly MATLAB-only) — no
+      longer the current state. Full detail:
       `matlab/docs/Segment14_Task2_Confidence_Gate_Production_Promotion.md`. Outputs:
       `matlab/scripts/run_segment14_task1_ubfc_d2_held_out_validation.m`,
       `results/metrics/segment14_task1_ubfc_d2_held_out_validation.csv`,
@@ -761,6 +829,161 @@ scale any of these up, that is a new, explicit decision, not an automatic next s
       `signal/RealHeartRateEstimator.kt`, `signal/LiveSpo2Estimator.kt`,
       `MainActivity.kt`, `res/layout/activity_main.xml`, `res/values/strings.xml`,
       `android/README.md`.
+- [x] **Segment 17 — `run_spandan_interactive.m`: stop duplicating the pipeline, call
+      the current one.** **Done 2026-09-14.** Abrar asked for one MATLAB file that runs
+      the whole current pipeline and can select the subject video from anywhere on the
+      computer, and asked to update the existing file if one already existed —
+      `scripts/run_spandan_interactive.m` already had the `uigetfile`-any-video part,
+      but per its own header it deliberately ran a frozen, standalone, verbatim-copied
+      snapshot of the pipeline from Segment 7/8, explicitly NOT
+      `pipeline/estimateVitalsAndMorphology.m` off the path — so Segments 10-16
+      (confidence gate now default `true`, cPACE, mid-band, the Gaussian filter) were
+      silently absent from it. Deleted ~1200 lines of duplicated pipeline functions;
+      added a self-locating path bootstrap (`mfilename('fullpath')` →
+      `addpath(genpath('../src'))`) at the top so the file now calls the real,
+      current `matlab/src/` functions — the same ones every batch script here uses —
+      and will never go stale again by construction. **Flagged, not silently dropped**:
+      the old file's `chooseHeuristicPolarityByNotchConfidence` (a real, evidence-based
+      polarity-selection improvement for Cases 2/3, no ground truth) was never ported
+      into `matlab/src/morphology/fixPolarity.m`, so it's gone from this file too —
+      Cases 2/3 now use the same plain skewness heuristic production/Android already
+      use, which is the more honest "current pipeline" answer but leaves the
+      skewness-rule bias `fixPolarity.m`'s own header already documents unaddressed. A
+      real follow-up, not done here: port that confidence-anchored logic into
+      `fixPolarity.m` itself, or add it as an `opts.polarityMethod` hook on
+      `estimateVitalsAndMorphology.m`. All function-signature call sites checked
+      argument-for-argument against the current `matlab/src/**.m` files (not assumed
+      compatible); the rewritten file structurally verified (every block/`end` pairs)
+      but **not executed in MATLAB this session** (no MATLAB in this environment) —
+      Abrar should run it once to confirm before a live demo. See the Current State
+      entry above for the full rationale. Output: `matlab/scripts/run_spandan_interactive.m`
+      (rewritten, same filename/entry point).
+- [x] **Segment 18 — Android camera throughput + buffer-window revisit (Workstream 1).**
+      **Done 2026-09-15/16, real on-device measurement, Samsung Galaxy A35
+      (`RFCXC0FFFSN`), same device used throughout this project.** First re-synced
+      `ProfilingFaceAnalyzer.kt` against `FaceAnalyzer.kt`'s current N=3 detection-skip
+      logic per this task's own instruction — **found already in sync this time** (not
+      stale, unlike the two prior occasions this project's history records). Profiled the
+      current ~19-20fps path: ML Kit detection remains ~98% of per-frame cost
+      (73-81ms/detect-frame observed this session), ROI/pixel-averaging negligible
+      (<5ms) — confirms Segment 7 Task G's finding still holds, no new bottleneck shifted
+      into view. **New, gated (`useMotionTracking`, default `false`) real inter-detection
+      tracker** replacing "freeze the last box" on skipped frames: `camera/
+      OpticalFlowMatcher.kt` (pure SAD block-match on a downsampled luma patch, no
+      Android dependency, unit-tested against synthetic shifted patches) +
+      `camera/OpticalFlowFaceTracker.kt` (Android wrapper, samples the Y-plane, tracks in
+      SENSOR space) + a new `CoordinateMapper.sensorRectToRotatedRect` (the mathematical
+      inverse of the existing `rotatedRectToSensorRect`, verified via a random-rect
+      round-trip test, since no device was available yet when it was written).
+      Deliberately NOT a KLT/optical-flow-library tracker — `matlab/docs/
+      Segment7_Task_D_Landmark_ROI.md`'s own finding (a KLT-tracked ROI net-regressing
+      MATLAB accuracy) was cited as a reason to keep this simpler.
+      **Real re-measurement, three back-to-back captures on the same device/session**:
+      baseline (no tracking) 19.96fps steady-state (40s window, 66.7% skip fraction,
+      matching the ideal N=3 ratio); with tracking enabled, **16.33fps — SLOWER**, despite
+      the tracker's own self-reported cost being negligible (mean 0.874ms/skipped frame,
+      max 7.35ms). A same-session baseline re-check (to isolate thermal/session drift)
+      found detection latency itself had ALSO risen to match the tracking capture's level
+      (80.86ms vs the tracking capture's 80.08ms) yet still held **19.19fps** — ruling out
+      simple thermal drift as the full explanation for the tracking capture's slower
+      16.33fps. **Verdict: NOT adopted — kept off by default (already the default), a
+      real, unrounded-up negative result**: the tracker's own measured cost is negligible
+      but end-to-end throughput regressed ~15-18% for a reason not fully isolated this
+      session (leading, unproven hypothesis: per-skipped-frame `IntArray` allocation/GC
+      pressure not visible inside the tracker's own `SystemClock` timing window) — flagged
+      as a follow-up needing real heap/allocation profiling tools this session didn't
+      have, not silently blamed on "probably thermal" without the controlling re-check
+      that argues against it. **Task 4 (buffer window)**: `SignalBuffer.
+      WINDOW_DURATION_SECONDS` **kept at 25.0s** — this session's real measured baseline
+      fps (19.19-19.96) sits close to the previously documented 21.40fps (real
+      device/session variance, same order of magnitude, same N=3 mechanism), so nothing
+      changes Segment 16's existing accuracy-vs-responsiveness tradeoff analysis. Real
+      interaction with Segment 19 noted and since CONFIRMED live (see that entry): live
+      fs varied 14.16-22.08Hz during actual on-device use this session, making Branch 2's
+      wide/mid band-mode fallback a genuinely exercised code path, not a theoretical
+      concern. **Task 5 (GC jitter) explicitly NOT re-investigated**, per this task's own
+      instruction that it was already closed. Full detail:
+      `android/docs/Segment18_Camera_Throughput_And_Buffer_Window.md`. New:
+      `camera/OpticalFlowMatcher.kt`, `camera/OpticalFlowFaceTracker.kt`,
+      `app/src/test/.../camera/OpticalFlowMatcherTest.kt`,
+      `app/src/test/.../camera/CoordinateMapperTest.kt`. Modified (additive):
+      `camera/CoordinateMapper.kt` (new `sensorRectToRotatedRect`), `camera/
+      FaceAnalyzer.kt` (new `useMotionTracking` param, default `false`, byte-identical
+      behavior when off), `camera/ProfilingFaceAnalyzer.kt` (mirrored, plus a new
+      `motionMs` profiling phase).
+- [x] **Segment 19 — port Branch 2 (waveform morphology/dicrotic notch) to Android
+      (Workstream 2).** **Done 2026-09-15/16, real on-device verification, same Galaxy
+      A35.** Read `matlab/src/pipeline/estimateVitalsAndMorphology.m`,
+      `morphology/{bandpassMorphology,adaptiveHarmonicFilter,notchDetectIEM,
+      harmonicSelectiveGaussianFilter,harmonicFilterConfidenceGate,
+      extractMorphologyWaveform,ensembleAverageBeats,fixPolarity,resampleUniform}.m`
+      directly from source before writing any Kotlin, per this task's own instruction.
+      **New Kotlin ports** (all under `signal/`, parallel to Branch 1, never merged into
+      it): `PchipInterpolator.kt` (a new SHARED Fritsch-Carlson PCHIP utility — MATLAB has
+      no single file for this, it's inlined via `interp1(...,'pchip')` in three different
+      functions; consolidating it into one Kotlin file is a deliberate, stated structural
+      difference from the MATLAB source, not a missed file), `MorphologyBandpassFilter.kt`
+      (wide/mid, reuses `BandpassFilter`'s own already-public design/filtfilt code rather
+      than duplicating it; adds a `pick(fs)` fallback the MATLAB side never needed since
+      its batch clips are always well above 16fps), `AdaptiveHarmonicFilter.kt` (ABPF comb
+      via JTransforms complex FFT/IFFT), `HarmonicSelectiveGaussianFilter.kt`,
+      `HarmonicFilterConfidenceGate.kt` (the safe single-fallback mode ONLY — the MATLAB
+      source's own discouraged multi-candidate mode is deliberately not ported, flagged in
+      this file's own KDoc so a future caller doesn't reach for it blind), `FixPolarity.kt`
+      (heuristic only — `fixPolarityByGroundTruth.m`/`estimateLagPolarityByGroundTruth.m`
+      excluded per the brief, since Android never has a contact-PPG reference),
+      `ResampleUniform.kt`, `EnsembleAverageBeats.kt`, `NotchDetectIEM.kt` (Savitzky-Golay
+      edge handling deviates from MATLAB's exact `sgolayfilt` boundary convention, stated
+      explicitly, same discipline as `WaveletDenoise.kt`'s own boundary note), and the
+      orchestrator `MorphologyWaveformEstimator.kt` (mirrors `estimateVitalsAndMorphology.m`'s
+      Branch 2 sequence exactly, `useConfidenceGate` default `true` matching production;
+      reuses the EXISTING `EstimatorStatus` enum per this task's own instruction rather than
+      inventing a new convention; wraps `EnsembleAverageBeats`/`FixPolarity`'s MATLAB-faithful
+      hard errors in a fail-soft catch, a deliberate, stated divergence for live camera data).
+      **UI**: new `ui/WaveformView.kt` (Canvas draw of the ensemble-averaged beat + a notch
+      marker) plus a "WAVEFORM MORPHOLOGY (BRANCH 2)" card in `activity_main.xml`, matching
+      the existing vitals-card style exactly; the status pill surfaces the RAW (unclipped)
+      notch confidence NUMBER and which filter was used, not just a pass/fail — colored by
+      `EstimatorStatus` plus (when `OK`) a second check against the 0.3 confidence bar,
+      since `OK` alone only means "a value was computed," not "a confident one." **49/49
+      unit tests pass** (10 new signal test files + `MorphologyWaveformEstimatorTest`'s
+      end-to-end orchestration sweep across a realistic fps range, plus every pre-existing
+      test), all synthetic-signal-verified before trusting real camera data, same
+      discipline as every numeric port in this project. **Real on-device verification**: 9
+      successful Branch 2 recomputes captured over a ~40s continuous face-in-frame window,
+      **zero exceptions, zero crashes, app pid stable throughout**. Real MID-band fallback
+      fired at a real measured fs=14.33Hz (Nyquist=7.17Hz < WIDE's 8Hz cutoff, correctly
+      inadmissible; MID's 6Hz cutoff fits) with ABPF passing at notch confidence 0.818; real
+      WIDE band fired at fs≥21.4Hz; the confidence gate substituted to Gaussian(0.15) in 6/9
+      windows (ABPF failed the 0.3 bar) and stayed on ABPF in 3/9 — BOTH paths genuinely
+      exercised on real data, not just unit-tested; notch confidence spread 0.019-0.869
+      across windows, matching this project's own MATLAB-side documented wide variance
+      (Segment 10 Task 1's pooled result), not a bug. **Branch 1 confirmed unaffected** on
+      the same capture — `RealHeartRateEstimator`/`LiveSpo2Estimator` logged normally
+      throughout (HR 51-136bpm, consistent with this project's already-documented jitter
+      pattern; SpO2 ~96.8-97.1%), no shared state, no new exceptions. A screenshot (not
+      retained, per this project's own established no-screenshot-retention practice)
+      confirmed the card renders correctly and — a genuinely useful real-data catch — that
+      the status pill correctly showed "Low signal quality" on one tick while HR/SpO2
+      simultaneously showed "Live"/OK, confirming Branch 1/Branch 2 independence end to
+      end, not just by code inspection. **Real fs this ran at, stated per the task's own
+      instruction: 14.16-22.08Hz** (live, varying). **Ambiguities flagged, not silently
+      guessed**: (1) `NotchDetectIEM`'s Savitzky-Golay boundary handling (see above); (2)
+      no MATLAB precedent exists for the confidence gate's fallback candidate itself
+      failing (a live-camera-only failure mode) — resolved by keeping the primary (ABPF)
+      result rather than inventing a third path; (3) `trimmean`'s exact trim-count rounding
+      isn't verified bit-exact against MATLAB's own tie-breaking; (4) the 2000ms recompute
+      interval / 10s minimum window are this port's own choice, confirmed only to keep up
+      without a backlog on the one real capture taken, not tuned against a full on-device
+      CPU budget. Full detail: `android/docs/Segment19_Branch2_Morphology_Port.md`. New:
+      `signal/{PchipInterpolator,MorphologyBandpassFilter,AdaptiveHarmonicFilter,
+      HarmonicSelectiveGaussianFilter,HarmonicFilterConfidenceGate,FixPolarity,
+      ResampleUniform,EnsembleAverageBeats,NotchDetectIEM,MorphologyWaveformEstimator}.kt`,
+      `ui/WaveformView.kt`, 10 new test files under `app/src/test/.../signal/`. Modified
+      (additive only): `MainActivity.kt`, `activity_main.xml`, `strings.xml`,
+      `app/build.gradle.kts` (`testOptions.unitTests.isReturnDefaultValues=true` — a
+      standard, safe Android unit-test config needed because `Log.d`/`.w` throws "not
+      mocked" under plain JUnit; no production behavior change).
 
 ---
 
@@ -1398,3 +1621,46 @@ Maintenance Protocol rule 3.)*
   `Segment16_Task2_SpO2_Research_and_Audit.md`, `Segment16_Task3_UI_UX_Pass.md` (all
   three updated with real results, screenshot references removed).
   `android/README.md` updated with a full Segment 16 summary.
+- **2026-09-14** (Cowork session) — Segment 17: `scripts/run_spandan_interactive.m`
+  rewritten to call `pipeline/estimateVitalsAndMorphology.m` and every other pipeline
+  function off the MATLAB path (self-locating `addpath` bootstrap added) instead of
+  ~1200 lines of Segment-7/8-frozen local duplicates, per Abrar's request for one file
+  that runs the current pipeline on any video picked from anywhere on the computer.
+  Drops the old file's `chooseHeuristicPolarityByNotchConfidence` divergence for
+  no-ground-truth clips (never ported into `matlab/src/` — flagged as a follow-up, not
+  done this session). Not run in MATLAB this session (no MATLAB available in this
+  environment) — should be run once to confirm. See Current State and Active Work
+  Queue entries above for full detail.
+- **2026-09-15/16** (new session) — Two independent Android workstreams, both with real
+  on-device verification on the same Galaxy A35 (`RFCXC0FFFSN`) once it was attached
+  partway through the session (started with none, per this project's recurring pattern —
+  see the Segment 18/19 Active Work Queue entries for exactly when device access
+  resumed). **Segment 18** (camera throughput + buffer window): re-profiled the current
+  N=3-detection-skip path (confirmed ML Kit detection still ~98% of cost, nothing shifted
+  the bottleneck), built a new gated (`useMotionTracking`, off by default)
+  `OpticalFlowFaceTracker`/`OpticalFlowMatcher` inter-detection tracker plus a new
+  `CoordinateMapper.sensorRectToRotatedRect` inverse mapping, and re-measured real
+  fps three times back-to-back: baseline 19.96/19.19fps steady-state (two captures,
+  confirming the existing mechanism), tracking-enabled 16.33fps — a real, unrounded-up
+  **negative result**: the tracker's own cost is negligible but end-to-end throughput
+  regressed for a reason a controlling re-check couldn't attribute to simple thermal
+  drift; kept off by default, root cause flagged as open (no profiling tools available
+  to fully isolate it). `WINDOW_DURATION_SECONDS` left at 25.0s — no new evidence changes
+  Segment 16's tradeoff analysis. **Segment 19** (Branch 2 port): read all nine relevant
+  `matlab/src/morphology/*` and `pipeline/estimateVitalsAndMorphology.m` files directly
+  from source, then ported the full Branch 2 chain to Kotlin (`PchipInterpolator`,
+  `MorphologyBandpassFilter`, `AdaptiveHarmonicFilter`, `HarmonicSelectiveGaussianFilter`,
+  `HarmonicFilterConfidenceGate`, `FixPolarity`, `ResampleUniform`, `EnsembleAverageBeats`,
+  `NotchDetectIEM`, orchestrated by a new `MorphologyWaveformEstimator` that reuses the
+  existing `EstimatorStatus` enum rather than inventing a new one) — this project's first
+  time Branch 2 has ever run on Android, correcting every prior session's accurate-at-the-
+  time "never ported" claim (marked superseded, not deleted, per this file's own
+  Maintenance Protocol). Added a new "WAVEFORM MORPHOLOGY (BRANCH 2)" UI card surfacing
+  the RAW (unclipped) notch confidence number, not just a pass/fail. 49/49 unit tests pass
+  (10 new files, all synthetic-signal-verified first). **Real on-device capture**: 9
+  successful Branch 2 recomputes over ~40s, zero crashes, real WIDE/MID band-mode
+  switching and real ABPF/Gaussian confidence-gate substitution both observed live (not
+  just unit-tested), Branch 1 (HR/SpO2) confirmed unaffected on the same capture. Full
+  detail, all caveats and flagged ambiguities, in each segment's own doc:
+  `android/docs/Segment18_Camera_Throughput_And_Buffer_Window.md`,
+  `android/docs/Segment19_Branch2_Morphology_Port.md`.

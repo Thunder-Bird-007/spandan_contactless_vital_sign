@@ -103,6 +103,9 @@ the runway available to re-verify them on-device.
 | `signal/HeartRateFft.kt` | Real port of `heartrate/fftHeartRate.m` (FFT peak-picking in the 0.7-4Hz band), via JTransforms |
 | `signal/RealHeartRateEstimator.kt` | Wires the above into one pipeline against `SignalBuffer`'s window; displayed bpm is chosen per-reading by the CHROM/POS switching rule (see [switching estimator port](#chrompos-switching-estimator-port-segment-4-follow-up-4) below), CHROM/POS raw values still logged alongside for comparison |
 | `signal/LiveSpo2Estimator.kt` | Real port of `spo2/ratioOfRatios.m` + the uncentered production linear calibration (`spo2/calibrateSpO2.m` coefficients, `matlab/docs/SpO2_Final_Calibration_Spec.md`). Independent of `RealHeartRateEstimator` -- see [`docs/SpO2_Live_Implementation.md`](docs/SpO2_Live_Implementation.md) for the exact formula, the sign-convention correction made while porting it, and on-device verification |
+| `signal/{PchipInterpolator,MorphologyBandpassFilter,AdaptiveHarmonicFilter,HarmonicSelectiveGaussianFilter,HarmonicFilterConfidenceGate,FixPolarity,ResampleUniform,EnsembleAverageBeats,NotchDetectIEM}.kt`, `signal/MorphologyWaveformEstimator.kt` | **Segment 19** -- real port of Branch 2 (waveform morphology/dicrotic notch), previously never on Android. Independent of Branch 1 (`RealHeartRateEstimator`/`LiveSpo2Estimator`), same deliberate MATLAB-side separation. See [`docs/Segment19_Branch2_Morphology_Port.md`](docs/Segment19_Branch2_Morphology_Port.md) for the full port, real on-device verification, and flagged ambiguities. |
+| `ui/WaveformView.kt` | Segment 19 -- draws one ensemble-averaged cardiac cycle + the detected notch marker, feeding the new "WAVEFORM MORPHOLOGY" card |
+| `camera/OpticalFlowMatcher.kt`, `camera/OpticalFlowFaceTracker.kt` | Segment 18 -- gated (`useMotionTracking`, off by default), real but NOT adopted inter-detection face-box tracker; see [`docs/Segment18_Camera_Throughput_And_Buffer_Window.md`](docs/Segment18_Camera_Throughput_And_Buffer_Window.md) for why (a real measured throughput regression, not fully explained by thermal drift) |
 
 **Placeholder/removed (historical):**
 
@@ -197,9 +200,12 @@ android/
       AndroidManifest.xml
       java/com/spandan/app/
         MainActivity.kt
-        camera/              - real: detection, ROI, coordinate mapping, pixel averaging
-        signal/              - real: buffer/model classes + the HR and SpO2 pipelines (no placeholder files remain)
-        ui/                  - real: overlay + chart custom Views
+        camera/              - real: detection, ROI, coordinate mapping, pixel averaging,
+                                gated inter-detection tracking (Segment 18)
+        signal/              - real: buffer/model classes + the HR/SpO2 pipelines (Branch 1)
+                                and the waveform-morphology/dicrotic-notch pipeline
+                                (Branch 2, Segment 19) -- no placeholder files remain
+        ui/                  - real: overlay, live-signal chart, morphology waveform view
       res/                   - layout, strings, theme
   settings.gradle.kts / build.gradle.kts / gradle.properties
 ```
@@ -1091,3 +1097,46 @@ never committed to git and never reached GitHub. Full detail:
 properties only -- numeric logic byte-for-byte unchanged), `MainActivity.kt`
 (status-pill wiring, no-face debounce, display-smoother hook now ON by
 default), `layout/activity_main.xml`, `values/strings.xml`.
+
+## Segment 18 -- camera throughput + buffer window revisit
+
+Run 2026-09-15/16, same Galaxy A35. Re-profiled the current N=3-detection-skip path
+(confirmed ML Kit detection is still ~98% of per-frame cost, nothing new shifted the
+bottleneck), then built a real, gated (`useMotionTracking`, **off by default**)
+inter-detection face-box tracker (`camera/OpticalFlowMatcher.kt` + `camera/
+OpticalFlowFaceTracker.kt`, plus a new `CoordinateMapper.sensorRectToRotatedRect`) as an
+alternative to freezing the box between real detections. **Real on-device
+re-measurement, three back-to-back captures**: baseline 19.96fps / 19.19fps
+steady-state (two captures, confirming the existing frame-skip mechanism still holds, in
+the same range as the previously documented 21.40fps); with tracking enabled, **16.33fps
+-- measurably SLOWER**, despite the tracker's own measured cost being negligible (<1ms
+mean). A controlling re-check ruled out simple thermal/session drift as the full
+explanation. **Verdict: NOT adopted, stays off by default** -- a real, honestly-reported
+negative result, with the likely (unproven) cause flagged as per-frame allocation/GC
+pressure this session had no tooling to isolate. `SignalBuffer.WINDOW_DURATION_SECONDS`
+stays at 25.0s -- no new evidence to revisit Segment 16's own tradeoff analysis. Full
+detail: [`docs/Segment18_Camera_Throughput_And_Buffer_Window.md`](docs/Segment18_Camera_Throughput_And_Buffer_Window.md).
+
+## Segment 19 -- Branch 2 (waveform morphology / dicrotic notch) ported to Android
+
+Run 2026-09-15/16, same Galaxy A35. **This project's first-ever Android port of Branch
+2** -- every prior session correctly stated it had never been ported (a deliberate scope
+decision, most recently re-confirmed as of Segment 14); that statement is now superseded,
+not deleted, in `SESSION_HANDOFF.md`. Read all nine relevant `matlab/src/morphology/*.m`
+files plus `pipeline/estimateVitalsAndMorphology.m` directly from source before writing
+any Kotlin, then ported the full chain (`PchipInterpolator`, `MorphologyBandpassFilter`,
+`AdaptiveHarmonicFilter`, `HarmonicSelectiveGaussianFilter`,
+`HarmonicFilterConfidenceGate`, `FixPolarity`, `ResampleUniform`, `EnsembleAverageBeats`,
+`NotchDetectIEM`), orchestrated by a new `MorphologyWaveformEstimator` that reuses the
+existing `EstimatorStatus` enum rather than inventing a new convention. Added a "WAVEFORM
+MORPHOLOGY (BRANCH 2)" UI card (`ui/WaveformView.kt` + a status pill) surfacing the RAW
+(unclipped) notch confidence number, not just a pass/fail -- per this task's own
+instruction, since `notchDetectIEM.m`'s boolean output is documented elsewhere in this
+project as a near-useless gate at pool scale. **49/49 unit tests pass** (10 new files,
+every one synthetic-signal-verified first). **Real on-device capture**: 9 successful
+Branch 2 recomputes over ~40s of continuous face-in-frame, zero crashes/exceptions, real
+fs varying 14.16-22.08Hz live -- both the WIDE/MID band-mode fallback AND the
+ABPF/Gaussian confidence-gate substitution fired for real on that capture (6/9 windows
+substituted, 3/9 stayed on ABPF), not just in a unit test. Branch 1 (HR/SpO2) confirmed
+unaffected on the exact same capture. Full detail, real numbers, and every flagged
+ambiguity: [`docs/Segment19_Branch2_Morphology_Port.md`](docs/Segment19_Branch2_Morphology_Port.md).
