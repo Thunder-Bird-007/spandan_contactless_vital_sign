@@ -14,6 +14,11 @@
 % since Branch 1's call sequence in estimateVitalsAndMorphology.m is
 % byte-identical to that test's own recomputation.
 %
+% [2026-09-20] Wavelet note: Parts 1-2 run at the orchestrator's default
+% (useWaveletDenoise=true). SpO2 (Part 2) is pinned to the pre-wavelet chain
+% inside the orchestrator, so it matches the pre-wavelet calibration CSV at
+% either setting; Part 3 forces useWaveletDenoise=false (see there).
+%
 % Part 2 (Branch 1 SpO2 path, all 5 UBFC ground-truth subjects): for each
 % subject, Branch 1's own spo2/ratioOfRatios.m output (Rvalue) is checked
 % against results/metrics/segment5_dataset1_calibration.csv's already-
@@ -84,7 +89,13 @@ disp(['HR_chrom: recomputed = ' num2str(result5gt.hrBpm.chrom, '%.10f') ', saved
 disp(['HR_pos:   recomputed = ' num2str(result5gt.hrBpm.pos, '%.10f') ', saved = ' num2str(previouslySavedHR.HR_pos, '%.10f') ', byte-identical = ' num2str(posMatch)]);
 disp(['HR_green: recomputed = ' num2str(result5gt.hrBpm.green, '%.10f') ', saved = ' num2str(previouslySavedHR.HR_green, '%.10f') ', byte-identical = ' num2str(greenMatch)]);
 
-part1Pass = chromMatch && posMatch && greenMatch;
+% GREEN is reported but NOT part of the pass/fail gate (2026-09-20):
+% HR_green now follows the wavelet-on default, while data/processed/*_hr_estimates.mat
+% and the frozen segment4/segment6 GREEN values are pre-wavelet (Segment 8's
+% promotion spliced CHROM/POS as wavelet-on and left GREEN pre-wavelet because
+% the ablation never covered it -- see SESSION_HANDOFF.md). 5-gt's GREEN happens
+% to be unaffected by wavelet, so gating on it would pass only by coincidence.
+part1Pass = chromMatch && posMatch;
 
 if ~part1Pass
     error('segment7_task_f_regression_test:part1Failed', 'Branch 1 HR output is NOT byte-identical to the already-saved hr_estimates.mat for subject %s.', subjectID);
@@ -214,7 +225,10 @@ for subjectPos = 1:numSubjects
     % see Segment 14 Task 2's promotion, docs/Segment14_Task2_Confidence_
     % Gate_Production_Promotion.md.
     videoInput = struct('R', rgbData.R, 'G', rgbData.G, 'B', rgbData.B, 'fs', rgbData.fs);
-    resultThis = estimateVitalsAndMorphology(videoInput, gt, [], struct('subjectID', subjectID, 'useConfidenceGate', false));
+    % useWaveletDenoise explicitly FALSE for the same reason: that CSV was
+    % written by scripts/run_segment7_task_b_branch2_batch.m, an independent
+    % pipeline copy that never applied waveletDenoise (2026-09-20).
+    resultThis = estimateVitalsAndMorphology(videoInput, gt, [], struct('subjectID', subjectID, 'useConfidenceGate', false, 'useWaveletDenoise', false));
 
     rowMask = strcmp(notchTable.subjectID, subjectID) & strcmp(notchTable.method, 'adaptiveHarmonic');
     if ~any(rowMask)

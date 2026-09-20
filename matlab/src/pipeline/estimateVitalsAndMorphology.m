@@ -10,6 +10,74 @@ function result = estimateVitalsAndMorphology(videoInput, groundTruth, calibPara
 % 7 Task E's finding below for why a single shared filter choice was
 % rejected in favor of two parallel branches.
 %
+% =====================================================================
+% FIX, 2026-09-19 -- READ BEFORE ASSUMING THIS FUNCTION MATCHES OLDER
+% DOCS/REGRESSION DATA BIT-FOR-BIT
+% =====================================================================
+% SESSION_HANDOFF.md's Segment 8 Action 7 documents DWT wavelet-shrinkage
+% denoising (filtering/waveletDenoise.m) as "PROMOTED TO DEFAULT" for
+% Branch 1, wired into scripts/run_segment3_filtering_batch.m and
+% scripts/run_vipl_integration_batch.m (applied to each raw R/G/B channel
+% immediately before filtering/detrendSignal.m, useWaveletDenoise toggle,
+% default true) and into Android's RealHeartRateEstimator.kt. That
+% promotion was NEVER actually ported into this shared orchestrator --
+% the one function scripts/run_spandan_interactive.m and every other
+% current call site actually uses -- so every caller of THIS function
+% was silently running without wavelet denoising despite it being
+% documented project-wide as the production default. This fix closes
+% that gap: opts.useWaveletDenoise (default true, matching the batch
+% scripts' own default) now applies filtering/waveletDenoise.m to R/G/B
+% at the exact same position the validated batch scripts use --
+% immediately before the detrendSignal.m call below, upstream of BOTH
+% branches (this function only detrends once and both branches consume
+% that single result, so wavelet denoising the shared input naturally
+% flows into Branch 2 as well as Branch 1; only Branch 1 was ever
+% ablated/validated against ground truth, so treat Branch 2's own
+% distortion-vs-morphology tradeoff qhen wavelet denoising is active as
+% UNVALIDATED, not assumed neutral or beneficial).
+%
+% SpO2 PIN, 2026-09-20: Branch 1's SpO2 path (ratioOfRatios ->
+% calibrateSpO2) does NOT follow opts.useWaveletDenoise. Frozen
+% segment5_dataset1_calibration.csv / segment5_vipl_calibration.csv R values
+% (all 112 subjects) match the PRE-wavelet chain, and calibrateSpO2's fitted
+% A/B were fit on those, so feeding it wavelet-shifted R would be a
+% train/serve mismatch. SpO2 is therefore always computed from the
+% pre-wavelet chain. Whether wavelet helps or hurts SpO2 is an OPEN,
+% deferred question (see matlab/experiments/segment27_*).
+%
+% HR-GREEN NOTE: HR_green now follows the wavelet-on default. The old frozen
+% GREEN column in segment6_hr_pooled_metrics.csv is a Segment 8 splice
+% artifact (CHROM/POS spliced in wavelet-on; GREEN left pre-wavelet because
+% the ablation never covered it) and is superseded, not because of a new bug.
+%
+% BEHAVIOR CHANGE A CALLER MUST KNOW ABOUT: exactly like
+% scripts/run_vipl_integration_batch.m already does, R/G/B are
+% REASSIGNED in place to their wavelet-denoised versions when
+% opts.useWaveletDenoise is true (the default). That means
+% result.R/result.G/result.B, and the "raw" arguments Branch 1 passes to
+% chromCombine/posCombine/ratioOfRatios for DC normalization, are the
+% WAVELET-DENOISED signal, not the literal pre-wavelet raw pixel means,
+% whenever the default is left on. This exactly matches
+% run_vipl_integration_batch.m's own already-validated convention (same
+% reassignment, same downstream usage) -- it is not a new, separately
+% invented behavior. A caller that specifically needs the literal
+% pre-wavelet raw trace (e.g. an on-screen "Raw ROI trace" panel) must
+% capture its own copy of R/G/B BEFORE calling this function.
+%
+% REGRESSION TEST IMPACT, FLAGGED NOT SILENTLY LEFT: this file's own
+% header already documents that tests/segment7_task_f_regression_test.m
+% requires this function's notch output to match
+% results/metrics/segment7_task_b_notch_branch2.csv bit-for-bit, and that
+% test already knows to pass opts.useConfidenceGate=false for its Part 3
+% bit-exact check. That CSV predates this wavelet fix, so with
+% useWaveletDenoise now defaulting to true, that regression test will
+% start failing its bit-exact comparison unless it is updated to also
+% pass opts.useWaveletDenoise=false (to reproduce pre-fix behavior) OR
+% the recorded CSV is regenerated under the new default. This file does
+% NOT touch that test or that CSV -- a human should decide which of the
+% two is the right fix, same discipline as every other validated-result
+% change in this project.
+%
 % WHY TWO BRANCHES OFF ONE EXTRACTION (Segment 7 Task E's decision):
 % the filtering that helps notch morphology (a wide 0.5-8 Hz band plus
 % morphology/adaptiveHarmonicFilter.m's harmonic comb) measurably HURTS
@@ -27,7 +95,8 @@ function result = estimateVitalsAndMorphology(videoInput, groundTruth, calibPara
 % by both branches; it is never called a second time for the morphology
 % branch.
 %
-% Branch 1 (production, UNCHANGED call sequence -- byte-identical to
+% Branch 1 (production; UNCHANGED call sequence downstream of the new
+% wavelet-denoise step above -- byte-identical to
 % scripts/run_segment4_heartrate_batch.m and
 % scripts/run_vipl_integration_batch.m's own sequence, both of which
 % agree with each other): filtering/detrendSignal.m ->
@@ -68,14 +137,15 @@ function result = estimateVitalsAndMorphology(videoInput, groundTruth, calibPara
 % the identical formula independently) actually computes, and Task F's
 % own regression test (tests/segment7_task_f_regression_test.m) requires
 % this function's notch output to match results/metrics/segment7_task_b_notch_branch2.csv
-% bit-for-bit -- which is only possible by replicating that script's own
-% sharedF0Hz computation exactly, band-for-band. Both f0 estimates come
-% from the SAME function (heartrate/fftHeartRate.m) applied once, not
-% independently per channel, which is the property that actually matters
-% for Branch 2's cross-channel alignment; they are simply computed from
-% two differently-filtered versions of the same pulse (Branch 1's narrow
-% 0.7-4 Hz CHROM vs Branch 2's own wide 0.5-8 Hz CHROM), and are not
-% guaranteed to be numerically identical.
+% bit-for-bit (see the wavelet-fix note above for the current status of
+% that bit-exact match) -- which is only possible by replicating that
+% script's own sharedF0Hz computation exactly, band-for-band. Both f0
+% estimates come from the SAME function (heartrate/fftHeartRate.m)
+% applied once, not independently per channel, which is the property
+% that actually matters for Branch 2's cross-channel alignment; they are
+% simply computed from two differently-filtered versions of the same
+% pulse (Branch 1's narrow 0.7-4 Hz CHROM vs Branch 2's own wide 0.5-8 Hz
+% CHROM), and are not guaranteed to be numerically identical.
 %
 % Inputs:
 %   videoInput   - EITHER (a) string/char, full path to a UBFC-style
@@ -125,6 +195,18 @@ function result = estimateVitalsAndMorphology(videoInput, groundTruth, calibPara
 %                    subjectID - string/char, echoed back in
 %                                result.subjectID purely for
 %                                figure/report labeling. Default ''.
+%                    useWaveletDenoise - logical, default true (2026-09-19
+%                                fix promoting SESSION_HANDOFF.md's Segment
+%                                8 Action 7 default into this shared
+%                                orchestrator -- see the FIX note at the
+%                                top of this header for the full story).
+%                                When true, filtering/waveletDenoise.m
+%                                (db4, 3-level, default params) is applied
+%                                to R/G/B, in place, immediately before
+%                                filtering/detrendSignal.m -- the exact
+%                                position scripts/run_vipl_integration_batch.m
+%                                uses. Set to false to reproduce this
+%                                function's exact pre-2026-09-19 behavior.
 %                    useConfidenceGate - logical, default true (Segment 14
 %                                Task 2 promotion, 2026-09-13). When true,
 %                                Branch 2 additionally computes
@@ -161,7 +243,12 @@ function result = estimateVitalsAndMorphology(videoInput, groundTruth, calibPara
 % Outputs:
 %   result - struct with fields:
 %     subjectID, frameRate, roiTimestamps, R, G, B  - the shared inputs
-%       both branches were run on (raw ROI traces + real timestamps).
+%       both branches were run on (R/G/B are POST-wavelet-denoise when
+%       opts.useWaveletDenoise is true -- see the BEHAVIOR CHANGE note
+%       above -- and real timestamps).
+%     waveletDenoiseUsed - logical, echoes opts.useWaveletDenoise, so a
+%       caller/report can tell which convention result.R/G/B follow
+%       without re-reading opts itself.
 %     hrBpm.chrom / .pos / .green  - Branch 1's three HR estimates (bpm),
 %       identical convention to results/metrics/segment4_hr_summary*.csv.
 %     spo2Pct   - Branch 1's calibrated SpO2 estimate (%), or NaN if
@@ -219,6 +306,10 @@ if ~isfield(opts, 'subjectID')
     opts.subjectID = '';
 end
 
+if ~isfield(opts, 'useWaveletDenoise') || isempty(opts.useWaveletDenoise)
+    opts.useWaveletDenoise = true; % 2026-09-19 fix -- see header FIX note
+end
+
 if ~isfield(opts, 'useConfidenceGate') || isempty(opts.useConfidenceGate)
     opts.useConfidenceGate = true; % Segment 14 Task 2 promotion -- see Branch 2 section below
 end
@@ -244,11 +335,29 @@ else
     error('estimateVitalsAndMorphology:badVideoInput', 'videoInput must be a video path (char/string) or a struct with fields R, G, B, fs.');
 end
 
+% === 2026-09-19 fix: DWT wavelet-shrinkage denoise, in place, immediately
+% before detrendSignal -- same position/params scripts/run_vipl_integration_batch.m
+% and scripts/run_segment3_filtering_batch.m already use as their own
+% validated default. See header FIX note for why this was missing and
+% what it changes for callers. ===
+% SpO2 is deliberately PINNED to the pre-wavelet signal (see the SpO2 PIN
+% note in the header): capture the untouched R/G/B before the reassignment.
+R_preWavelet = R;
+G_preWavelet = G;
+B_preWavelet = B;
+
+if opts.useWaveletDenoise
+    R = waveletDenoise(R);
+    G = waveletDenoise(G);
+    B = waveletDenoise(B);
+end
+
 [R_detrended, ~] = detrendSignal(R);
 [G_detrended, ~] = detrendSignal(G);
 [B_detrended, ~] = detrendSignal(B);
 
-% === Branch 1: production HR/SpO2, UNCHANGED sequence. ===
+% === Branch 1: production HR/SpO2, UNCHANGED sequence downstream of the
+% wavelet-denoise step above. ===
 [R_filtered, ~] = bandpassClean(R_detrended, frameRate);
 [G_filtered, ~] = bandpassClean(G_detrended, frameRate);
 [B_filtered, ~] = bandpassClean(B_detrended, frameRate);
@@ -263,7 +372,25 @@ pulsePosFiltered = bandpassClean(pulsePos, frameRate);
 
 [HR_green, ~, ~] = fftHeartRate(G_filtered, frameRate);
 
-Rvalue = ratioOfRatios(R_filtered, G_filtered, B_filtered, R, G, B, frameRate);
+% SpO2 PIN (2026-09-20): ratioOfRatios consumes BOTH the filtered AC
+% channels and the raw DC channels, and spo2/calibrateSpO2.m's coefficients
+% were fit on R values from the pre-wavelet chain, so the WHOLE chain is
+% rebuilt here from the pre-wavelet signal (detrend -> bandpass), regardless
+% of opts.useWaveletDenoise. When wavelet is off this is byte-identical to
+% the values already computed above and is simply reused.
+if opts.useWaveletDenoise
+    [R_spo2Detrended, ~] = detrendSignal(R_preWavelet);
+    [G_spo2Detrended, ~] = detrendSignal(G_preWavelet);
+    [B_spo2Detrended, ~] = detrendSignal(B_preWavelet);
+    [R_spo2Filtered, ~] = bandpassClean(R_spo2Detrended, frameRate);
+    [G_spo2Filtered, ~] = bandpassClean(G_spo2Detrended, frameRate);
+    [B_spo2Filtered, ~] = bandpassClean(B_spo2Detrended, frameRate);
+else
+    R_spo2Filtered = R_filtered;
+    G_spo2Filtered = G_filtered;
+    B_spo2Filtered = B_filtered;
+end
+Rvalue = ratioOfRatios(R_spo2Filtered, G_spo2Filtered, B_spo2Filtered, R_preWavelet, G_preWavelet, B_preWavelet, frameRate);
 
 if isempty(calibParams)
     spo2Pct = NaN;
@@ -407,6 +534,7 @@ result.roiTimestamps = roiTimestamps;
 result.R = R;
 result.G = G;
 result.B = B;
+result.waveletDenoiseUsed = opts.useWaveletDenoise;
 
 result.hrBpm = struct('chrom', HR_chrom, 'pos', HR_pos, 'green', HR_green);
 result.spo2Pct = spo2Pct;
