@@ -1,0 +1,95 @@
+[noWavelet] CHROM S1windowed vs arm1(1=prod,2=S1global) MAIN_112: worse>1 15 better>1 11 severe-worse 7 signrank p=0.9808
+[noWavelet] CHROM S1windowed vs arm2(1=prod,2=S1global) MAIN_112: worse>1 2 better>1 1 severe-worse 0 signrank p=0.7500
+[noWavelet] POS S1windowed vs arm1(1=prod,2=S1global) MAIN_112: worse>1 0 better>1 4 severe-worse 0 signrank p=0.1250
+[noWavelet] POS S1windowed vs arm2(1=prod,2=S1global) MAIN_112: worse>1 0 better>1 4 severe-worse 0 signrank p=0.1250
+[noWavelet] Full windowed030 vs Full global030 MAIN_112: worse>1 0 better>1 3 severe-worse 0 p=0.2500
+[noWavelet] Full windowed030 vs CHROM production MAIN_112: worse>1 45 better>1 22 severe-worse 25 p=0.0062
+[wavelet] CHROM S1windowed vs arm1(1=prod,2=S1global) MAIN_112: worse>1 14 better>1 12 severe-worse 4 signrank p=0.9494
+[wavelet] CHROM S1windowed vs arm2(1=prod,2=S1global) MAIN_112: worse>1 2 better>1 0 severe-worse 1 signrank p=0.5000
+[wavelet] POS S1windowed vs arm1(1=prod,2=S1global) MAIN_112: worse>1 3 better>1 1 severe-worse 2 signrank p=0.3750
+[wavelet] POS S1windowed vs arm2(1=prod,2=S1global) MAIN_112: worse>1 3 better>1 1 severe-worse 2 signrank p=0.3750
+[wavelet] Full windowed030 vs Full global030 MAIN_112: worse>1 2 better>1 5 severe-worse 0 p=0.2969
+[wavelet] Full windowed030 vs CHROM production MAIN_112: worse>1 58 better>1 21 severe-worse 30 p=0.0000
+REGRESSION CHECK vs Segment 15 [cPACE-Full-bw0.30]: n=100 max|diff|=0.0000 bpm
+REGRESSION CHECK vs Segment 15 [CHROM]: n=100 max|diff|=0.0000 bpm
+REGRESSION CHECK vs Segment 15 [POS]: n=100 max|diff|=0.0000 bpm
+REGRESSION CHECK vs Segment 15 [cPACE-Stage1+CHROM]: n=100 max|diff|=0.0000 bpm
+                method                      pool           n     nFail     MAE      medianAE     RMSE     pearsonR     severeGT10       chain   
+    ______________________________    ________________    ___    _____    ______    ________    ______    _________    __________    ___________
+
+    "CHROM production"                "MAIN_112"          112      0      9.0969     3.2859     18.005      0.31448        30        "noWavelet"
+    "CHROM production"                "VIPL_v2_motion"     20      0      8.1821     5.1812      11.18      0.57549         7        "noWavelet"
+    "CHROM S1 global q"               "MAIN_112"          112      0      8.9431     3.4412     18.499      0.28558        25        "noWavelet"
+    "CHROM S1 global q"               "VIPL_v2_motion"     20      0      10.052     4.9017     15.495      0.35753         7        "noWavelet"
+    "CHROM S1 windowed q"             "MAIN_112"          112      0      8.9875     3.4097     18.536      0.28294        26        "noWavelet"
+    "CHROM S1 windowed q"             "VIPL_v2_motion"     20      0      10.346     5.1812     15.562      0.34135         7        "noWavelet"
+    "POS production"                  "MAIN_112"          112      0      8.6795     3.2014     16.454      0.28091        30        "noWavelet"
+    "POS production"                  "VIPL_v2_motion"     20      0      9.0432     4.2462     14.859      0.41445         6        "noWavelet"
+    "POS S1 global q"                 "MAIN_112"          112      0      8.6795     3.2014     16.454      0.28091        30        "noWavelet"
+    "POS S1 global q"                 "VIPL_v2_motion"     20      0      9.0432     4.2462     14.859      0.41445         6        "noWavelet"
+    "POS S1 windowed q"               "MAIN_112"          112      0      8.3363     3.1604     16.122      0.30416        29        "noWavelet"
+    "POS S1 windowed q"               "VIPL_v2_motion"     20      0      9.1276     4.2462     14.865      0.41107         6        "noWavelet"
+    "cPACE Full global q bw0.30"      "MAIN_112"          112      0      10.908     7.6382     15.291       0.4487        47        "noWavelet"
+    "cPACE Full global q bw0.30"      "VIPL_v2_motion"     20      0      24.954     16.204     44.157     -0.18289        13        "noWavelet"
+    "cPACE Full windowed q bw0.30"    "MAIN_112"          112      0      10.781     7.5271     15.207      0.44404        47        "noWavelet"
+    "cPACE Full windowed q bw0.30"    "VIPL_v2_motion"     20      0      16.771     15.309     21.201     0.093913        12        "noWavelet"
+    "cPACE Full windowed q bw0.15"    "MAIN_112"          112      0      9.7728     5.6216     14.535      0.45947        38        "noWavelet"
+    "cPACE Full windowed q bw0.15"    "VIPL_v2_motion"     20      0      17.005     13.376     22.927     -0.10852        10        "noWavelet"
+    "CHROM production"                "MAIN_112"          112      0      7.8344     4.0716     11.868      0.53187        32        "wavelet"  
+    "CHROM production"                "VIPL_v2_motion"     20      0      8.8506     5.1812     12.641      0.53648         7        "wavelet"  
+    "CHROM S1 global q"               "MAIN_112"          112      0       7.472     4.0389     10.864      0.55885        31        "wavelet"  
+    "CHROM S1 global q"               "VIPL_v2_motion"     20      0      10.758     5.8846     15.865      0.28672         7        "wavelet"  
+    "CHROM S1 windowed q"             "MAIN_112"          112      0       7.599     4.0389     11.071      0.53712        31        "wavelet"  
+    "CHROM S1 windowed q"             "VIPL_v2_motion"     20      0      10.157     5.1812     15.662      0.29594         6        "wavelet"  
+    "POS production"                  "MAIN_112"          112      0      7.2217     4.4979     10.849      0.62341        30        "wavelet"  
+    "POS production"                  "VIPL_v2_motion"     20      0      10.565     5.8846     16.061       0.3076         6        "wavelet"  
+    "POS S1 global q"                 "MAIN_112"          112      0      7.2217     4.4979     10.849      0.62341        30        "wavelet"  
+    "POS S1 global q"                 "VIPL_v2_motion"     20      0      10.565     5.8846     16.061       0.3076         6        "wavelet"  
+    "POS S1 windowed q"               "MAIN_112"          112      0      7.6004     4.4979     11.441      0.59394        32        "wavelet"  
+    "POS S1 windowed q"               "VIPL_v2_motion"     20      0      12.215     5.1812     20.049      0.22622         6        "wavelet"  
+    "cPACE Full global q bw0.30"      "MAIN_112"          112      0      13.494     9.8313     21.743      0.36099        55        "wavelet"  
+    "cPACE Full global q bw0.30"      "VIPL_v2_motion"     20      0      17.697     17.596     21.911      0.10059        13        "wavelet"  
+    "cPACE Full windowed q bw0.30"    "MAIN_112"          112      0      13.315     9.7911     21.681      0.35548        55        "wavelet"  
+    "cPACE Full windowed q bw0.30"    "VIPL_v2_motion"     20      0      17.697     17.596     21.911      0.10059        13        "wavelet"  
+    "cPACE Full windowed q bw0.15"    "MAIN_112"          112      0      10.378     6.6436     14.793       0.4768        41        "wavelet"  
+    "cPACE Full windowed q bw0.15"    "VIPL_v2_motion"     20      0      16.026     13.376     21.342    -0.025271        10        "wavelet"  
+
+20/132
+40/132
+60/132
+80/132
+100/132
+120/132
+REGRESSION vs Seg22: LGI_fft max|diff|=0.0000, CHROM max|diff|=0.0000, POS max|diff|=0.0000 bpm (n=132)
+LGI tracker vs LGI fft [MAIN_112]: better>1 41 worse>1 45 severe-worse 11 signrank p=0.9583
+LGI tracker vs LGI fft [V2]: better>1 7 worse>1 10 severe-worse 4 signrank p=0.4553
+LGI tracker vs CHROM fft [MAIN_112]: better>1 37 worse>1 45 severe-worse 12 signrank p=0.5155
+LGI tracker vs CHROM fft [V2]: better>1 3 worse>1 14 severe-worse 7 signrank p=0.0090
+LGI tracker vs POS fft [MAIN_112]: better>1 36 worse>1 50 severe-worse 13 signrank p=0.1040
+LGI tracker vs POS fft [V2]: better>1 4 worse>1 12 severe-worse 8 signrank p=0.0304
+LGI paperReadout vs LGI fft [MAIN_112]: better>1 31 worse>1 34 severe-worse 8 signrank p=0.7872
+LGI paperReadout vs LGI fft [V2]: better>1 11 worse>1 3 severe-worse 1 signrank p=0.0620
+LGI paperReadout vs CHROM fft [MAIN_112]: better>1 29 worse>1 34 severe-worse 10 signrank p=0.4247
+LGI paperReadout vs CHROM fft [V2]: better>1 5 worse>1 10 severe-worse 4 signrank p=0.1790
+           method                 pool           n     nFail     MAE      medianAE     RMSE     pearsonR    severeGT10
+    ____________________    ________________    ___    _____    ______    ________    ______    ________    __________
+
+    "LGI_fft"               "MAIN_112"          112      0       9.239     4.1356     14.063     0.46475        38    
+    "LGI_fft"               "VIPL_v2_motion"     20      0      16.929     16.675     22.244    -0.12387        11    
+    "LGI_paperReadout"      "MAIN_112"          112      0      7.7608     4.3449     11.061     0.59933        34    
+    "LGI_paperReadout"      "VIPL_v2_motion"     20      0      12.275      8.136     17.064     0.12887         8    
+    "LGI_tracker"           "MAIN_112"          112      0      9.4757     5.7823     15.619     0.38344        36    
+    "LGI_tracker"           "VIPL_v2_motion"     20      0      21.571     18.328     32.622    -0.05568        12    
+    "CHROM_fft"             "MAIN_112"          112      0      7.8344     4.0716     11.868     0.53187        32    
+    "CHROM_fft"             "VIPL_v2_motion"     20      0      8.8506     5.1812     12.641     0.53648         7    
+    "CHROM_paperReadout"    "MAIN_112"          112      0      6.3754     4.3026     9.1007      0.6414        25    
+    "CHROM_paperReadout"    "VIPL_v2_motion"     20      0       8.251     5.5902     11.474      0.5274         6    
+    "CHROM_tracker"         "MAIN_112"          112      0      6.5399      3.992     8.7707     0.67903        30    
+    "CHROM_tracker"         "VIPL_v2_motion"     20      0      9.2356     4.8825     12.405     0.30086         8    
+    "POS_fft"               "MAIN_112"          112      0      7.2217     4.4979     10.849     0.62341        30    
+    "POS_fft"               "VIPL_v2_motion"     20      0      10.565     5.8846     16.061      0.3076         6    
+    "POS_paperReadout"      "MAIN_112"          112      0      6.6957     4.4637     9.3447     0.63018        30    
+    "POS_paperReadout"      "VIPL_v2_motion"     20      0      9.4952     5.6377     12.642      0.4964         7    
+    "POS_tracker"           "MAIN_112"          112      0      6.2934     4.2721     8.4126     0.69144        26    
+    "POS_tracker"           "VIPL_v2_motion"     20      0      9.3011      3.891     14.911     0.27655         7    
+

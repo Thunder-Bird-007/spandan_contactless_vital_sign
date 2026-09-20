@@ -1,0 +1,69 @@
+REGRESSION vs Seg22 2SR_sel (fbUnmask, stride 2.0s): max|diff|=0.0000 bpm (n=132)
+Forehead-box skin fraction (mask keeps): median 0.97, IQR [0.88 1.00]; subjects with >30% non-skin: 14/132; face-box median 0.69
+2SR fbMask vs fbUnmask [MAIN_112]: better>1 10 worse>1 6 severe-worse 4 signrank p=0.4445
+2SR fbMask vs fbUnmask [V2]: better>1 4 worse>1 7 severe-worse 2 signrank p=0.8984
+2SR faceUnmask vs fbUnmask [MAIN_112]: better>1 27 worse>1 37 severe-worse 18 signrank p=0.1682
+2SR faceUnmask vs fbUnmask [V2]: better>1 13 worse>1 4 severe-worse 2 signrank p=0.0615
+2SR faceMask vs fbUnmask [MAIN_112]: better>1 24 worse>1 23 severe-worse 11 signrank p=0.9484
+2SR faceMask vs fbUnmask [V2]: better>1 13 worse>1 3 severe-worse 2 signrank p=0.0615
+Spearman(non-skin fraction in forehead box, 2SR improvement from masking) = 0.072 (p=0.4528)
+                         method                                pool           n     nFail     MAE      medianAE     RMSE     pearsonR     severeGT10
+    _________________________________________________    ________________    ___    _____    ______    ________    ______    _________    __________
+
+    "2SR fbUnmask stride=2.0s [PRIMARY]"                 "MAIN_112"          112      0      9.5159     5.7315     14.229      0.39075        38    
+    "2SR fbUnmask stride=2.0s [PRIMARY]"                 "VIPL_v2_motion"     20      0      21.341     21.616     26.512     -0.17766        14    
+    "2SR+waveletOut fbUnmask"                            "MAIN_112"          112      0      15.607     12.626     20.189      0.31986        63    
+    "2SR+waveletOut fbUnmask"                            "VIPL_v2_motion"     20      0      21.347      20.37     26.159     -0.10207        15    
+    "2SR fbUnmask stride=0.0s (grid, not selected)"      "MAIN_112"          112      0      33.928     7.8352     53.849     0.027008        53    
+    "2SR fbUnmask stride=0.0s (grid, not selected)"      "VIPL_v2_motion"     20      0      45.753     24.698      66.35     0.040271        13    
+    "2SR fbUnmask stride=0.5s (grid, not selected)"      "MAIN_112"          112      0      9.8019     4.2734     19.128      0.26656        32    
+    "2SR fbUnmask stride=0.5s (grid, not selected)"      "VIPL_v2_motion"     20      0       16.53     14.047     21.883    -0.071981        11    
+    "2SR fbUnmask stride=1.0s (grid, not selected)"      "MAIN_112"          112      0      15.377     5.0482     26.674    -0.043462        43    
+    "2SR fbUnmask stride=1.0s (grid, not selected)"      "VIPL_v2_motion"     20      0      19.034     20.498     22.597     -0.10308        14    
+    "CHROM on fbUnmask"                                  "MAIN_112"          112      0      7.8344     4.0716     11.868      0.53187        32    
+    "CHROM on fbUnmask"                                  "VIPL_v2_motion"     20      0      8.8506     5.1812     12.641      0.53648         7    
+    "POS on fbUnmask"                                    "MAIN_112"          112      0      7.2217     4.4979     10.849      0.62341        30    
+    "POS on fbUnmask"                                    "VIPL_v2_motion"     20      0      10.565     5.8846     16.061       0.3076         6    
+    "2SR fbMask stride=2.0s [PRIMARY]"                   "MAIN_112"          112      0      10.128     4.0378     18.912      0.19584        37    
+    "2SR fbMask stride=2.0s [PRIMARY]"                   "VIPL_v2_motion"     20      0      21.321     17.172     27.857     0.069943        13    
+    "2SR+waveletOut fbMask"                              "MAIN_112"          112      0      15.522     13.095     20.075      0.31193        66    
+    "2SR+waveletOut fbMask"                              "VIPL_v2_motion"     20      0      19.916     17.172     25.602     0.084181        12    
+    "2SR fbMask stride=0.0s (grid, not selected)"        "MAIN_112"          112      0      35.898     10.265     55.594     0.013321        56    
+    "2SR fbMask stride=0.0s (grid, not selected)"        "VIPL_v2_motion"     20      0      28.953      12.67     44.047      0.29674        11    
+    "2SR fbMask stride=0.5s (grid, not selected)"        "MAIN_112"          112      0       8.706     4.3906       14.3      0.45841        32    
+    "2SR fbMask stride=0.5s (grid, not selected)"        "VIPL_v2_motion"     20      0      13.898     11.316     18.123      0.45299        10    
+    "2SR fbMask stride=1.0s (grid, not selected)"        "MAIN_112"          112      0      14.826     5.5663       25.8    -0.018933        42    
+    "2SR fbMask stride=1.0s (grid, not selected)"        "VIPL_v2_motion"     20      0      17.502     17.959      22.26      0.11934        12    
+    "CHROM on fbMask"                                    "MAIN_112"          112      0      8.5742     4.6081     14.098      0.37741        36    
+    "CHROM on fbMask"                                    "VIPL_v2_motion"     20      0      9.0928     4.9017     12.918      0.55211         7    
+    "POS on fbMask"                                      "MAIN_112"          112      0      9.6622     5.7257     15.229      0.32365        41    
+    "POS on fbMask"                                      "VIPL_v2_motion"     20      0      10.956     5.1463     16.083      0.38738         8    
+    "2SR faceUnmask stride=2.0s [PRIMARY]"               "MAIN_112"          112      0      10.925     6.5334     16.143      0.30056        44    
+    "2SR faceUnmask stride=2.0s [PRIMARY]"               "VIPL_v2_motion"     20      0      14.906     12.051     19.073      0.18136        10    
+    "2SR+waveletOut faceUnmask"                          "MAIN_112"          112      0      13.559     9.8182     18.467      0.22305        56    
+    "2SR+waveletOut faceUnmask"                          "VIPL_v2_motion"     20      0      15.627     13.846      20.16      0.02131        12    
+    "2SR faceUnmask stride=0.0s (grid, not selected)"    "MAIN_112"          112      0      33.984     22.317     49.805    -0.076053        64    
+    "2SR faceUnmask stride=0.0s (grid, not selected)"    "VIPL_v2_motion"     20      0      24.907     7.6287     43.083      0.25327         9    
+    "2SR faceUnmask stride=0.5s (grid, not selected)"    "MAIN_112"          112      0      9.4574     5.3169     14.086      0.37514        38    
+    "2SR faceUnmask stride=0.5s (grid, not selected)"    "VIPL_v2_motion"     20      0       13.27     5.8799     18.547     -0.18297         8    
+    "2SR faceUnmask stride=1.0s (grid, not selected)"    "MAIN_112"          112      0      14.368     6.9169     24.344    -0.084241        50    
+    "2SR faceUnmask stride=1.0s (grid, not selected)"    "VIPL_v2_motion"     20      0       13.56     10.696     18.135     0.030651        10    
+    "CHROM on faceUnmask"                                "MAIN_112"          112      0      11.448     6.8924     17.012      0.25447        45    
+    "CHROM on faceUnmask"                                "VIPL_v2_motion"     20      0      8.1001     5.0574     11.941      0.49302         4    
+    "POS on faceUnmask"                                  "MAIN_112"          112      0      10.094     6.2314     14.855      0.32274        41    
+    "POS on faceUnmask"                                  "VIPL_v2_motion"     20      0      12.248      6.428     16.936      0.13701         8    
+    "2SR faceMask stride=2.0s [PRIMARY]"                 "MAIN_112"          112      0      10.339     4.9242      18.32      0.30994        38    
+    "2SR faceMask stride=2.0s [PRIMARY]"                 "VIPL_v2_motion"     20      0      15.387     10.045     22.119    -0.099227        10    
+    "2SR+waveletOut faceMask"                            "MAIN_112"          112      0      13.799     8.2639     19.404       0.2469        50    
+    "2SR+waveletOut faceMask"                            "VIPL_v2_motion"     20      0      16.328     12.752     22.748    -0.086996        10    
+    "2SR faceMask stride=0.0s (grid, not selected)"      "MAIN_112"          112      0      18.197      3.983      36.58       0.1084        36    
+    "2SR faceMask stride=0.0s (grid, not selected)"      "VIPL_v2_motion"     20      0      13.668     3.7739     24.248      0.53595         5    
+    "2SR faceMask stride=0.5s (grid, not selected)"      "MAIN_112"          112      0      9.1967      4.429     15.694      0.34842        37    
+    "2SR faceMask stride=0.5s (grid, not selected)"      "VIPL_v2_motion"     20      0       12.57     5.9339     17.551      0.16807         9    
+    "2SR faceMask stride=1.0s (grid, not selected)"      "MAIN_112"          112      0      9.7239     3.8912     16.928      0.18726        35    
+    "2SR faceMask stride=1.0s (grid, not selected)"      "VIPL_v2_motion"     20      0      11.356     10.696     16.642      0.42824        10    
+    "CHROM on faceMask"                                  "MAIN_112"          112      0      9.0849     5.3008     13.171      0.53009        36    
+    "CHROM on faceMask"                                  "VIPL_v2_motion"     20      0      8.1804     5.1447     11.857      0.56076         5    
+    "POS on faceMask"                                    "MAIN_112"          112      0      8.9438     5.5511     12.647      0.59175        38    
+    "POS on faceMask"                                    "VIPL_v2_motion"     20      0      8.6348     3.8521     15.228      0.43379         4    
+

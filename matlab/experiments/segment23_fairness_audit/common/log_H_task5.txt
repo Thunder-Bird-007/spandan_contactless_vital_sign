@@ -1,0 +1,412 @@
+10/132
+20/132
+30/132
+40/132
+50/132
+60/132
+70/132
+80/132
+90/132
+100/132
+110/132
+120/132
+130/132
+
+=== MAE matrix (bpm), pool UBFC ===
+                                        <strong>E1Whole_clipFft</strong>    <strong>E2NaiveWindowed</strong>    <strong>E3RAKFNative_exp_B_1_</strong>    <strong>E4RAKFOriginal_division_</strong>    <strong>E5LGI_paperReadout256_90_</strong>    <strong>E6State_spaceTracker</strong>
+                                        <strong>_______________</strong>    <strong>_______________</strong>    <strong>_____________________</strong>    <strong>________________________</strong>    <strong>_________________________</strong>    <strong>____________________</strong>
+
+    <strong>CHROM (prod, wavelet)           </strong>        3.2622             3.1881                17.003                     9.8195                      2.6441                     3.1441       
+    <strong>POS (prod, wavelet)             </strong>        3.7723             2.7632                21.521                     12.745                      2.4763                     2.8441       
+    <strong>CHROM (no wavelet)              </strong>        3.7723             2.5074                11.019                     4.9533                      2.4763                     3.1441       
+    <strong>POS (no wavelet)                </strong>        3.7723              1.659                11.014                     5.0146                      2.4763                     3.1441       
+    <strong>GREEN (Seg4/18 form)            </strong>        12.559             11.228                40.684                     32.222                      15.338                      7.927       
+    <strong>cPACE Stage1+CHROM (global q)   </strong>        3.7723             1.8387                10.961                     5.4813                      2.4763                     2.5441       
+    <strong>cPACE Stage1+POS (global q)     </strong>        3.7723              1.659                11.014                     5.0146                      2.4763                     3.1441       
+    <strong>cPACE Full bw0.30               </strong>        2.4364             2.8165                5.6233                     3.6184                      4.2499                      3.771       
+    <strong>cPACE Full bw0.15               </strong>        3.1798             2.9302                2.7618                     3.0259                      2.8123                      2.871       
+    <strong>CIELab a* (orig, Seg18)         </strong>        3.6953             3.3773                 20.69                     12.845                      2.8119                     2.8441       
+    <strong>YCbCr Cb (orig, Seg18)          </strong>        17.983             6.5356                36.658                     26.846                      11.815                     7.4003       
+    <strong>YCbCr Cr (orig, Seg18)          </strong>        12.153             6.0453                27.077                     19.375                      8.1836                      3.471       
+    <strong>2SR (Seg22, forehead box)       </strong>        3.5726             4.1153                 11.48                     5.9001                      3.0079                      3.127       
+    <strong>LGI projection (Seg22)          </strong>          2.65             6.0376                17.389                     12.031                      4.8259                      3.771       
+    <strong>a* NATIVE (Task2)               </strong>        18.922              6.982                18.938                     15.663                      16.346                     21.127       
+    <strong>Cb NATIVE (Task2)               </strong>        16.876             11.654                 16.54                     12.417                      15.339                     22.671       
+    <strong>Cr NATIVE (Task2)               </strong>        18.922             10.192                 23.82                     18.993                       16.68                     30.427       
+    <strong>2SR skin-masked forehead (Task3)</strong>        2.8459             3.4207                10.759                     4.7883                      3.3439                      4.027       
+    <strong>2SR skin-masked face (Task3)    </strong>          13.8             7.4248                23.627                     12.452                      4.3523                     4.2717       
+
+rank under E1 whole-clip fft               : 5 8 9 10 14 11 12 1 4 7 17 13 6 2 18 16 19 3 15 
+rank under E2 naive windowed               : 8 5 4 1 18 3 2 6 7 9 14 13 11 12 15 19 17 10 16 
+rank under E3 RAKF native (exp, b=1)       : 10 14 7 5 19 4 6 2 1 13 18 17 8 11 12 9 16 3 15 
+rank under E4 RAKF original (division)     : 9 13 4 5 19 7 6 2 1 14 18 17 8 10 15 11 16 3 12 
+rank under E5 LGI-paper readout 256/90%    : 6 1 2 3 16 4 5 11 8 7 15 14 9 13 18 17 19 10 12 
+rank under E6 state-space tracker          : 6 2 7 8 16 1 9 11 4 3 15 10 5 12 17 18 19 13 14 
+CHROM (no wavelet)                     gap vs CHROM per estimator: [0.51 -0.68 -5.98 -4.87 -0.17 0] | vs POS: [0 -0.26 -10.5 -7.79 0 0.3] | sign flips vs CHROM: 1
+POS (no wavelet)                       gap vs CHROM per estimator: [0.51 -1.53 -5.99 -4.8 -0.17 0] | vs POS: [0 -1.1 -10.51 -7.73 0 0.3] | sign flips vs CHROM: 1
+GREEN (Seg4/18 form)                   gap vs CHROM per estimator: [9.3 8.04 23.68 22.4 12.69 4.78] | vs POS: [8.79 8.46 19.16 19.48 12.86 5.08] | sign flips vs CHROM: 0
+cPACE Stage1+CHROM (global q)          gap vs CHROM per estimator: [0.51 -1.35 -6.04 -4.34 -0.17 -0.6] | vs POS: [0 -0.92 -10.56 -7.26 0 -0.3] | sign flips vs CHROM: 1
+cPACE Stage1+POS (global q)            gap vs CHROM per estimator: [0.51 -1.53 -5.99 -4.8 -0.17 0] | vs POS: [0 -1.1 -10.51 -7.73 0 0.3] | sign flips vs CHROM: 1
+cPACE Full bw0.30                      gap vs CHROM per estimator: [-0.83 -0.37 -11.38 -6.2 1.61 0.63] | vs POS: [-1.34 0.05 -15.9 -9.13 1.77 0.93] | sign flips vs CHROM: 1
+cPACE Full bw0.15                      gap vs CHROM per estimator: [-0.08 -0.26 -14.24 -6.79 0.17 -0.27] | vs POS: [-0.59 0.17 -18.76 -9.72 0.34 0.03] | sign flips vs CHROM: 1
+CIELab a* (orig, Seg18)                gap vs CHROM per estimator: [0.43 0.19 3.69 3.03 0.17 -0.3] | vs POS: [-0.08 0.61 -0.83 0.1 0.34 0] | sign flips vs CHROM: 1
+YCbCr Cb (orig, Seg18)                 gap vs CHROM per estimator: [14.72 3.35 19.65 17.03 9.17 4.26] | vs POS: [14.21 3.77 15.14 14.1 9.34 4.56] | sign flips vs CHROM: 0
+YCbCr Cr (orig, Seg18)                 gap vs CHROM per estimator: [8.89 2.86 10.07 9.56 5.54 0.33] | vs POS: [8.38 3.28 5.56 6.63 5.71 0.63] | sign flips vs CHROM: 0
+2SR (Seg22, forehead box)              gap vs CHROM per estimator: [0.31 0.93 -5.52 -3.92 0.36 -0.02] | vs POS: [-0.2 1.35 -10.04 -6.85 0.53 0.28] | sign flips vs CHROM: 1
+LGI projection (Seg22)                 gap vs CHROM per estimator: [-0.61 2.85 0.39 2.21 2.18 0.63] | vs POS: [-1.12 3.27 -4.13 -0.71 2.35 0.93] | sign flips vs CHROM: 1
+a* NATIVE (Task2)                      gap vs CHROM per estimator: [15.66 3.79 1.93 5.84 13.7 17.98] | vs POS: [15.15 4.22 -2.58 2.92 13.87 18.28] | sign flips vs CHROM: 0
+Cb NATIVE (Task2)                      gap vs CHROM per estimator: [13.61 8.47 -0.46 2.6 12.69 19.53] | vs POS: [13.1 8.89 -4.98 -0.33 12.86 19.83] | sign flips vs CHROM: 1
+Cr NATIVE (Task2)                      gap vs CHROM per estimator: [15.66 7 6.82 9.17 14.04 27.28] | vs POS: [15.15 7.43 2.3 6.25 14.2 27.58] | sign flips vs CHROM: 0
+2SR skin-masked forehead (Task3)       gap vs CHROM per estimator: [-0.42 0.23 -6.24 -5.03 0.7 0.88] | vs POS: [-0.93 0.66 -10.76 -7.96 0.87 1.18] | sign flips vs CHROM: 1
+2SR skin-masked face (Task3)           gap vs CHROM per estimator: [10.54 4.24 6.62 2.63 1.71 1.13] | vs POS: [10.03 4.66 2.11 -0.29 1.88 1.43] | sign flips vs CHROM: 0
+
+=== MAE matrix (bpm), pool VIPL_v1 ===
+                                        <strong>E1Whole_clipFft</strong>    <strong>E2NaiveWindowed</strong>    <strong>E3RAKFNative_exp_B_1_</strong>    <strong>E4RAKFOriginal_division_</strong>    <strong>E5LGI_paperReadout256_90_</strong>    <strong>E6State_spaceTracker</strong>
+                                        <strong>_______________</strong>    <strong>_______________</strong>    <strong>_____________________</strong>    <strong>________________________</strong>    <strong>_________________________</strong>    <strong>____________________</strong>
+
+    <strong>CHROM (prod, wavelet)           </strong>        8.0481             7.7908                11.713                     10.768                      6.5498                     6.6986       
+    <strong>POS (prod, wavelet)             </strong>        7.3829             7.5229                9.9729                     9.2029                      6.8929                     6.4546       
+    <strong>CHROM (no wavelet)              </strong>        9.3458             10.338                12.899                     12.148                      6.0077                      9.926       
+    <strong>POS (no wavelet)                </strong>        8.9089             9.5412                11.277                     10.531                      5.8354                     7.0554       
+    <strong>GREEN (Seg4/18 form)            </strong>        15.096             11.973                17.726                     16.376                      11.179                     16.984       
+    <strong>cPACE Stage1+CHROM (global q)   </strong>        9.1847             9.6285                13.066                     12.141                      5.9566                     10.776       
+    <strong>cPACE Stage1+POS (global q)     </strong>        8.9089             9.5412                11.277                     10.531                      5.8354                     7.0554       
+    <strong>cPACE Full bw0.30               </strong>        11.304             10.236                11.571                     11.061                      9.6335                      9.868       
+    <strong>cPACE Full bw0.15               </strong>        9.9929             9.9723                10.647                     10.348                      9.7491                      9.771       
+    <strong>CIELab a* (orig, Seg18)         </strong>        9.8043             9.4369                12.935                         12                      7.8198                     13.725       
+    <strong>YCbCr Cb (orig, Seg18)          </strong>        14.757             13.312                20.245                     18.735                      12.988                     20.082       
+    <strong>YCbCr Cr (orig, Seg18)          </strong>        11.911             9.4746                15.423                     14.087                      9.8128                     15.604       
+    <strong>2SR (Seg22, forehead box)       </strong>        9.7936             12.763                15.896                     14.857                      8.0875                     13.871       
+    <strong>LGI projection (Seg22)          </strong>        9.5469             8.3419                11.202                     10.277                       7.898                     9.7422       
+    <strong>a* NATIVE (Task2)               </strong>        16.372             14.246                  18.5                     17.502                      8.6581                     25.284       
+    <strong>Cb NATIVE (Task2)               </strong>        19.887             18.941                23.752                     22.122                      11.025                     42.406       
+    <strong>Cr NATIVE (Task2)               </strong>        15.531             14.566                19.245                     18.185                      10.507                     24.673       
+    <strong>2SR skin-masked forehead (Task3)</strong>        10.468             13.216                17.117                     16.023                       7.866                     14.587       
+    <strong>2SR skin-masked face (Task3)    </strong>        10.178             8.5875                11.348                     10.602                      7.7321                     10.613       
+
+rank under E1 whole-clip fft               : 2 1 6 3 16 5 4 13 10 9 15 14 8 7 18 19 17 12 11 
+rank under E2 naive windowed               : 2 1 12 7 13 9 8 11 10 5 16 6 14 3 17 19 18 15 4 
+rank under E3 RAKF native (exp, b=1)       : 8 1 9 4 15 11 5 7 2 10 18 12 13 3 16 19 17 14 6 
+rank under E4 RAKF original (division)     : 7 1 11 5 15 10 4 8 3 9 18 12 13 2 16 19 17 14 6 
+rank under E5 LGI-paper readout 256/90%    : 5 6 4 1 18 3 2 13 14 8 19 15 11 10 12 17 16 9 7 
+rank under E6 state-space tracker          : 2 1 8 3 15 10 4 7 6 11 16 14 12 5 18 19 17 13 9 
+CHROM (no wavelet)                     gap vs CHROM per estimator: [1.3 2.55 1.19 1.38 -0.54 3.23] | vs POS: [1.96 2.81 2.93 2.95 -0.89 3.47] | sign flips vs CHROM: 1
+POS (no wavelet)                       gap vs CHROM per estimator: [0.86 1.75 -0.44 -0.24 -0.71 0.36] | vs POS: [1.53 2.02 1.3 1.33 -1.06 0.6] | sign flips vs CHROM: 1
+GREEN (Seg4/18 form)                   gap vs CHROM per estimator: [7.05 4.18 6.01 5.61 4.63 10.29] | vs POS: [7.71 4.45 7.75 7.17 4.29 10.53] | sign flips vs CHROM: 0
+cPACE Stage1+CHROM (global q)          gap vs CHROM per estimator: [1.14 1.84 1.35 1.37 -0.59 4.08] | vs POS: [1.8 2.11 3.09 2.94 -0.94 4.32] | sign flips vs CHROM: 1
+cPACE Stage1+POS (global q)            gap vs CHROM per estimator: [0.86 1.75 -0.44 -0.24 -0.71 0.36] | vs POS: [1.53 2.02 1.3 1.33 -1.06 0.6] | sign flips vs CHROM: 1
+cPACE Full bw0.30                      gap vs CHROM per estimator: [3.26 2.45 -0.14 0.29 3.08 3.17] | vs POS: [3.92 2.71 1.6 1.86 2.74 3.41] | sign flips vs CHROM: 1
+cPACE Full bw0.15                      gap vs CHROM per estimator: [1.94 2.18 -1.07 -0.42 3.2 3.07] | vs POS: [2.61 2.45 0.67 1.14 2.86 3.32] | sign flips vs CHROM: 1
+CIELab a* (orig, Seg18)                gap vs CHROM per estimator: [1.76 1.65 1.22 1.23 1.27 7.03] | vs POS: [2.42 1.91 2.96 2.8 0.93 7.27] | sign flips vs CHROM: 0
+YCbCr Cb (orig, Seg18)                 gap vs CHROM per estimator: [6.71 5.52 8.53 7.97 6.44 13.38] | vs POS: [7.37 5.79 10.27 9.53 6.1 13.63] | sign flips vs CHROM: 0
+YCbCr Cr (orig, Seg18)                 gap vs CHROM per estimator: [3.86 1.68 3.71 3.32 3.26 8.91] | vs POS: [4.53 1.95 5.45 4.88 2.92 9.15] | sign flips vs CHROM: 0
+2SR (Seg22, forehead box)              gap vs CHROM per estimator: [1.75 4.97 4.18 4.09 1.54 7.17] | vs POS: [2.41 5.24 5.92 5.65 1.19 7.42] | sign flips vs CHROM: 0
+LGI projection (Seg22)                 gap vs CHROM per estimator: [1.5 0.55 -0.51 -0.49 1.35 3.04] | vs POS: [2.16 0.82 1.23 1.07 1.01 3.29] | sign flips vs CHROM: 1
+a* NATIVE (Task2)                      gap vs CHROM per estimator: [8.32 6.46 6.79 6.73 2.11 18.59] | vs POS: [8.99 6.72 8.53 8.3 1.77 18.83] | sign flips vs CHROM: 0
+Cb NATIVE (Task2)                      gap vs CHROM per estimator: [11.84 11.15 12.04 11.35 4.47 35.71] | vs POS: [12.5 11.42 13.78 12.92 4.13 35.95] | sign flips vs CHROM: 0
+Cr NATIVE (Task2)                      gap vs CHROM per estimator: [7.48 6.78 7.53 7.42 3.96 17.97] | vs POS: [8.15 7.04 9.27 8.98 3.61 18.22] | sign flips vs CHROM: 0
+2SR skin-masked forehead (Task3)       gap vs CHROM per estimator: [2.42 5.42 5.4 5.26 1.32 7.89] | vs POS: [3.09 5.69 7.14 6.82 0.97 8.13] | sign flips vs CHROM: 0
+2SR skin-masked face (Task3)           gap vs CHROM per estimator: [2.13 0.8 -0.36 -0.17 1.18 3.91] | vs POS: [2.79 1.06 1.38 1.4 0.84 4.16] | sign flips vs CHROM: 1
+
+=== MAE matrix (bpm), pool MAIN_112 ===
+                                        <strong>E1Whole_clipFft</strong>    <strong>E2NaiveWindowed</strong>    <strong>E3RAKFNative_exp_B_1_</strong>    <strong>E4RAKFOriginal_division_</strong>    <strong>E5LGI_paperReadout256_90_</strong>    <strong>E6State_spaceTracker</strong>
+                                        <strong>_______________</strong>    <strong>_______________</strong>    <strong>_____________________</strong>    <strong>________________________</strong>    <strong>_________________________</strong>    <strong>____________________</strong>
+
+    <strong>CHROM (prod, wavelet)           </strong>        7.8344             7.5853                11.949                     10.725                      6.3754                     6.5399       
+    <strong>POS (prod, wavelet)             </strong>        7.2217             7.3104                10.488                     9.3611                      6.6957                     6.2934       
+    <strong>CHROM (no wavelet)              </strong>        9.0969             9.9881                12.815                     11.827                      5.8501                     9.6232       
+    <strong>POS (no wavelet)                </strong>        8.6795             9.1893                11.266                     10.285                      5.6854                     6.8808       
+    <strong>GREEN (Seg4/18 form)            </strong>        14.983             11.939                18.751                     17.083                      11.365                     16.579       
+    <strong>cPACE Stage1+CHROM (global q)   </strong>        8.9431             9.2807                12.972                     11.843                      5.8012                     10.408       
+    <strong>cPACE Stage1+POS (global q)     </strong>        8.6795             9.1893                11.266                     10.285                      5.6854                     6.8808       
+    <strong>cPACE Full bw0.30               </strong>        10.908             9.9046                11.305                     10.729                      9.3932                     9.5958       
+    <strong>cPACE Full bw0.15               </strong>        9.6888             9.6579                10.295                     10.021                      9.4394                      9.463       
+    <strong>CIELab a* (orig, Seg18)         </strong>        9.5316             9.1664                13.281                     12.038                      7.5962                     13.239       
+    <strong>YCbCr Cb (orig, Seg18)          </strong>        14.901             13.009                20.977                     19.097                      12.936                     19.516       
+    <strong>YCbCr Cr (orig, Seg18)          </strong>        11.922             9.3215                15.944                     14.323                      9.7401                     15.063       
+    <strong>2SR (Seg22, forehead box)       </strong>        9.5159             12.377                15.699                     14.457                      7.8608                     13.391       
+    <strong>LGI projection (Seg22)          </strong>         9.239              8.239                11.479                     10.355                      7.7608                     9.4757       
+    <strong>a* NATIVE (Task2)               </strong>        16.486             13.922                 18.52                      17.42                      9.0013                     25.099       
+    <strong>Cb NATIVE (Task2)               </strong>        19.752             18.615                 23.43                     21.689                      11.217                     41.525       
+    <strong>Cr NATIVE (Task2)               </strong>        15.682             14.371                 19.45                     18.221                      10.783                      24.93       
+    <strong>2SR skin-masked forehead (Task3)</strong>        10.128             12.778                16.834                     15.521                      7.6641                     14.115       
+    <strong>2SR skin-masked face (Task3)    </strong>        10.339             8.5356                11.897                     10.685                      7.5813                     10.329       
+
+rank under E1 whole-clip fft               : 2 1 6 3 16 5 4 13 10 9 15 14 8 7 18 19 17 11 12 
+rank under E2 naive windowed               : 2 1 12 6 13 8 7 11 10 5 16 9 14 3 17 19 18 15 4 
+rank under E3 RAKF native (exp, b=1)       : 8 2 9 3 16 10 4 5 1 11 18 13 12 6 15 19 17 14 7 
+rank under E4 RAKF original (division)     : 7 1 9 4 15 10 3 8 2 11 18 12 13 5 16 19 17 14 6 
+rank under E5 LGI-paper readout 256/90%    : 5 6 4 1 18 3 2 13 14 8 19 15 11 10 12 17 16 9 7 
+rank under E6 state-space tracker          : 2 1 8 3 15 10 4 7 5 11 16 14 12 6 18 19 17 13 9 
+CHROM (no wavelet)                     gap vs CHROM per estimator: [1.26 2.4 0.87 1.1 -0.53 3.08] | vs POS: [1.88 2.68 2.33 2.47 -0.85 3.33] | sign flips vs CHROM: 1
+POS (no wavelet)                       gap vs CHROM per estimator: [0.85 1.6 -0.68 -0.44 -0.69 0.34] | vs POS: [1.46 1.88 0.78 0.92 -1.01 0.59] | sign flips vs CHROM: 1
+GREEN (Seg4/18 form)                   gap vs CHROM per estimator: [7.15 4.35 6.8 6.36 4.99 10.04] | vs POS: [7.76 4.63 8.26 7.72 4.67 10.29] | sign flips vs CHROM: 0
+cPACE Stage1+CHROM (global q)          gap vs CHROM per estimator: [1.11 1.7 1.02 1.12 -0.57 3.87] | vs POS: [1.72 1.97 2.48 2.48 -0.89 4.11] | sign flips vs CHROM: 1
+cPACE Stage1+POS (global q)            gap vs CHROM per estimator: [0.85 1.6 -0.68 -0.44 -0.69 0.34] | vs POS: [1.46 1.88 0.78 0.92 -1.01 0.59] | sign flips vs CHROM: 1
+cPACE Full bw0.30                      gap vs CHROM per estimator: [3.07 2.32 -0.64 0 3.02 3.06] | vs POS: [3.69 2.59 0.82 1.37 2.7 3.3] | sign flips vs CHROM: 1
+cPACE Full bw0.15                      gap vs CHROM per estimator: [1.85 2.07 -1.65 -0.7 3.06 2.92] | vs POS: [2.47 2.35 -0.19 0.66 2.74 3.17] | sign flips vs CHROM: 1
+CIELab a* (orig, Seg18)                gap vs CHROM per estimator: [1.7 1.58 1.33 1.31 1.22 6.7] | vs POS: [2.31 1.86 2.79 2.68 0.9 6.95] | sign flips vs CHROM: 0
+YCbCr Cb (orig, Seg18)                 gap vs CHROM per estimator: [7.07 5.42 9.03 8.37 6.56 12.98] | vs POS: [7.68 5.7 10.49 9.74 6.24 13.22] | sign flips vs CHROM: 0
+YCbCr Cr (orig, Seg18)                 gap vs CHROM per estimator: [4.09 1.74 3.99 3.6 3.36 8.52] | vs POS: [4.7 2.01 5.46 4.96 3.04 8.77] | sign flips vs CHROM: 0
+2SR (Seg22, forehead box)              gap vs CHROM per estimator: [1.68 4.79 3.75 3.73 1.49 6.85] | vs POS: [2.29 5.07 5.21 5.1 1.17 7.1] | sign flips vs CHROM: 0
+LGI projection (Seg22)                 gap vs CHROM per estimator: [1.4 0.65 -0.47 -0.37 1.39 2.94] | vs POS: [2.02 0.93 0.99 0.99 1.07 3.18] | sign flips vs CHROM: 1
+a* NATIVE (Task2)                      gap vs CHROM per estimator: [8.65 6.34 6.57 6.69 2.63 18.56] | vs POS: [9.26 6.61 8.03 8.06 2.31 18.81] | sign flips vs CHROM: 0
+Cb NATIVE (Task2)                      gap vs CHROM per estimator: [11.92 11.03 11.48 10.96 4.84 34.98] | vs POS: [12.53 11.31 12.94 12.33 4.52 35.23] | sign flips vs CHROM: 0
+Cr NATIVE (Task2)                      gap vs CHROM per estimator: [7.85 6.79 7.5 7.5 4.41 18.39] | vs POS: [8.46 7.06 8.96 8.86 4.09 18.64] | sign flips vs CHROM: 0
+2SR skin-masked forehead (Task3)       gap vs CHROM per estimator: [2.29 5.19 4.88 4.8 1.29 7.58] | vs POS: [2.91 5.47 6.35 6.16 0.97 7.82] | sign flips vs CHROM: 0
+2SR skin-masked face (Task3)           gap vs CHROM per estimator: [2.5 0.95 -0.05 -0.04 1.21 3.79] | vs POS: [3.12 1.23 1.41 1.32 0.89 4.04] | sign flips vs CHROM: 1
+
+=== MAE matrix (bpm), pool VIPL_v2_motion ===
+                                        <strong>E1Whole_clipFft</strong>    <strong>E2NaiveWindowed</strong>    <strong>E3RAKFNative_exp_B_1_</strong>    <strong>E4RAKFOriginal_division_</strong>    <strong>E5LGI_paperReadout256_90_</strong>    <strong>E6State_spaceTracker</strong>
+                                        <strong>_______________</strong>    <strong>_______________</strong>    <strong>_____________________</strong>    <strong>________________________</strong>    <strong>_________________________</strong>    <strong>____________________</strong>
+
+    <strong>CHROM (prod, wavelet)           </strong>        8.8506             9.5624                10.643                     10.331                       8.251                     9.2356       
+    <strong>POS (prod, wavelet)             </strong>        10.565             10.736                17.123                     16.052                      9.4952                     9.3011       
+    <strong>CHROM (no wavelet)              </strong>        8.1821             8.7618                11.643                     11.152                      8.3159                     6.6679       
+    <strong>POS (no wavelet)                </strong>        9.0432             9.7834                16.401                     15.424                      8.8792                     9.1154       
+    <strong>GREEN (Seg4/18 form)            </strong>        21.805             14.952                21.353                     20.033                      18.374                     19.412       
+    <strong>cPACE Stage1+CHROM (global q)   </strong>        10.052             7.7856                11.213                     10.732                       8.687                     12.936       
+    <strong>cPACE Stage1+POS (global q)     </strong>        9.0432             9.7834                16.401                     15.424                      8.8792                     9.1154       
+    <strong>cPACE Full bw0.30               </strong>        24.954             18.076                25.294                     23.371                      17.142                     25.931       
+    <strong>cPACE Full bw0.15               </strong>        16.613             15.982                15.653                     15.756                      16.155                     16.506       
+    <strong>CIELab a* (orig, Seg18)         </strong>        14.509             13.836                20.002                     18.902                      11.539                     18.496       
+    <strong>YCbCr Cb (orig, Seg18)          </strong>        22.054             17.472                22.126                     21.458                      17.777                     20.834       
+    <strong>YCbCr Cr (orig, Seg18)          </strong>        20.525             18.977                24.227                     23.513                      18.831                      19.08       
+    <strong>2SR (Seg22, forehead box)       </strong>        21.341             14.658                18.248                     17.187                      15.226                     22.787       
+    <strong>LGI projection (Seg22)          </strong>        16.929             13.917                 18.84                     17.956                      12.275                     21.571       
+    <strong>a* NATIVE (Task2)               </strong>        21.227             15.937                17.309                     16.951                      18.734                     27.714       
+    <strong>Cb NATIVE (Task2)               </strong>        23.844             20.624                18.125                     18.127                      20.019                     27.686       
+    <strong>Cr NATIVE (Task2)               </strong>        21.437             16.424                19.492                      18.68                      20.005                     24.704       
+    <strong>2SR skin-masked forehead (Task3)</strong>        21.321             17.235                14.172                     13.988                      15.178                     26.451       
+    <strong>2SR skin-masked face (Task3)    </strong>        15.387             10.365                13.696                      13.06                       14.11                     14.223       
+
+rank under E1 whole-clip fft               : 2 6 1 3 16 5 4 19 9 7 17 11 14 10 12 18 15 13 8 
+rank under E2 naive windowed               : 3 7 2 4 11 1 5 17 13 8 16 18 10 9 12 19 14 15 6 
+rank under E3 RAKF native (exp, b=1)       : 1 9 3 7 16 2 8 19 6 15 17 18 12 13 10 11 14 5 4 
+rank under E4 RAKF original (division)     : 1 9 3 7 16 2 6 18 8 15 17 19 11 12 10 13 14 5 4 
+rank under E5 LGI-paper readout 256/90%    : 1 6 2 4 15 3 5 13 12 7 14 17 11 8 16 19 18 10 9 
+rank under E6 state-space tracker          : 4 5 1 2 11 6 3 16 8 9 12 10 14 13 19 18 15 17 7 
+CHROM (no wavelet)                     gap vs CHROM per estimator: [-0.67 -0.8 1 0.82 0.06 -2.57] | vs POS: [-2.38 -1.97 -5.48 -4.9 -1.18 -2.63] | sign flips vs CHROM: 1
+POS (no wavelet)                       gap vs CHROM per estimator: [0.19 0.22 5.76 5.09 0.63 -0.12] | vs POS: [-1.52 -0.95 -0.72 -0.63 -0.62 -0.19] | sign flips vs CHROM: 1
+GREEN (Seg4/18 form)                   gap vs CHROM per estimator: [12.95 5.39 10.71 9.7 10.12 10.18] | vs POS: [11.24 4.22 4.23 3.98 8.88 10.11] | sign flips vs CHROM: 0
+cPACE Stage1+CHROM (global q)          gap vs CHROM per estimator: [1.2 -1.78 0.57 0.4 0.44 3.7] | vs POS: [-0.51 -2.95 -5.91 -5.32 -0.81 3.63] | sign flips vs CHROM: 1
+cPACE Stage1+POS (global q)            gap vs CHROM per estimator: [0.19 0.22 5.76 5.09 0.63 -0.12] | vs POS: [-1.52 -0.95 -0.72 -0.63 -0.62 -0.19] | sign flips vs CHROM: 1
+cPACE Full bw0.30                      gap vs CHROM per estimator: [16.1 8.51 14.65 13.04 8.89 16.7] | vs POS: [14.39 7.34 8.17 7.32 7.65 16.63] | sign flips vs CHROM: 0
+cPACE Full bw0.15                      gap vs CHROM per estimator: [7.76 6.42 5.01 5.43 7.9 7.27] | vs POS: [6.05 5.25 -1.47 -0.3 6.66 7.2] | sign flips vs CHROM: 0
+CIELab a* (orig, Seg18)                gap vs CHROM per estimator: [5.66 4.27 9.36 8.57 3.29 9.26] | vs POS: [3.94 3.1 2.88 2.85 2.04 9.19] | sign flips vs CHROM: 0
+YCbCr Cb (orig, Seg18)                 gap vs CHROM per estimator: [13.2 7.91 11.48 11.13 9.53 11.6] | vs POS: [11.49 6.74 5 5.41 8.28 11.53] | sign flips vs CHROM: 0
+YCbCr Cr (orig, Seg18)                 gap vs CHROM per estimator: [11.67 9.41 13.58 13.18 10.58 9.84] | vs POS: [9.96 8.24 7.1 7.46 9.34 9.78] | sign flips vs CHROM: 0
+2SR (Seg22, forehead box)              gap vs CHROM per estimator: [12.49 5.1 7.6 6.86 6.97 13.55] | vs POS: [10.78 3.92 1.12 1.13 5.73 13.49] | sign flips vs CHROM: 0
+LGI projection (Seg22)                 gap vs CHROM per estimator: [8.08 4.35 8.2 7.62 4.02 12.34] | vs POS: [6.36 3.18 1.72 1.9 2.78 12.27] | sign flips vs CHROM: 0
+a* NATIVE (Task2)                      gap vs CHROM per estimator: [12.38 6.37 6.67 6.62 10.48 18.48] | vs POS: [10.66 5.2 0.19 0.9 9.24 18.41] | sign flips vs CHROM: 0
+Cb NATIVE (Task2)                      gap vs CHROM per estimator: [14.99 11.06 7.48 7.8 11.77 18.45] | vs POS: [13.28 9.89 1 2.07 10.52 18.38] | sign flips vs CHROM: 0
+Cr NATIVE (Task2)                      gap vs CHROM per estimator: [12.59 6.86 8.85 8.35 11.75 15.47] | vs POS: [10.87 5.69 2.37 2.63 10.51 15.4] | sign flips vs CHROM: 0
+2SR skin-masked forehead (Task3)       gap vs CHROM per estimator: [12.47 7.67 3.53 3.66 6.93 17.22] | vs POS: [10.76 6.5 -2.95 -2.06 5.68 17.15] | sign flips vs CHROM: 0
+2SR skin-masked face (Task3)           gap vs CHROM per estimator: [6.54 0.8 3.05 2.73 5.86 4.99] | vs POS: [4.82 -0.37 -3.43 -2.99 4.61 4.92] | sign flips vs CHROM: 0
+
+=== Paired per-subject tests vs production CHROM(k=1)/POS(k=2), same estimator ===
+E1 whole-clip fft              vs CHROM | MAIN_112 | CHROM (no wavelet)             | n=112 better>1 20 worse>1 18 severe-worse 8 p=0.8890
+E1 whole-clip fft              vs POS | MAIN_112 | CHROM (no wavelet)             | n=112 better>1 23 worse>1 21 severe-worse 10 p=0.8083
+E1 whole-clip fft              vs CHROM | V2   | CHROM (no wavelet)             | n=20 better>1 2 worse>1 3 severe-worse 1 p=1.0000
+E1 whole-clip fft              vs POS | V2   | CHROM (no wavelet)             | n=20 better>1 6 worse>1 4 severe-worse 1 p=0.3750
+E1 whole-clip fft              vs CHROM | MAIN_112 | POS (no wavelet)               | n=112 better>1 25 worse>1 22 severe-worse 11 p=0.9654
+E1 whole-clip fft              vs POS | MAIN_112 | POS (no wavelet)               | n=112 better>1 16 worse>1 15 severe-worse 9 p=0.7779
+E1 whole-clip fft              vs CHROM | V2   | POS (no wavelet)               | n=20 better>1 5 worse>1 6 severe-worse 4 p=0.8984
+E1 whole-clip fft              vs POS | V2   | POS (no wavelet)               | n=20 better>1 4 worse>1 2 severe-worse 0 p=0.5625
+E1 whole-clip fft              vs CHROM | MAIN_112 | GREEN (Seg4/18 form)           | n=112 better>1 23 worse>1 70 severe-worse 46 p=0.0000
+E1 whole-clip fft              vs POS | MAIN_112 | GREEN (Seg4/18 form)           | n=112 better>1 20 worse>1 73 severe-worse 45 p=0.0000
+E1 whole-clip fft              vs CHROM | V2   | GREEN (Seg4/18 form)           | n=20 better>1 2 worse>1 16 severe-worse 11 p=0.0012
+E1 whole-clip fft              vs POS | V2   | GREEN (Seg4/18 form)           | n=20 better>1 2 worse>1 14 severe-worse 11 p=0.0027
+E1 whole-clip fft              vs CHROM | MAIN_112 | cPACE Stage1+CHROM (global q)  | n=112 better>1 25 worse>1 22 severe-worse 9 p=0.7102
+E1 whole-clip fft              vs POS | MAIN_112 | cPACE Stage1+CHROM (global q)  | n=112 better>1 23 worse>1 26 severe-worse 10 p=0.8075
+E1 whole-clip fft              vs CHROM | V2   | cPACE Stage1+CHROM (global q)  | n=20 better>1 4 worse>1 5 severe-worse 3 p=0.7344
+E1 whole-clip fft              vs POS | V2   | cPACE Stage1+CHROM (global q)  | n=20 better>1 5 worse>1 4 severe-worse 1 p=0.5703
+E1 whole-clip fft              vs CHROM | MAIN_112 | cPACE Stage1+POS (global q)    | n=112 better>1 25 worse>1 22 severe-worse 11 p=0.9654
+E1 whole-clip fft              vs POS | MAIN_112 | cPACE Stage1+POS (global q)    | n=112 better>1 16 worse>1 15 severe-worse 9 p=0.7779
+E1 whole-clip fft              vs CHROM | V2   | cPACE Stage1+POS (global q)    | n=20 better>1 5 worse>1 6 severe-worse 4 p=0.8984
+E1 whole-clip fft              vs POS | V2   | cPACE Stage1+POS (global q)    | n=20 better>1 4 worse>1 2 severe-worse 0 p=0.5625
+E1 whole-clip fft              vs CHROM | MAIN_112 | cPACE Full bw0.30              | n=112 better>1 24 worse>1 45 severe-worse 26 p=0.0018
+E1 whole-clip fft              vs POS | MAIN_112 | cPACE Full bw0.30              | n=112 better>1 18 worse>1 48 severe-worse 26 p=0.0001
+E1 whole-clip fft              vs CHROM | V2   | cPACE Full bw0.30              | n=20 better>1 3 worse>1 14 severe-worse 8 p=0.0129
+E1 whole-clip fft              vs POS | V2   | cPACE Full bw0.30              | n=20 better>1 3 worse>1 13 severe-worse 7 p=0.0084
+E1 whole-clip fft              vs CHROM | MAIN_112 | cPACE Full bw0.15              | n=112 better>1 29 worse>1 41 severe-worse 18 p=0.0363
+E1 whole-clip fft              vs POS | MAIN_112 | cPACE Full bw0.15              | n=112 better>1 19 worse>1 40 severe-worse 16 p=0.0012
+E1 whole-clip fft              vs CHROM | V2   | cPACE Full bw0.15              | n=20 better>1 2 worse>1 12 severe-worse 6 p=0.0181
+E1 whole-clip fft              vs POS | V2   | cPACE Full bw0.15              | n=20 better>1 3 worse>1 9 severe-worse 4 p=0.0295
+E1 whole-clip fft              vs CHROM | MAIN_112 | CIELab a* (orig, Seg18)        | n=112 better>1 24 worse>1 31 severe-worse 18 p=0.1206
+E1 whole-clip fft              vs POS | MAIN_112 | CIELab a* (orig, Seg18)        | n=112 better>1 20 worse>1 31 severe-worse 17 p=0.0266
+E1 whole-clip fft              vs CHROM | V2   | CIELab a* (orig, Seg18)        | n=20 better>1 5 worse>1 11 severe-worse 7 p=0.1208
+E1 whole-clip fft              vs POS | V2   | CIELab a* (orig, Seg18)        | n=20 better>1 7 worse>1 9 severe-worse 7 p=0.2146
+E1 whole-clip fft              vs CHROM | MAIN_112 | YCbCr Cb (orig, Seg18)         | n=112 better>1 19 worse>1 69 severe-worse 44 p=0.0000
+E1 whole-clip fft              vs POS | MAIN_112 | YCbCr Cb (orig, Seg18)         | n=112 better>1 14 worse>1 70 severe-worse 41 p=0.0000
+E1 whole-clip fft              vs CHROM | V2   | YCbCr Cb (orig, Seg18)         | n=20 better>1 4 worse>1 15 severe-worse 11 p=0.0033
+E1 whole-clip fft              vs POS | V2   | YCbCr Cb (orig, Seg18)         | n=20 better>1 4 worse>1 13 severe-worse 10 p=0.0049
+E1 whole-clip fft              vs CHROM | MAIN_112 | YCbCr Cr (orig, Seg18)         | n=112 better>1 28 worse>1 47 severe-worse 32 p=0.0014
+E1 whole-clip fft              vs POS | MAIN_112 | YCbCr Cr (orig, Seg18)         | n=112 better>1 24 worse>1 47 severe-worse 31 p=0.0002
+E1 whole-clip fft              vs CHROM | V2   | YCbCr Cr (orig, Seg18)         | n=20 better>1 4 worse>1 15 severe-worse 11 p=0.0064
+E1 whole-clip fft              vs POS | V2   | YCbCr Cr (orig, Seg18)         | n=20 better>1 5 worse>1 14 severe-worse 11 p=0.0141
+E1 whole-clip fft              vs CHROM | MAIN_112 | 2SR (Seg22, forehead box)      | n=112 better>1 28 worse>1 43 severe-worse 20 p=0.0657
+E1 whole-clip fft              vs POS | MAIN_112 | 2SR (Seg22, forehead box)      | n=112 better>1 25 worse>1 44 severe-worse 20 p=0.0212
+E1 whole-clip fft              vs CHROM | V2   | 2SR (Seg22, forehead box)      | n=20 better>1 4 worse>1 14 severe-worse 12 p=0.0100
+E1 whole-clip fft              vs POS | V2   | 2SR (Seg22, forehead box)      | n=20 better>1 3 worse>1 15 severe-worse 10 p=0.0111
+E1 whole-clip fft              vs CHROM | MAIN_112 | LGI projection (Seg22)         | n=112 better>1 22 worse>1 22 severe-worse 16 p=0.2161
+E1 whole-clip fft              vs POS | MAIN_112 | LGI projection (Seg22)         | n=112 better>1 14 worse>1 21 severe-worse 15 p=0.0294
+E1 whole-clip fft              vs CHROM | V2   | LGI projection (Seg22)         | n=20 better>1 1 worse>1 11 severe-worse 7 p=0.0161
+E1 whole-clip fft              vs POS | V2   | LGI projection (Seg22)         | n=20 better>1 2 worse>1 7 severe-worse 5 p=0.0195
+E1 whole-clip fft              vs CHROM | MAIN_112 | a* NATIVE (Task2)              | n=112 better>1 27 worse>1 44 severe-worse 28 p=0.0007
+E1 whole-clip fft              vs POS | MAIN_112 | a* NATIVE (Task2)              | n=112 better>1 25 worse>1 46 severe-worse 30 p=0.0001
+E1 whole-clip fft              vs CHROM | V2   | a* NATIVE (Task2)              | n=20 better>1 4 worse>1 15 severe-worse 10 p=0.0043
+E1 whole-clip fft              vs POS | V2   | a* NATIVE (Task2)              | n=20 better>1 4 worse>1 15 severe-worse 10 p=0.0048
+E1 whole-clip fft              vs CHROM | MAIN_112 | Cb NATIVE (Task2)              | n=112 better>1 26 worse>1 68 severe-worse 42 p=0.0000
+E1 whole-clip fft              vs POS | MAIN_112 | Cb NATIVE (Task2)              | n=112 better>1 22 worse>1 73 severe-worse 41 p=0.0000
+E1 whole-clip fft              vs CHROM | V2   | Cb NATIVE (Task2)              | n=20 better>1 3 worse>1 16 severe-worse 11 p=0.0025
+E1 whole-clip fft              vs POS | V2   | Cb NATIVE (Task2)              | n=20 better>1 3 worse>1 16 severe-worse 11 p=0.0062
+E1 whole-clip fft              vs CHROM | MAIN_112 | Cr NATIVE (Task2)              | n=112 better>1 27 worse>1 54 severe-worse 33 p=0.0001
+E1 whole-clip fft              vs POS | MAIN_112 | Cr NATIVE (Task2)              | n=112 better>1 19 worse>1 56 severe-worse 33 p=0.0000
+E1 whole-clip fft              vs CHROM | V2   | Cr NATIVE (Task2)              | n=20 better>1 2 worse>1 16 severe-worse 11 p=0.0016
+E1 whole-clip fft              vs POS | V2   | Cr NATIVE (Task2)              | n=20 better>1 3 worse>1 15 severe-worse 10 p=0.0021
+E1 whole-clip fft              vs CHROM | MAIN_112 | 2SR skin-masked forehead (Task3) | n=112 better>1 29 worse>1 41 severe-worse 18 p=0.1482
+E1 whole-clip fft              vs POS | MAIN_112 | 2SR skin-masked forehead (Task3) | n=112 better>1 28 worse>1 43 severe-worse 19 p=0.0826
+E1 whole-clip fft              vs CHROM | V2   | 2SR skin-masked forehead (Task3) | n=20 better>1 4 worse>1 14 severe-worse 9 p=0.0111
+E1 whole-clip fft              vs POS | V2   | 2SR skin-masked forehead (Task3) | n=20 better>1 3 worse>1 15 severe-worse 9 p=0.0090
+E1 whole-clip fft              vs CHROM | MAIN_112 | 2SR skin-masked face (Task3)   | n=112 better>1 36 worse>1 40 severe-worse 19 p=0.3589
+E1 whole-clip fft              vs POS | MAIN_112 | 2SR skin-masked face (Task3)   | n=112 better>1 34 worse>1 40 severe-worse 19 p=0.2385
+E1 whole-clip fft              vs CHROM | V2   | 2SR skin-masked face (Task3)   | n=20 better>1 5 worse>1 11 severe-worse 7 p=0.1354
+E1 whole-clip fft              vs POS | V2   | 2SR skin-masked face (Task3)   | n=20 better>1 4 worse>1 12 severe-worse 5 p=0.0793
+E2 naive windowed              vs CHROM | MAIN_112 | CHROM (no wavelet)             | n=112 better>1 36 worse>1 41 severe-worse 21 p=0.0920
+E2 naive windowed              vs POS | MAIN_112 | CHROM (no wavelet)             | n=112 better>1 40 worse>1 42 severe-worse 23 p=0.1430
+E2 naive windowed              vs CHROM | V2   | CHROM (no wavelet)             | n=20 better>1 8 worse>1 5 severe-worse 1 p=0.2734
+E2 naive windowed              vs POS | V2   | CHROM (no wavelet)             | n=20 better>1 9 worse>1 6 severe-worse 2 p=0.4724
+E2 naive windowed              vs CHROM | MAIN_112 | POS (no wavelet)               | n=112 better>1 39 worse>1 35 severe-worse 16 p=0.6271
+E2 naive windowed              vs POS | MAIN_112 | POS (no wavelet)               | n=112 better>1 37 worse>1 35 severe-worse 16 p=0.5741
+E2 naive windowed              vs CHROM | V2   | POS (no wavelet)               | n=20 better>1 8 worse>1 8 severe-worse 1 p=0.9434
+E2 naive windowed              vs POS | V2   | POS (no wavelet)               | n=20 better>1 12 worse>1 5 severe-worse 1 p=0.3271
+E2 naive windowed              vs CHROM | MAIN_112 | GREEN (Seg4/18 form)           | n=112 better>1 32 worse>1 70 severe-worse 23 p=0.0001
+E2 naive windowed              vs POS | MAIN_112 | GREEN (Seg4/18 form)           | n=112 better>1 29 worse>1 75 severe-worse 25 p=0.0000
+E2 naive windowed              vs CHROM | V2   | GREEN (Seg4/18 form)           | n=20 better>1 2 worse>1 17 severe-worse 4 p=0.0025
+E2 naive windowed              vs POS | V2   | GREEN (Seg4/18 form)           | n=20 better>1 5 worse>1 14 severe-worse 5 p=0.0251
+E2 naive windowed              vs CHROM | MAIN_112 | cPACE Stage1+CHROM (global q)  | n=112 better>1 41 worse>1 44 severe-worse 18 p=0.2395
+E2 naive windowed              vs POS | MAIN_112 | cPACE Stage1+CHROM (global q)  | n=112 better>1 36 worse>1 45 severe-worse 18 p=0.1013
+E2 naive windowed              vs CHROM | V2   | cPACE Stage1+CHROM (global q)  | n=20 better>1 10 worse>1 5 severe-worse 2 p=0.1627
+E2 naive windowed              vs POS | V2   | cPACE Stage1+CHROM (global q)  | n=20 better>1 12 worse>1 3 severe-worse 1 p=0.0437
+E2 naive windowed              vs CHROM | MAIN_112 | cPACE Stage1+POS (global q)    | n=112 better>1 39 worse>1 35 severe-worse 16 p=0.6271
+E2 naive windowed              vs POS | MAIN_112 | cPACE Stage1+POS (global q)    | n=112 better>1 37 worse>1 35 severe-worse 16 p=0.5741
+E2 naive windowed              vs CHROM | V2   | cPACE Stage1+POS (global q)    | n=20 better>1 8 worse>1 8 severe-worse 1 p=0.9434
+E2 naive windowed              vs POS | V2   | cPACE Stage1+POS (global q)    | n=20 better>1 12 worse>1 5 severe-worse 1 p=0.3271
+E2 naive windowed              vs CHROM | MAIN_112 | cPACE Full bw0.30              | n=112 better>1 40 worse>1 49 severe-worse 18 p=0.0537
+E2 naive windowed              vs POS | MAIN_112 | cPACE Full bw0.30              | n=112 better>1 37 worse>1 54 severe-worse 19 p=0.0109
+E2 naive windowed              vs CHROM | V2   | cPACE Full bw0.30              | n=20 better>1 4 worse>1 13 severe-worse 10 p=0.0072
+E2 naive windowed              vs POS | V2   | cPACE Full bw0.30              | n=20 better>1 6 worse>1 12 severe-worse 9 p=0.0329
+E2 naive windowed              vs CHROM | MAIN_112 | cPACE Full bw0.15              | n=112 better>1 38 worse>1 48 severe-worse 18 p=0.1743
+E2 naive windowed              vs POS | MAIN_112 | cPACE Full bw0.15              | n=112 better>1 35 worse>1 52 severe-worse 20 p=0.0291
+E2 naive windowed              vs CHROM | V2   | cPACE Full bw0.15              | n=20 better>1 7 worse>1 11 severe-worse 10 p=0.0386
+E2 naive windowed              vs POS | V2   | cPACE Full bw0.15              | n=20 better>1 8 worse>1 11 severe-worse 9 p=0.0766
+E2 naive windowed              vs CHROM | MAIN_112 | CIELab a* (orig, Seg18)        | n=112 better>1 29 worse>1 46 severe-worse 13 p=0.0638
+E2 naive windowed              vs POS | MAIN_112 | CIELab a* (orig, Seg18)        | n=112 better>1 31 worse>1 49 severe-worse 14 p=0.0364
+E2 naive windowed              vs CHROM | V2   | CIELab a* (orig, Seg18)        | n=20 better>1 6 worse>1 13 severe-worse 5 p=0.0196
+E2 naive windowed              vs POS | V2   | CIELab a* (orig, Seg18)        | n=20 better>1 5 worse>1 11 severe-worse 5 p=0.1089
+E2 naive windowed              vs CHROM | MAIN_112 | YCbCr Cb (orig, Seg18)         | n=112 better>1 38 worse>1 65 severe-worse 34 p=0.0001
+E2 naive windowed              vs POS | MAIN_112 | YCbCr Cb (orig, Seg18)         | n=112 better>1 33 worse>1 67 severe-worse 30 p=0.0000
+E2 naive windowed              vs CHROM | V2   | YCbCr Cb (orig, Seg18)         | n=20 better>1 4 worse>1 13 severe-worse 10 p=0.0126
+E2 naive windowed              vs POS | V2   | YCbCr Cb (orig, Seg18)         | n=20 better>1 5 worse>1 13 severe-worse 7 p=0.0228
+E2 naive windowed              vs CHROM | MAIN_112 | YCbCr Cr (orig, Seg18)         | n=112 better>1 39 worse>1 61 severe-worse 20 p=0.0466
+E2 naive windowed              vs POS | MAIN_112 | YCbCr Cr (orig, Seg18)         | n=112 better>1 37 worse>1 65 severe-worse 18 p=0.0088
+E2 naive windowed              vs CHROM | V2   | YCbCr Cr (orig, Seg18)         | n=20 better>1 6 worse>1 14 severe-worse 10 p=0.0019
+E2 naive windowed              vs POS | V2   | YCbCr Cr (orig, Seg18)         | n=20 better>1 4 worse>1 15 severe-worse 9 p=0.0055
+E2 naive windowed              vs CHROM | MAIN_112 | 2SR (Seg22, forehead box)      | n=112 better>1 35 worse>1 53 severe-worse 23 p=0.0017
+E2 naive windowed              vs POS | MAIN_112 | 2SR (Seg22, forehead box)      | n=112 better>1 33 worse>1 58 severe-worse 24 p=0.0004
+E2 naive windowed              vs CHROM | V2   | 2SR (Seg22, forehead box)      | n=20 better>1 4 worse>1 12 severe-worse 5 p=0.0442
+E2 naive windowed              vs POS | V2   | 2SR (Seg22, forehead box)      | n=20 better>1 6 worse>1 11 severe-worse 5 p=0.1165
+E2 naive windowed              vs CHROM | MAIN_112 | LGI projection (Seg22)         | n=112 better>1 27 worse>1 45 severe-worse 11 p=0.0646
+E2 naive windowed              vs POS | MAIN_112 | LGI projection (Seg22)         | n=112 better>1 22 worse>1 43 severe-worse 7 p=0.0133
+E2 naive windowed              vs CHROM | V2   | LGI projection (Seg22)         | n=20 better>1 5 worse>1 13 severe-worse 6 p=0.0329
+E2 naive windowed              vs POS | V2   | LGI projection (Seg22)         | n=20 better>1 4 worse>1 10 severe-worse 4 p=0.1937
+E2 naive windowed              vs CHROM | MAIN_112 | a* NATIVE (Task2)              | n=112 better>1 29 worse>1 63 severe-worse 28 p=0.0001
+E2 naive windowed              vs POS | MAIN_112 | a* NATIVE (Task2)              | n=112 better>1 31 worse>1 63 severe-worse 26 p=0.0001
+E2 naive windowed              vs CHROM | V2   | a* NATIVE (Task2)              | n=20 better>1 5 worse>1 14 severe-worse 7 p=0.0251
+E2 naive windowed              vs POS | V2   | a* NATIVE (Task2)              | n=20 better>1 6 worse>1 9 severe-worse 6 p=0.2485
+E2 naive windowed              vs CHROM | MAIN_112 | Cb NATIVE (Task2)              | n=112 better>1 28 worse>1 78 severe-worse 47 p=0.0000
+E2 naive windowed              vs POS | MAIN_112 | Cb NATIVE (Task2)              | n=112 better>1 24 worse>1 81 severe-worse 49 p=0.0000
+E2 naive windowed              vs CHROM | V2   | Cb NATIVE (Task2)              | n=20 better>1 1 worse>1 18 severe-worse 10 p=0.0002
+E2 naive windowed              vs POS | V2   | Cb NATIVE (Task2)              | n=20 better>1 3 worse>1 15 severe-worse 8 p=0.0126
+E2 naive windowed              vs CHROM | MAIN_112 | Cr NATIVE (Task2)              | n=112 better>1 31 worse>1 68 severe-worse 31 p=0.0000
+E2 naive windowed              vs POS | MAIN_112 | Cr NATIVE (Task2)              | n=112 better>1 30 worse>1 64 severe-worse 33 p=0.0000
+E2 naive windowed              vs CHROM | V2   | Cr NATIVE (Task2)              | n=20 better>1 3 worse>1 16 severe-worse 7 p=0.0022
+E2 naive windowed              vs POS | V2   | Cr NATIVE (Task2)              | n=20 better>1 3 worse>1 14 severe-worse 5 p=0.0141
+E2 naive windowed              vs CHROM | MAIN_112 | 2SR skin-masked forehead (Task3) | n=112 better>1 35 worse>1 53 severe-worse 23 p=0.0016
+E2 naive windowed              vs POS | MAIN_112 | 2SR skin-masked forehead (Task3) | n=112 better>1 33 worse>1 57 severe-worse 25 p=0.0005
+E2 naive windowed              vs CHROM | V2   | 2SR skin-masked forehead (Task3) | n=20 better>1 7 worse>1 10 severe-worse 6 p=0.0836
+E2 naive windowed              vs POS | V2   | 2SR skin-masked forehead (Task3) | n=20 better>1 8 worse>1 9 severe-worse 7 p=0.3135
+E2 naive windowed              vs CHROM | MAIN_112 | 2SR skin-masked face (Task3)   | n=112 better>1 51 worse>1 35 severe-worse 15 p=0.7471
+E2 naive windowed              vs POS | MAIN_112 | 2SR skin-masked face (Task3)   | n=112 better>1 47 worse>1 39 severe-worse 15 p=0.8909
+E2 naive windowed              vs CHROM | V2   | 2SR skin-masked face (Task3)   | n=20 better>1 10 worse>1 7 severe-worse 4 p=0.9479
+E2 naive windowed              vs POS | V2   | 2SR skin-masked face (Task3)   | n=20 better>1 11 worse>1 7 severe-worse 4 p=0.7112
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | CHROM (no wavelet)             | n=112 better>1 22 worse>1 14 severe-worse 11 p=0.1951
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | CHROM (no wavelet)             | n=112 better>1 28 worse>1 19 severe-worse 13 p=0.3684
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | CHROM (no wavelet)             | n=20 better>1 1 worse>1 3 severe-worse 1 p=0.9811
+E3 RAKF native (exp, b=1)      vs POS | V2   | CHROM (no wavelet)             | n=20 better>1 8 worse>1 6 severe-worse 1 p=0.2180
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | POS (no wavelet)               | n=112 better>1 26 worse>1 13 severe-worse 10 p=0.0393
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | POS (no wavelet)               | n=112 better>1 23 worse>1 12 severe-worse 10 p=0.1867
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | POS (no wavelet)               | n=20 better>1 2 worse>1 9 severe-worse 6 p=0.0534
+E3 RAKF native (exp, b=1)      vs POS | V2   | POS (no wavelet)               | n=20 better>1 6 worse>1 6 severe-worse 4 p=0.9679
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | GREEN (Seg4/18 form)           | n=112 better>1 30 worse>1 67 severe-worse 51 p=0.0001
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | GREEN (Seg4/18 form)           | n=112 better>1 23 worse>1 68 severe-worse 52 p=0.0000
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | GREEN (Seg4/18 form)           | n=20 better>1 3 worse>1 16 severe-worse 12 p=0.0137
+E3 RAKF native (exp, b=1)      vs POS | V2   | GREEN (Seg4/18 form)           | n=20 better>1 6 worse>1 12 severe-worse 9 p=0.2959
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | cPACE Stage1+CHROM (global q)  | n=112 better>1 24 worse>1 23 severe-worse 16 p=0.8452
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | cPACE Stage1+CHROM (global q)  | n=112 better>1 27 worse>1 22 severe-worse 16 p=0.8376
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | cPACE Stage1+CHROM (global q)  | n=20 better>1 2 worse>1 7 severe-worse 3 p=0.2432
+E3 RAKF native (exp, b=1)      vs POS | V2   | cPACE Stage1+CHROM (global q)  | n=20 better>1 7 worse>1 4 severe-worse 2 p=0.2432
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | cPACE Stage1+POS (global q)    | n=112 better>1 26 worse>1 13 severe-worse 10 p=0.0393
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | cPACE Stage1+POS (global q)    | n=112 better>1 23 worse>1 12 severe-worse 10 p=0.1867
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | cPACE Stage1+POS (global q)    | n=20 better>1 2 worse>1 9 severe-worse 6 p=0.0534
+E3 RAKF native (exp, b=1)      vs POS | V2   | cPACE Stage1+POS (global q)    | n=20 better>1 6 worse>1 6 severe-worse 4 p=0.9679
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | cPACE Full bw0.30              | n=112 better>1 32 worse>1 36 severe-worse 17 p=1.0000
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | cPACE Full bw0.30              | n=112 better>1 30 worse>1 36 severe-worse 16 p=0.5551
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | cPACE Full bw0.30              | n=20 better>1 2 worse>1 13 severe-worse 8 p=0.0206
+E3 RAKF native (exp, b=1)      vs POS | V2   | cPACE Full bw0.30              | n=20 better>1 6 worse>1 9 severe-worse 6 p=0.5197
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | cPACE Full bw0.15              | n=112 better>1 35 worse>1 33 severe-worse 15 p=0.4779
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | cPACE Full bw0.15              | n=112 better>1 34 worse>1 32 severe-worse 16 p=0.5647
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | cPACE Full bw0.15              | n=20 better>1 3 worse>1 10 severe-worse 6 p=0.0910
+E3 RAKF native (exp, b=1)      vs POS | V2   | cPACE Full bw0.15              | n=20 better>1 9 worse>1 7 severe-worse 5 p=0.7475
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | CIELab a* (orig, Seg18)        | n=112 better>1 24 worse>1 29 severe-worse 23 p=0.1253
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | CIELab a* (orig, Seg18)        | n=112 better>1 21 worse>1 28 severe-worse 23 p=0.0170
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | CIELab a* (orig, Seg18)        | n=20 better>1 3 worse>1 14 severe-worse 10 p=0.0137
+E3 RAKF native (exp, b=1)      vs POS | V2   | CIELab a* (orig, Seg18)        | n=20 better>1 8 worse>1 9 severe-worse 8 p=0.5503
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | YCbCr Cb (orig, Seg18)         | n=112 better>1 30 worse>1 64 severe-worse 51 p=0.0000
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | YCbCr Cb (orig, Seg18)         | n=112 better>1 26 worse>1 64 severe-worse 49 p=0.0000
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | YCbCr Cb (orig, Seg18)         | n=20 better>1 3 worse>1 14 severe-worse 11 p=0.0276
+E3 RAKF native (exp, b=1)      vs POS | V2   | YCbCr Cb (orig, Seg18)         | n=20 better>1 8 worse>1 10 severe-worse 10 p=0.4781
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | YCbCr Cr (orig, Seg18)         | n=112 better>1 28 worse>1 55 severe-worse 38 p=0.0035
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | YCbCr Cr (orig, Seg18)         | n=112 better>1 27 worse>1 56 severe-worse 39 p=0.0003
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | YCbCr Cr (orig, Seg18)         | n=20 better>1 3 worse>1 16 severe-worse 12 p=0.0124
+E3 RAKF native (exp, b=1)      vs POS | V2   | YCbCr Cr (orig, Seg18)         | n=20 better>1 8 worse>1 11 severe-worse 11 p=0.2790
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | 2SR (Seg22, forehead box)      | n=112 better>1 40 worse>1 33 severe-worse 25 p=0.8891
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | 2SR (Seg22, forehead box)      | n=112 better>1 37 worse>1 36 severe-worse 27 p=0.3132
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | 2SR (Seg22, forehead box)      | n=20 better>1 3 worse>1 12 severe-worse 9 p=0.0304
+E3 RAKF native (exp, b=1)      vs POS | V2   | 2SR (Seg22, forehead box)      | n=20 better>1 7 worse>1 9 severe-worse 5 p=0.7938
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | LGI projection (Seg22)         | n=112 better>1 16 worse>1 23 severe-worse 16 p=0.3980
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | LGI projection (Seg22)         | n=112 better>1 8 worse>1 16 severe-worse 11 p=0.0034
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | LGI projection (Seg22)         | n=20 better>1 2 worse>1 11 severe-worse 8 p=0.0111
+E3 RAKF native (exp, b=1)      vs POS | V2   | LGI projection (Seg22)         | n=20 better>1 5 worse>1 5 severe-worse 4 p=0.5732
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | a* NATIVE (Task2)              | n=112 better>1 28 worse>1 44 severe-worse 32 p=0.0113
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | a* NATIVE (Task2)              | n=112 better>1 27 worse>1 41 severe-worse 30 p=0.0120
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | a* NATIVE (Task2)              | n=20 better>1 2 worse>1 13 severe-worse 6 p=0.0090
+E3 RAKF native (exp, b=1)      vs POS | V2   | a* NATIVE (Task2)              | n=20 better>1 6 worse>1 8 severe-worse 3 p=0.7172
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | Cb NATIVE (Task2)              | n=112 better>1 26 worse>1 71 severe-worse 50 p=0.0000
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | Cb NATIVE (Task2)              | n=112 better>1 28 worse>1 73 severe-worse 49 p=0.0000
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | Cb NATIVE (Task2)              | n=20 better>1 2 worse>1 14 severe-worse 9 p=0.0152
+E3 RAKF native (exp, b=1)      vs POS | V2   | Cb NATIVE (Task2)              | n=20 better>1 7 worse>1 8 severe-worse 6 p=0.8228
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | Cr NATIVE (Task2)              | n=112 better>1 29 worse>1 50 severe-worse 32 p=0.0075
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | Cr NATIVE (Task2)              | n=112 better>1 27 worse>1 47 severe-worse 32 p=0.0026
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | Cr NATIVE (Task2)              | n=20 better>1 2 worse>1 16 severe-worse 9 p=0.0090
+E3 RAKF native (exp, b=1)      vs POS | V2   | Cr NATIVE (Task2)              | n=20 better>1 7 worse>1 10 severe-worse 6 p=0.6874
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | 2SR skin-masked forehead (Task3) | n=112 better>1 38 worse>1 34 severe-worse 26 p=0.5378
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | 2SR skin-masked forehead (Task3) | n=112 better>1 36 worse>1 36 severe-worse 27 p=0.2646
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | 2SR skin-masked forehead (Task3) | n=20 better>1 4 worse>1 10 severe-worse 6 p=0.2432
+E3 RAKF native (exp, b=1)      vs POS | V2   | 2SR skin-masked forehead (Task3) | n=20 better>1 7 worse>1 7 severe-worse 3 p=0.5503
+E3 RAKF native (exp, b=1)      vs CHROM | MAIN_112 | 2SR skin-masked face (Task3)   | n=112 better>1 43 worse>1 27 severe-worse 18 p=0.1946
+E3 RAKF native (exp, b=1)      vs POS | MAIN_112 | 2SR skin-masked face (Task3)   | n=112 better>1 40 worse>1 34 severe-worse 19 p=0.7480
+E3 RAKF native (exp, b=1)      vs CHROM | V2   | 2SR skin-masked face (Task3)   | n=20 better>1 5 worse>1 6 severe-worse 4 p=0.8405
+E3 RAKF native (exp, b=1)      vs POS | V2   | 2SR skin-masked face (Task3)   | n=20 better>1 10 worse>1 5 severe-worse 4 p=0.2772
+

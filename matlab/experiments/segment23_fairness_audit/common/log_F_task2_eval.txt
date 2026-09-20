@@ -1,0 +1,52 @@
+REGRESSION vs Seg18 A0: a* max|diff|=0.0000  Cb 0.0000  Cr 0.0000  (n=112)
+KLT pruning: median pruned fraction 0.000, subjects with >20% pruned: 0, >50%: 0
+a* arm A0_box_perpixel vs chromProd (MAIN_112): better>1 24 worse>1 31 severe-worse>10 18 signrank p=0.1206
+a* arm A3_FULL_native vs chromProd (MAIN_112): better>1 27 worse>1 44 severe-worse>10 28 signrank p=0.0007
+a* arm A0_box_perpixel vs posProd (MAIN_112): better>1 20 worse>1 31 severe-worse>10 17 signrank p=0.0266
+a* arm A3_FULL_native vs posProd (MAIN_112): better>1 25 worse>1 46 severe-worse>10 30 signrank p=0.0001
+             method                    pool           n     nFail     MAE      medianAE     RMSE     pearsonR     severeGT10
+    _________________________    ________________    ___    _____    ______    ________    ______    _________    __________
+
+    "A0_box_perpixel [a]"        "MAIN_112"          112      0      9.5316     4.6631      14.59      0.42677        36    
+    "A0_box_perpixel [a]"        "VIPL_v2_motion"     20      0      14.509     12.614      20.13      0.10868        11    
+    "A0_box_perpixel [Cb]"       "MAIN_112"          112      0      14.901     12.074     19.763      0.12742        64    
+    "A0_box_perpixel [Cb]"       "VIPL_v2_motion"     20      0      22.054     20.001     25.657     -0.39273        17    
+    "A0_box_perpixel [Cr]"       "MAIN_112"          112      0      11.922     7.1014      16.59        0.317        48    
+    "A0_box_perpixel [Cr]"       "VIPL_v2_motion"     20      0      20.525     17.802     23.269     -0.23442        18    
+    "A1_box_sumnormLab [a]"      "MAIN_112"          112      0       9.309     4.9581     14.374      0.44538        37    
+    "A1_box_sumnormLab [a]"      "VIPL_v2_motion"     20      0      14.832     7.0061     20.686      0.19975         9    
+    "A1_box_sumnormLab [Cb]"     "MAIN_112"          112      0      20.496     15.256     28.161     0.013384        70    
+    "A1_box_sumnormLab [Cb]"     "VIPL_v2_motion"     20      0      16.811     13.771     21.972     -0.38967        11    
+    "A1_box_sumnormLab [Cr]"     "MAIN_112"          112      0      11.157     5.7885     16.643      0.26992        46    
+    "A1_box_sumnormLab [Cr]"     "VIPL_v2_motion"     20      0      17.462     16.927     21.074    -0.025991        13    
+    "A2_uniformROI_KLT [a]"      "MAIN_112"          112      0      16.486     7.1112     26.402      0.16244        48    
+    "A2_uniformROI_KLT [a]"      "VIPL_v2_motion"     20      0      21.227     18.335     25.793     -0.10063        16    
+    "A2_uniformROI_KLT [Cb]"     "MAIN_112"          112      0      19.752     12.091     30.158       0.1292        60    
+    "A2_uniformROI_KLT [Cb]"     "VIPL_v2_motion"     20      0      23.844     20.268     29.015     -0.27841        16    
+    "A2_uniformROI_KLT [Cr]"     "MAIN_112"          112      0      15.682     9.6283     23.672      0.17281        54    
+    "A2_uniformROI_KLT [Cr]"     "VIPL_v2_motion"     20      0      21.437     20.268     24.701      0.23062        17    
+    "A3_FULL_native [a]"         "MAIN_112"          112      0      16.486     7.1112     26.402      0.16244        48    
+    "A3_FULL_native [a]"         "VIPL_v2_motion"     20      0      21.227     18.335     25.793     -0.10063        16    
+    "A3_FULL_native [Cb]"        "MAIN_112"          112      0      19.752     12.091     30.158       0.1292        60    
+    "A3_FULL_native [Cb]"        "VIPL_v2_motion"     20      0      23.844     20.268     29.015     -0.27841        16    
+    "A3_FULL_native [Cr]"        "MAIN_112"          112      0      15.682     9.6283     23.672      0.17281        54    
+    "A3_FULL_native [Cr]"        "VIPL_v2_motion"     20      0      21.437     20.268     24.701      0.23062        17    
+    "A3w_native_wavelet [a]"     "MAIN_112"          112      0      12.778       8.97     17.258      0.32435        53    
+    "A3w_native_wavelet [a]"     "VIPL_v2_motion"     20      0      21.885     18.335     25.999    -0.045955        17    
+    "A3w_native_wavelet [Cb]"    "MAIN_112"          112      0      16.121     15.287     19.907      0.23993        67    
+    "A3w_native_wavelet [Cb]"    "VIPL_v2_motion"     20      0      22.185     20.268     26.043     -0.14487        16    
+    "A3w_native_wavelet [Cr]"    "MAIN_112"          112      0      15.132     12.349     19.134      0.31261        63    
+    "A3w_native_wavelet [Cr]"    "VIPL_v2_motion"     20      0      21.437     20.268     24.701      0.23062        17    
+    "GREEN forehead box"         "MAIN_112"          112      0      14.983     13.188      19.49     0.086979        63    
+    "GREEN forehead box"         "VIPL_v2_motion"     20      0      21.805     19.421     24.975     -0.21345        18    
+    "GREEN native ROI"           "MAIN_112"          112      0      11.929     6.3467     16.823      0.35306        49    
+    "GREEN native ROI"           "VIPL_v2_motion"     20      0      20.957     16.053     23.862      0.15729        18    
+    "CHROM production (box)"     "MAIN_112"          112      0      7.8344     4.0716     11.868      0.53187        32    
+    "CHROM production (box)"     "VIPL_v2_motion"     20      0      8.8506     5.1812     12.641      0.53648         7    
+    "POS production (box)"       "MAIN_112"          112      0      7.2217     4.4979     10.849      0.62341        30    
+    "POS production (box)"       "VIPL_v2_motion"     20      0      10.565     5.8846     16.061       0.3076         6    
+    "CHROM on native ROI"        "MAIN_112"          112      0      10.049     6.4338     13.803      0.38456        43    
+    "CHROM on native ROI"        "VIPL_v2_motion"     20      0      12.175     6.6213     17.005      0.20977         8    
+    "POS on native ROI"          "MAIN_112"          112      0      8.7778     5.9707     11.779       0.5413        40    
+    "POS on native ROI"          "VIPL_v2_motion"     20      0      13.462     10.742     17.928      0.18206        11    
+

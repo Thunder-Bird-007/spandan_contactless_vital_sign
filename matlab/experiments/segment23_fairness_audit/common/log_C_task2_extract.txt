@@ -1,0 +1,352 @@
+--- 5-gt (1/132) ---
+5-gt done 59s fs=28.67 frames=2409 pruned=0 inits=3
+--- 6-gt (2/132) ---
+6-gt done 31s fs=28.67 frames=2383 pruned=0 inits=3
+--- 7-gt (3/132) ---
+7-gt done 32s fs=28.67 frames=2362 pruned=0 inits=3
+--- 12-gt (4/132) ---
+12-gt done 43s fs=28.67 frames=2388 pruned=0 inits=3
+--- after-exercise (5/132) ---
+after-exercise done 55s fs=28.64 frames=3368 pruned=0 inits=4
+--- VIPL_p1_v1_source1 (6/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7962 fps) by 19.1847% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p1\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p1_v1_source1 done 13s fs=29.80 frames=1036 pruned=0 inits=2
+--- VIPL_p2_v1_source1 (7/132) ---
+VIPL_p2_v1_source1 done 69s fs=24.93 frames=668 pruned=0 inits=1
+--- VIPL_p3_v1_source1 (8/132) ---
+VIPL_p3_v1_source1 done 16s fs=24.93 frames=754 pruned=0 inits=1
+--- VIPL_p4_v1_source1 (9/132) ---
+VIPL_p4_v1_source1 done 20s fs=24.93 frames=839 pruned=0 inits=1
+--- VIPL_p5_v1_source1 (10/132) ---
+VIPL_p5_v1_source1 done 10s fs=24.94 frames=771 pruned=0 inits=1
+--- VIPL_p6_v1_source1 (11/132) ---
+VIPL_p6_v1_source1 done 10s fs=23.82 frames=729 pruned=0 inits=1
+--- VIPL_p7_v1_source1 (12/132) ---
+VIPL_p7_v1_source1 done 11s fs=23.82 frames=750 pruned=0 inits=1
+--- VIPL_p8_v1_source1 (13/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2283 fps) by 23.0869% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p8\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p8_v1_source1 done 13s fs=19.23 frames=596 pruned=0 inits=1
+--- VIPL_p9_v1_source1 (14/132) ---
+VIPL_p9_v1_source1 done 26s fs=23.77 frames=799 pruned=0 inits=1
+--- VIPL_p10_v1_source1 (15/132) ---
+VIPL_p10_v1_source1 done 15s fs=23.82 frames=803 pruned=0 inits=1
+--- VIPL_p11_v1_source1 (16/132) ---
+VIPL_p11_v1_source1 done 14s fs=24.89 frames=715 pruned=0 inits=1
+--- VIPL_p12_v1_source1 (17/132) ---
+VIPL_p12_v1_source1 done 11s fs=24.94 frames=726 pruned=0 inits=1
+--- VIPL_p13_v1_source1 (18/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7935 fps) by 19.174% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p13\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p13_v1_source1 done 12s fs=29.79 frames=871 pruned=0 inits=1
+--- VIPL_p14_v1_source1 (19/132) ---
+VIPL_p14_v1_source1 done 11s fs=24.93 frames=746 pruned=0 inits=1
+--- VIPL_p15_v1_source1 (20/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7982 fps) by 19.1928% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p15\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p15_v1_source1 done 13s fs=29.80 frames=915 pruned=0 inits=2
+--- VIPL_p16_v1_source1 (21/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7788 fps) by 19.1154% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p16\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p16_v1_source1 done 19s fs=29.78 frames=922 pruned=0 inits=2
+--- VIPL_p17_v1_source1 (22/132) ---
+VIPL_p17_v1_source1 done 14s fs=24.94 frames=793 pruned=0 inits=1
+--- VIPL_p18_v1_source1 (23/132) ---
+VIPL_p18_v1_source1 done 11s fs=24.94 frames=734 pruned=0 inits=1
+--- VIPL_p19_v1_source1 (24/132) ---
+VIPL_p19_v1_source1 done 10s fs=24.93 frames=822 pruned=0 inits=1
+--- VIPL_p20_v1_source1 (25/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1374 fps) by 35.4503% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p20\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p20_v1_source1 done 6s fs=16.14 frames=497 pruned=0 inits=1
+--- VIPL_p21_v1_source1 (26/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1371 fps) by 35.4516% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p21\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p21_v1_source1 done 9s fs=16.14 frames=647 pruned=0 inits=1
+--- VIPL_p22_v1_source1 (27/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1353 fps) by 35.4588% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p22\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p22_v1_source1 done 15s fs=16.14 frames=499 pruned=0 inits=1
+--- VIPL_p23_v1_source1 (28/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (18.0884 fps) by 27.6465% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p23\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p23_v1_source1 done 15s fs=18.09 frames=550 pruned=0 inits=1
+--- VIPL_p24_v1_source1 (29/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.0667 fps) by 35.7333% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p24\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p24_v1_source1 done 26s fs=16.07 frames=483 pruned=0 inits=1
+--- VIPL_p25_v1_source1 (30/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1354 fps) by 35.4584% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p25\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p25_v1_source1 done 18s fs=16.14 frames=491 pruned=0 inits=1
+--- VIPL_p26_v1_source1 (31/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.0709 fps) by 35.7165% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p26\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p26_v1_source1 done 7s fs=16.07 frames=469 pruned=0 inits=1
+--- VIPL_p27_v1_source1 (32/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.1304 fps) by 23.4783% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p27\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p27_v1_source1 done 10s fs=19.13 frames=716 pruned=0 inits=1
+--- VIPL_p28_v1_source1 (33/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1397 fps) by 35.441% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p28\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p28_v1_source1 done 8s fs=16.14 frames=487 pruned=0 inits=1
+--- VIPL_p29_v1_source1 (34/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1456 fps) by 35.4176% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p29\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p29_v1_source1 done 7s fs=16.15 frames=504 pruned=0 inits=1
+--- VIPL_p30_v1_source1 (35/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1425 fps) by 35.4301% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p30\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p30_v1_source1 done 7s fs=16.14 frames=485 pruned=0 inits=1
+--- VIPL_p31_v1_source1 (36/132) ---
+VIPL_p31_v1_source1 done 11s fs=24.93 frames=812 pruned=0 inits=1
+--- VIPL_p32_v1_source1 (37/132) ---
+VIPL_p32_v1_source1 done 11s fs=24.87 frames=872 pruned=0 inits=1
+--- VIPL_p33_v1_source1 (38/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.6403 fps) by 33.439% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p33\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p33_v1_source1 done 7s fs=16.64 frames=505 pruned=0 inits=1
+--- VIPL_p34_v1_source1 (39/132) ---
+VIPL_p34_v1_source1 done 10s fs=24.93 frames=698 pruned=0 inits=1
+--- VIPL_p35_v1_source1 (40/132) ---
+VIPL_p35_v1_source1 done 11s fs=24.93 frames=829 pruned=0 inits=1
+--- VIPL_p36_v1_source1 (41/132) ---
+VIPL_p36_v1_source1 done 9s fs=24.93 frames=774 pruned=0 inits=1
+--- VIPL_p37_v1_source1 (42/132) ---
+VIPL_p37_v1_source1 done 11s fs=24.93 frames=829 pruned=0 inits=1
+--- VIPL_p38_v1_source1 (43/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.6058 fps) by 33.5769% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p38\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p38_v1_source1 done 5s fs=16.61 frames=501 pruned=0 inits=1
+--- VIPL_p39_v1_source1 (44/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.6442 fps) by 33.4232% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p39\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p39_v1_source1 done 6s fs=16.64 frames=544 pruned=0 inits=1
+--- VIPL_p40_v1_source1 (45/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.6379 fps) by 33.4485% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p40\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p40_v1_source1 done 5s fs=16.64 frames=502 pruned=0 inits=1
+--- VIPL_p41_v1_source1 (46/132) ---
+VIPL_p41_v1_source1 done 9s fs=24.89 frames=747 pruned=0 inits=1
+--- VIPL_p42_v1_source1 (47/132) ---
+VIPL_p42_v1_source1 done 10s fs=24.93 frames=749 pruned=0 inits=1
+--- VIPL_p43_v1_source1 (48/132) ---
+VIPL_p43_v1_source1 done 10s fs=24.93 frames=792 pruned=0 inits=1
+--- VIPL_p44_v1_source1 (49/132) ---
+VIPL_p44_v1_source1 done 8s fs=24.93 frames=765 pruned=0 inits=1
+--- VIPL_p45_v1_source1 (50/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2334 fps) by 23.0665% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p45\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p45_v1_source1 done 8s fs=19.23 frames=570 pruned=0 inits=1
+--- VIPL_p46_v1_source1 (51/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2383 fps) by 23.0467% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p46\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p46_v1_source1 done 7s fs=19.24 frames=588 pruned=0 inits=1
+--- VIPL_p47_v1_source1 (52/132) ---
+VIPL_p47_v1_source1 done 7s fs=23.82 frames=586 pruned=0 inits=1
+--- VIPL_p48_v1_source1 (53/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1387 fps) by 35.4454% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p48\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p48_v1_source1 done 5s fs=16.14 frames=488 pruned=0 inits=1
+--- VIPL_p49_v1_source1 (54/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2288 fps) by 23.0848% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p49\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p49_v1_source1 done 12s fs=19.23 frames=752 pruned=0 inits=1
+--- VIPL_p50_v1_source1 (55/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1362 fps) by 35.455% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p50\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p50_v1_source1 done 7s fs=16.14 frames=506 pruned=0 inits=1
+--- VIPL_p51_v1_source1 (56/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (18.5163 fps) by 25.9349% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p51\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p51_v1_source1 done 9s fs=18.52 frames=611 pruned=0 inits=1
+--- VIPL_p52_v1_source1 (57/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2374 fps) by 23.0503% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p52\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p52_v1_source1 done 9s fs=19.24 frames=668 pruned=0 inits=1
+--- VIPL_p53_v1_source1 (58/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1333 fps) by 35.4669% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p53\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p53_v1_source1 done 6s fs=16.13 frames=493 pruned=0 inits=1
+--- VIPL_p54_v1_source1 (59/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1369 fps) by 35.4524% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p54\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p54_v1_source1 done 8s fs=16.14 frames=497 pruned=1 inits=1
+--- VIPL_p55_v1_source1 (60/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1392 fps) by 35.4432% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p55\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p55_v1_source1 done 7s fs=16.14 frames=487 pruned=0 inits=1
+--- VIPL_p56_v1_source1 (61/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.137 fps) by 35.4518% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p56\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p56_v1_source1 done 7s fs=16.14 frames=521 pruned=0 inits=1
+--- VIPL_p57_v1_source1 (62/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2325 fps) by 23.0701% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p57\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p57_v1_source1 done 6s fs=19.23 frames=654 pruned=0 inits=1
+--- VIPL_p58_v1_source1 (63/132) ---
+VIPL_p58_v1_source1 done 9s fs=23.82 frames=763 pruned=0 inits=1
+--- VIPL_p59_v1_source1 (64/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2301 fps) by 23.0794% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p59\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p59_v1_source1 done 7s fs=19.23 frames=589 pruned=0 inits=1
+--- VIPL_p60_v1_source1 (65/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2247 fps) by 23.1013% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p60\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p60_v1_source1 done 7s fs=19.22 frames=547 pruned=0 inits=1
+--- VIPL_p61_v1_source1 (66/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1387 fps) by 35.4454% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p61\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p61_v1_source1 done 6s fs=16.14 frames=488 pruned=0 inits=1
+--- VIPL_p62_v1_source1 (67/132) ---
+VIPL_p62_v1_source1 done 9s fs=23.82 frames=716 pruned=0 inits=1
+--- VIPL_p63_v1_source1 (68/132) ---
+VIPL_p63_v1_source1 done 9s fs=23.82 frames=797 pruned=0 inits=1
+--- VIPL_p64_v1_source1 (69/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (22.2667 fps) by 10.9331% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p64\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p64_v1_source1 done 10s fs=22.27 frames=824 pruned=2 inits=1
+--- VIPL_p65_v1_source1 (70/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1417 fps) by 35.4331% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p65\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p65_v1_source1 done 5s fs=16.14 frames=493 pruned=0 inits=1
+--- VIPL_p66_v1_source1 (71/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2339 fps) by 23.0644% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p66\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p66_v1_source1 done 5s fs=19.23 frames=474 pruned=0 inits=1
+--- VIPL_p67_v1_source1 (72/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1398 fps) by 35.4409% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p67\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p67_v1_source1 done 6s fs=16.14 frames=510 pruned=0 inits=1
+--- VIPL_p68_v1_source1 (73/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1322 fps) by 35.4712% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p68\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p68_v1_source1 done 6s fs=16.13 frames=494 pruned=0 inits=1
+--- VIPL_p69_v1_source1 (74/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1381 fps) by 35.4475% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p69\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p69_v1_source1 done 7s fs=16.14 frames=488 pruned=0 inits=1
+--- VIPL_p70_v1_source1 (75/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2326 fps) by 23.0697% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p70\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p70_v1_source1 done 7s fs=19.23 frames=614 pruned=0 inits=1
+--- VIPL_p71_v1_source1 (76/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2308 fps) by 23.0769% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p71\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p71_v1_source1 done 6s fs=19.23 frames=605 pruned=0 inits=1
+--- VIPL_p72_v1_source1 (77/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1381 fps) by 35.4478% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p72\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p72_v1_source1 done 7s fs=16.14 frames=607 pruned=0 inits=1
+--- VIPL_p73_v1_source1 (78/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1142 fps) by 35.5431% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p73\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p73_v1_source1 done 8s fs=16.11 frames=528 pruned=0 inits=1
+--- VIPL_p74_v1_source1 (79/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1344 fps) by 35.4623% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p74\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p74_v1_source1 done 7s fs=16.13 frames=484 pruned=0 inits=1
+--- VIPL_p75_v1_source1 (80/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1412 fps) by 35.4353% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p75\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p75_v1_source1 done 6s fs=16.14 frames=494 pruned=0 inits=1
+--- VIPL_p76_v1_source1 (81/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1426 fps) by 35.4296% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p76\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p76_v1_source1 done 5s fs=16.14 frames=500 pruned=0 inits=1
+--- VIPL_p77_v1_source1 (82/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2301 fps) by 23.0794% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p77\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p77_v1_source1 done 7s fs=19.23 frames=597 pruned=0 inits=1
+--- VIPL_p78_v1_source1 (83/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1367 fps) by 35.4533% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p78\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p78_v1_source1 done 7s fs=16.14 frames=546 pruned=0 inits=1
+--- VIPL_p79_v1_source1 (84/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2252 fps) by 23.0992% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p79\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p79_v1_source1 done 7s fs=19.23 frames=599 pruned=0 inits=1
+--- VIPL_p80_v1_source1 (85/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1406 fps) by 35.4374% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p80\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p80_v1_source1 done 7s fs=16.14 frames=494 pruned=0 inits=1
+--- VIPL_p81_v1_source1 (86/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1392 fps) by 35.4432% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p81\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p81_v1_source1 done 6s fs=16.14 frames=488 pruned=0 inits=1
+--- VIPL_p82_v1_source1 (87/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1394 fps) by 35.4424% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p82\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p82_v1_source1 done 9s fs=16.14 frames=503 pruned=0 inits=1
+--- VIPL_p83_v1_source1 (88/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.239 fps) by 23.0441% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p83\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p83_v1_source1 done 12s fs=19.24 frames=902 pruned=0 inits=2
+--- VIPL_p84_v1_source2 (89/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p84\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p84_v1_source2 done 12s fs=25.00 frames=910 pruned=0 inits=2
+--- VIPL_p85_v1_source1 (90/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1423 fps) by 35.4307% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p85\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p85_v1_source1 done 8s fs=16.14 frames=491 pruned=0 inits=1
+--- VIPL_p86_v1_source1 (91/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1106 fps) by 35.5576% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p86\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p86_v1_source1 done 7s fs=16.11 frames=466 pruned=0 inits=1
+--- VIPL_p87_v1_source1 (92/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1437 fps) by 35.4251% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p87\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p87_v1_source1 done 7s fs=16.14 frames=515 pruned=0 inits=1
+--- VIPL_p88_v1_source1 (93/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1428 fps) by 35.429% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p88\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p88_v1_source1 done 8s fs=16.14 frames=570 pruned=0 inits=1
+--- VIPL_p89_v1_source1 (94/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2377 fps) by 23.0494% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p89\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p89_v1_source1 done 10s fs=19.24 frames=592 pruned=0 inits=1
+--- VIPL_p90_v1_source1 (95/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1403 fps) by 35.4389% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p90\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p90_v1_source1 done 8s fs=16.14 frames=487 pruned=0 inits=1
+--- VIPL_p91_v1_source1 (96/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1394 fps) by 35.4422% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p91\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p91_v1_source1 done 8s fs=16.14 frames=526 pruned=0 inits=1
+--- VIPL_p92_v1_source1 (97/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1394 fps) by 35.4423% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p92\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p92_v1_source1 done 6s fs=16.14 frames=527 pruned=0 inits=1
+--- VIPL_p93_v1_source1 (98/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1342 fps) by 35.4633% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p93\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p93_v1_source1 done 7s fs=16.13 frames=508 pruned=0 inits=1
+--- VIPL_p94_v1_source1 (99/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1384 fps) by 35.4466% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p94\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p94_v1_source1 done 7s fs=16.14 frames=559 pruned=0 inits=1
+--- VIPL_p95_v1_source1 (100/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1389 fps) by 35.4445% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p95\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p95_v1_source1 done 8s fs=16.14 frames=503 pruned=0 inits=1
+--- VIPL_p96_v1_source1 (101/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1414 fps) by 35.4343% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p96\v1\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p96_v1_source1 done 5s fs=16.14 frames=400 pruned=0 inits=1
+--- VIPL_p97_v1_source2 (102/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p97\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p97_v1_source2 done 19s fs=25.00 frames=976 pruned=0 inits=2
+--- VIPL_p98_v1_source2 (103/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p98\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p98_v1_source2 done 14s fs=25.00 frames=956 pruned=0 inits=2
+--- VIPL_p99_v1_source2 (104/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p99\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p99_v1_source2 done 24s fs=25.00 frames=978 pruned=0 inits=2
+--- VIPL_p100_v1_source2 (105/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p100\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p100_v1_source2 done 20s fs=25.00 frames=1075 pruned=0 inits=2
+--- VIPL_p101_v1_source2 (106/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p101\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p101_v1_source2 done 18s fs=25.00 frames=990 pruned=0 inits=2
+--- VIPL_p102_v1_source2 (107/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p102\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p102_v1_source2 done 25s fs=25.00 frames=1026 pruned=0 inits=2
+--- VIPL_p103_v1_source2 (108/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p103\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p103_v1_source2 done 15s fs=25.00 frames=859 pruned=0 inits=1
+--- VIPL_p104_v1_source2 (109/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p104\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p104_v1_source2 done 14s fs=25.00 frames=995 pruned=0 inits=2
+--- VIPL_p105_v1_source2 (110/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p105\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p105_v1_source2 done 42s fs=25.00 frames=1648 pruned=2 inits=3
+--- VIPL_p106_v1_source2 (111/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p106\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p106_v1_source2 done 21s fs=25.00 frames=948 pruned=0 inits=2
+--- VIPL_p107_v1_source2 (112/132) ---
+loadVIPLVideo: no time.txt for source2 (H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p107\v1\source2\video.avi), using container FrameRate = 25 fps -- see docs/VIPL_DATA_FORMAT.md Section 4 for why this is a known accuracy limitation for source2.
+VIPL_p107_v1_source2 done 15s fs=25.00 frames=891 pruned=0 inits=1
+--- VIPL_p1_v2_source1 (113/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7868 fps) by 19.1472% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p1\v2\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p1_v2_source1 done 21s fs=29.79 frames=1162 pruned=0 inits=2
+--- VIPL_p3_v2_source1 (114/132) ---
+VIPL_p3_v2_source1 done 10s fs=24.93 frames=664 pruned=0 inits=1
+--- VIPL_p4_v2_source1 (115/132) ---
+VIPL_p4_v2_source1 done 6s fs=24.92 frames=460 pruned=0 inits=1
+--- VIPL_p6_v2_source1 (116/132) ---
+VIPL_p6_v2_source1 done 9s fs=23.81 frames=760 pruned=0 inits=1
+--- VIPL_p7_v2_source1 (117/132) ---
+VIPL_p7_v2_source1 done 10s fs=23.82 frames=729 pruned=1 inits=2
+--- VIPL_p8_v2_source1 (118/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (21.9552 fps) by 12.1792% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p8\v2\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p8_v2_source1 done 11s fs=21.96 frames=699 pruned=0 inits=1
+--- VIPL_p9_v2_source1 (119/132) ---
+VIPL_p9_v2_source1 done 11s fs=25.38 frames=838 pruned=0 inits=1
+--- VIPL_p10_v2_source1 (120/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (21.5889 fps) by 13.6442% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p10\v2\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p10_v2_source1 done 13s fs=21.59 frames=801 pruned=3 inits=4
+--- VIPL_p11_v2_source1 (121/132) ---
+VIPL_p11_v2_source1 done 10s fs=24.93 frames=603 pruned=0 inits=1
+--- VIPL_p12_v2_source1 (122/132) ---
+VIPL_p12_v2_source1 done 11s fs=24.93 frames=844 pruned=0 inits=1
+--- VIPL_p13_v2_source1 (123/132) ---
+VIPL_p13_v2_source1 done 11s fs=24.93 frames=721 pruned=0 inits=1
+--- VIPL_p14_v2_source1 (124/132) ---
+VIPL_p14_v2_source1 done 12s fs=24.93 frames=751 pruned=0 inits=1
+--- VIPL_p15_v2_source1 (125/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (26.8721 fps) by 7.4883% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p15\v2\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p15_v2_source1 done 13s fs=26.87 frames=765 pruned=0 inits=1
+--- VIPL_p16_v2_source1 (126/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7858 fps) by 19.1432% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p16\v2\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p16_v2_source1 done 11s fs=29.79 frames=795 pruned=0 inits=1
+--- VIPL_p17_v2_source1 (127/132) ---
+VIPL_p17_v2_source1 done 11s fs=24.93 frames=763 pruned=0 inits=1
+--- VIPL_p18_v2_source1 (128/132) ---
+VIPL_p18_v2_source1 done 12s fs=24.94 frames=781 pruned=0 inits=1
+--- VIPL_p19_v2_source1 (129/132) ---
+VIPL_p19_v2_source1 done 10s fs=24.93 frames=765 pruned=0 inits=1
+--- VIPL_p20_v2_source1 (130/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1372 fps) by 35.4513% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p20\v2\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p20_v2_source1 done 8s fs=16.14 frames=513 pruned=0 inits=1
+--- VIPL_p21_v2_source1 (131/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1453 fps) by 35.4188% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p21\v2\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p21_v2_source1 done 9s fs=16.15 frames=497 pruned=3 inits=3
+--- VIPL_p22_v2_source1 (132/132) ---
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.138 fps) by 35.4481% for H:\EEE 312 project\Contactless Vital Sign\spandan\data\raw\VIPL-HR\p22\v2\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p22_v2_source1 done 7s fs=16.14 frames=496 pruned=0 inits=1
+=== Task 2 extraction complete: 0 failed, 0 parity mismatches ===

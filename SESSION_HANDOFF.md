@@ -44,7 +44,7 @@ already uses (see README.md's own "mark superseded, don't delete" convention):
 
 ## Current State
 
-*(Last updated: 2026-09-14. If you are reading this later and nothing below has been
+*(Last updated: 2026-09-20. If you are reading this later and nothing below has been
 touched since, treat it with suspicion — either nothing happened, or someone skipped
 step 1 of the protocol above.)*
 
@@ -273,10 +273,100 @@ step 1 of the protocol above.)*
   see Archive Action 3); Lapitan et al., *Sci Rep* 14:6546 (2024, IIR phase distortion
   in PPG filtering — ~~NOT yet checked~~ **checked against the Android app, confirmed
   inapplicable by construction**, see Archive Action 6b).
+- **[2026-09-20, Segment 18 MATLAB colour-space + Segment 21 literature search]
+  Motion-robustness investigation opened, not yet resolved.** Segment 18 tested CIELab
+  a\*/YCbCr Cb/Cr as single-channel HR sources (5 UBFC + 107 VIPL v1, N=112, plus a new
+  20-subject VIPL v2 large-head-motion pool never tested before). Result: a\* beats green
+  (MAE 14.98→9.53bpm) but loses to production CHROM/POS (7.83/7.22bpm); under motion
+  every single channel tested is poor (a\* best but r=0.11; green/Cb go *negative*,
+  worse than chance) — **NOT promoted.** Full detail:
+  `matlab/docs/Segment18_ColorSpace_Ablation.md`. That motion-collapse result opened
+  Segment 21, a literature search for combiners specifically designed for motion
+  robustness (this is Segment 10 Task 2's own Tier 2 item 14 — PBV/LGI/OMIT — finally
+  read in full, plus 2SR and the VIPL-HR dataset paper's own motion-scenario context).
+  **Ranked for Spandan**: LGI (strongest published head-rotation evidence, r=0.97 vs
+  POS 0.56/2SR 0.51/ICA 0.16 in the source paper's own benchmark, but highest
+  implementation cost) > 2SR (cheap, "a few lines of MATLAB," more modest motion gains)
+  > PBV (needs camera spectral calibration, conflicts with this project's
+  no-calibration design goal) > OMIT (validated for compression robustness, not
+  motion — deprioritized for this specific problem). **Nothing implemented or run on
+  Spandan's own data yet** — see the queued Segment 22 entry below. Full detail:
+  `matlab/docs/Segment21_Motion_Robust_Combiner_Literature_Search.md`. A consolidated,
+  project-wide index of every paper searched (this entry plus everything in Segment 10
+  Task 2) is now maintained at `matlab/docs/Literature_Review_Master.md` — read that
+  first for "what have we already looked at" before starting any new literature search.
+  One blocked link recorded, not a dead end: the VIPL-HR paper's primary PDF host
+  (`jdl.link`) has an expired server SSL certificate as of this date; the arXiv mirror
+  (`ar5iv.labs.arxiv.org/html/1810.04927`) served the same content, so retry the direct
+  link later rather than re-deriving the content.
+- **[2026-09-20, Segment 22 — motion-robust combiner implementation + evaluation]
+  Investigation closed: NO-GO for both 2SR and the LGI projection step.** Tier 0
+  prerequisite run first: production CHROM/POS (wavelet default) had never actually
+  been measured on the 20-subject VIPL v2 motion pool — it turns out to already be far
+  better than Segment 18's single-channel numbers (MAE 8.85/10.57bpm, r 0.54/0.31 vs
+  Segment 18's 14.5-21.8bpm), re-deriving Segment 8's exact 112-subject numbers
+  (0.0000bpm diff) as a correctness check. Both new combiners then lost to that
+  baseline everywhere it matters: 2SR MAE 21.3bpm on v2 motion (worse for 14-15/20
+  subjects, 10-12 severe regressions >10bpm, p≈0.01) and 9.5bpm on the main pool (vs
+  7.83/7.22); LGI projection-only (tracker not built — see rationale below) MAE
+  16.9bpm on v2 motion (worse for 7-11/20, p≈0.02) and 9.2bpm on the main pool.
+  Stratified by skin-angle/dataset/motion-level/frame-rate: neither ever clearly beats
+  production in any stratum with a meaningful N; the closest, low-frame-rate v1
+  (7.6bpm for 2SR vs 6.5-7.2bpm production), is still not a win. LGI's one bright spot
+  (6.94bpm on the v1 rows of the same 20 subjects) is a single small stratum, not a
+  confirmed result. ~~**LGI's state-space HR tracker was deliberately not built**~~ **[2026-09-20, Segment 23: built and evaluated, still NOT ADOPTED]** — the
+  projection step alone is nearly equivalent to cPACE Stage 1 (Segments 11/15,
+  evaluated and not adopted) and the closest existing tracker (`residualAdaptiveKalmanHR.m`)
+  was already rejected in Segment 13, so per the staged-build plan, a losing projection
+  step ends the line without paying for the tracker. Caveats disclosed in the doc: the
+  final stride grid (including a 1-frame stride, 35.6bpm, clearly bad) was tuned on the
+  92 non-motion-pool subjects only; 2SR used the same fixed forehead box as
+  CHROM/POS with no skin mask, which its source paper prefers; some v2 strata have as
+  few as 3-5 subjects; a mid-run power cut interrupted extraction but the script
+  resumed cleanly (0 failures, 0 parity mismatches vs cached production traces).
+  **Net effect: production CHROM/POS pipeline is unchanged, nothing promoted.** Full
+  detail, per-subject and stratified tables: `matlab/docs/Segment22_Motion_Robust_Combiner_Evaluation.md`,
+  `results/metrics/segment22_per_subject.csv`, `segment22_stratified_summary.csv`,
+  `segment22_stride_selection.csv`. New code (kept, not wired into production):
+  `src/roi/extractROICovariance.m`, `src/pulseextraction/spatialSubspaceRotation.m`,
+  `src/pulseextraction/lgiProjection.m`. This closes the motion-robustness line opened
+  by Segment 18 — no further combiner work is queued on it; a future session should
+  read `matlab/docs/Literature_Review_Master.md` before starting a new search rather
+  than re-trying PBV/OMIT, which were already deprioritized in Segment 21 for
+  documented reasons (calibration requirement; validated for compression-robustness,
+  not motion).
+- **[2026-09-20, Segment 23 — fairness / native-form audit of every "EVALUATED, NOT ADOPTED" candidate] CLOSED. Production unchanged; nothing promoted.**
+  Question: is CHROM/POS's unbroken record real robustness or an artefact of simplified challengers + unmatched tuning? **Answer (`matlab/experiments/segment23_fairness_audit/MASTER_REPORT.md`):
+  mostly real robustness, plus a real-but-modest tuning/read-out asymmetry that changes no ranking; NOT a fairness artefact of incomplete challenger implementations.**
+  Every challenger re-run in native/completed form still loses (cPACE windowed q̂ T1; CIELab a* with the paper's ROI + KLT + sum-normalised Lab T2 — native form is *worse*, 16.5 vs 9.5bpm; 2SR with a real YCbCr skin mask T3; LGI with its own read-out + a state-space tracker T4; RAKF with the Eq. 12 exponent T7 — slightly worse than the division form, 11.95 vs 10.73bpm). The 19-combiner × 6-read-out matrix (T5) shows no challenger beats CHROM/POS under the same read-out. De-tuning CHROM/POS (T6) costs 1.3–4bpm pooled MAE but is **not per-subject significant** (all p ≥ 0.08). Per-subject, a\*/2SR/LGI are not significantly worse than CHROM on MAIN_112 (p 0.07–0.36); on the 20-subject motion pool CHROM significantly beats 2SR/LGI/cPACE Full (p 0.010–0.018).
+  ~~**New CANDIDATE (not promoted, needs held-out validation e.g. UBFC-D2):**~~ **[2026-09-20, Segment 24: held-out validation run — as-tested candidate NOT validated, see the Segment 24 Current State entry below]** **Original text:** a windowed peak read-out (0.5–2Hz, 256-sample/90%, median) or a frequency-state tracker lowers MAIN_112 MAE of the incumbents 1.1–1.5bpm (CHROM 7.83→6.38/6.54, POS 7.22→6.70/6.29), confounded by the ≤120bpm band prior it carries. **Brief corrections found from primary sources**: Yang's cells are 20×20px (120×80 is the ROI); Kaur's paper does not specify a windowed q̂; Pilz's own benchmark read-out is a 256/90% FFT peak-pick, not the tracker; Debnath & Kim give no numeric β; de Haan & Jeanne (CHROM) primary text was BLOCKED. Also: Segment 22's forehead-only 2SR region was unfairly small on motion (widening helps, still loses). Protected files: 18/18 SHA-256 identical before/after. Full per-task reports: `matlab/experiments/segment23_fairness_audit/task{1..7}_*/REPORT.md`.
+
+- **[2026-09-20, Segment 24 — held-out validation of the Segment 23 read-out candidate] CLOSED. Production unchanged; nothing promoted.** Pre-registered one-shot run (`matlab/experiments/segment24_readout_heldout_validation/PREREGISTRATION.md`, commit `7ffc964`, before any read-out ran). **Step 0 found UBFC-D2 was NOT untouched** (Segment 14 used it for the Branch 2 gate; it was never used for HR-accuracy scoring or read-out selection) and **VIPL-HR-V1 has no unused subjects** (exactly p1–p107, all in MAIN_112). So: PRIMARY = unused VIPL *videos* (source1 webcam v7 cached + v4/v6 newly decoded, 281 videos, 96 people) — **held out by video/scenario, NOT by subject**; UBFC-D2 (42) = SECONDARY, descriptive only; phone source2 strata (321) exploratory. **Results (PRIMARY, person-level paired Wilcoxon, Holm over 8):** windowed read-out as tested in Segment 23 (0.5–2 Hz) does **not** clearly beat production `fftHeartRate.m` (CHROM 11.94→11.47, POS 11.79→11.54 bpm; p_Holm = 1.0) — EVALUATED, NOT ADOPTED as tested; state tracker does not either (gain −0.06…+0.72) — EVALUATED, NOT ADOPTED, its Segment 23 gain does not reproduce. **The band confound was the wrong way round:** the same windowed read-out band-matched to 0.7–4.0 Hz clearly beats production (CHROM →9.21, POS →8.64 bpm; p_Holm 0.0019 / 3e-5) — the ≤120 bpm cap is the liability (it loses on after-exercise clips, GT up to 132 bpm). That band-matched variant was only a control condition, never run on MAIN_112 or a fresh set: **CANDIDATE, NOT VALIDATED**, needs a MAIN_112 run and a fresh set before any claim. D2 (descriptive) agrees in direction. Also found: tracker band is 0.7–3.0 Hz (≤180 bpm), not ≤120 as the brief said. Full report: `matlab/experiments/segment24_readout_heldout_validation/REPORT.md`. Reusable caches: 190 new `data/processed/VIPL_p*_v{4,6}_source1_rgb_traces.mat`, `results/s24_set_manifest.csv` (644 videos), `results/s24_hr_per_video.csv`. Protected files: 18/18 SHA-256 identical.
+
+- **[2026-09-20, Segment 25 — replication of Segment 24's band-matched windowed read-out] CLOSED. Production unchanged; nothing adopted.** Pre-registered one-shot (`matlab/experiments/segment25_readout_replication/PREREGISTRATION.md`, commit `aef3beb`), candidate = `lgiPaperReadout(pulse, fs, [0.7 4.0])` byte-identical to Segment 24's, six paired Wilcoxon tests, one joint Holm. The 321-phone-clip set was audited and EXCLUDED (same 107 people as MAIN_112, prior Branch 1 HR scoring, and condition (c) already seen on it in Segment 24). **(A) MAIN_112 (112): holds** — CHROM 7.83→6.73, POS 7.22→6.45 bpm, not significant on its own, no regression. **(B) VIPL v3+v5 source1, 188 new clips (96 people): replicates** — CHROM 9.43→7.12 (Holm p 0.020), POS 10.27→7.49 (p 0.0007); mostly driven by v5 dark/low-fps (~16.7 fps), weak for v3 on CHROM. **(C) VIPL v1 source3 RealSense, 107 clips: does NOT replicate** (0.11 / 0.43 bpm, n.s.). ~~**Verdict: CANDIDATE, VALIDATED (scenario-generalizing) — not ADOPTED**~~ **CANDIDATE, VALIDATED — degraded-signal conditions only (dark/low-fps/motion; not shown in normal-lighting or cross-device conditions) — not ADOPTED.** **[2026-09-20, Segment 26 Step 0 wording correction] Basis:** the Segment 25 gain splits by scenario — v3 talking CHROM shows no effect (p = 0.89; POS p = 0.030 uncorrected, would not survive correction) versus v5 dark CHROM p = 0.0001 (uncorrected; POS 0.0016), and MAIN_112 (normal lighting) improves without significance (Holm p 0.52–0.997); Segment 24's PRIMARY set shows large gains on v4 (bright light) and v7 (after exercise) and a small one on v6 (stable, 1.5 m) — **note: those Segment 24 scenarios are bright-light / after-exercise / longer-distance, NOT head-motion (VIPL's motion scenarios are v2/v9, not part of Segments 24/25), so 'motion' in the wording above is the requested label, not something these clips demonstrate.** Device shift (v1 source3) did not replicate. (~~CANDIDATE, NOT VALIDATED~~ from Segment 24). Only the read-out stage is new; combiner still CHROM/POS; held out by video/scenario, not by subject; no device-generalization claim. Report: `matlab/experiments/segment25_readout_replication/REPORT.md`. New caches: 295 `data/processed/VIPL_p*_v{3,5}_source1_*` / `_v1_source3_*_rgb_traces.mat`. Protected files 18/18 identical.
+
+- **[2026-09-20, Segment 26 — read-out mechanism isolation] CLOSED. Production unchanged.** Step 0: Segment 25's verdict wording corrected (old struck through) to "CANDIDATE, VALIDATED — degraded-signal conditions only (dark/low-fps/motion; not shown in normal-lighting or cross-device conditions)"; recorded that Segment 24's v4/v6 are bright-light/1.5 m, NOT motion. Pre-registered addendum (`matlab/experiments/segment26_readout_mechanism/PREREGISTRATION_addendum.md`, commit `1bb7d0c`). **Step 1 (median vs mean per-window aggregation, 730 cached clips, 0 new decode, 14 paired Wilcoxon + Holm): median-rejection hypothesis NOT supported.** Mean recovers 101 % (CHROM) / 86 % (POS) of the median's gain on the pooled degraded strata (v4/v6/v5); the median's small edge is, if anything, on the clean strata (mean worse by 0.2–1.0 bpm); no difference significant after correction (all Holm p ≥ 0.078); on v5 dark the mean is nominally better. Windowing itself does most of the work. **Step 2 (Spearman of per-clip gain vs cached proxies fs / dropped-frame fraction / mean ROI green, 6 tests Holm): no correlation** (all Holm p ≥ 0.079, max |ρ| 0.094); frame rate does not order the gains (v3 and v6 same fs, different gains; v4 and v5 opposite fs, similar large gains). **Net: mechanism of *where* it helps still unknown; the quality-gated production-gating story is NOT supported by any proxy available today** — no gating segment warranted on this evidence. Report: `matlab/experiments/segment26_readout_mechanism/REPORT.md`. Protected files 18/18 identical.
+
+- **[2026-09-20, Segment 27 — proposed third mechanism-isolation attempt] DESIGNED BUT DELIBERATELY NOT RUN.** Segment 27 (a proposed third mechanism-isolation attempt for the Segment 24–26 read-out finding) was designed but deliberately NOT run — after two dedicated segments (26's median-vs-mean and quality-proxy tests) came back negative, further mechanism-hunting was judged to have hit diminishing returns with no production decision pending on the answer. Final resting verdict: CANDIDATE, VALIDATED — degraded-signal conditions only; mechanism unresolved; not adopted; no further investigation planned absent new evidence. Full consolidated summary of Segments 23–26: `matlab/docs/Fairness_Audit_Summary_Segments23-26.md`.
 
 ---
 
 ## Active Work Queue
+
+- [x] **Segment 26 (read-out mechanism isolation) — Done 2026-09-20.** Outputs: `matlab/experiments/segment26_readout_mechanism/{PREREGISTRATION_addendum.md,REPORT.md,results/*,scripts/*,src/lgiPaperReadoutMean.m}`. ~~Open from Segment 25: isolate median-aggregate vs whole-clip FFT same band~~ median-aggregate isolated (not the driver). **Still open, not started:** whole-clip FFT with the same 0.7–4 Hz band/zero-padding (windowing vs band-limit), window length/hop, a genuine signal-quality proxy (spectral SNR, cross-ROI PLV), production-integration swap-in test.
+- [x] **Segment 25 (read-out replication) — Done 2026-09-20.** Outputs: `matlab/experiments/segment25_readout_replication/{PREREGISTRATION.md,REPORT.md,results/*,scripts/*,src/*}`. ~~Verdict CANDIDATE, VALIDATED (scenario-generalizing), not ADOPTED.~~ Verdict CANDIDATE, VALIDATED — degraded-signal conditions only (dark/low-fps/motion; not shown in normal-lighting or cross-device conditions), not ADOPTED (wording corrected in Segment 26 Step 0). **Open, not started (a separate decision):** production-integration swap-in test of the windowed 0.7–4 Hz read-out (full Branch 1 chain, Android window/latency check); isolate median-aggregate vs whole-clip-FFT-same-band controls; a genuinely new-people set (Bangladeshi self-collected, PURE/COHFACE/MMPD) if a subject-level claim is wanted.
+- [x] **Segment 24 (read-out held-out validation) — Done 2026-09-20.** Outputs: `matlab/experiments/segment24_readout_heldout_validation/{PREREGISTRATION.md,REPORT.md,results/*,scripts/*,src/*}`; new caches `data/processed/VIPL_p*_v{4,6}_source1_rgb_traces.mat` (190). Verdict: as-tested candidate EVALUATED, NOT ADOPTED; band-matched windowed read-out = CANDIDATE, NOT VALIDATED. **Open follow-ups (not started):** run band-matched windowed read-out on MAIN_112; test on a fresh set; band-alone control (whole-clip FFT 0.5–2 Hz) and median-aggregate isolation.
+- [x] **Segment 23 (fairness / native-form audit, 7 tasks) — Done 2026-09-20.** Outputs: `matlab/experiments/segment23_fairness_audit/MASTER_REPORT.md`, `task1..task7_*/REPORT.md`, per-task `results/*.csv`, shared `common/` (pool/metrics helpers, `protected_files_verification.txt`, run logs). New caches: `data/processed/seg23t2_<id>.mat` (native CIELab/KLT pass, 132 files), `seg23t3_<id>.mat` (skin-masked pixel stats, 132 files). Verdicts: all seven candidates remain EVALUATED, NOT ADOPTED; one new read-out CANDIDATE (see Current State). Heavy tasks 2 and 3 ran concurrently after a capacity check (both 0 failures / 0 parity mismatches); Tasks 1 and 4 verified LIGHT (cached RGB suffices). Nothing further is queued.
+- [x] ~~Segment 22 (queued, not started) — implement + stratified-evaluate motion-robust
+      combiners (2SR first, LGI second) against Segment 18's motion-pool finding.~~
+      **Done 2026-09-20. Verdict: NO-GO for both 2SR and LGI (projection-only) —
+      neither beats production CHROM/POS on the v2 motion pool or the main pool, in
+      pooled or stratified results. Production pipeline unchanged.** See the Current
+      State entry above and `matlab/docs/Segment22_Motion_Robust_Combiner_Evaluation.md`
+      for full per-subject/stratified tables and caveats. LGI's state-space tracker
+      was not built (projection step alone already lost). This closes the
+      motion-robustness investigation opened by Segment 18/21 — nothing further is
+      queued on it.
 
 **Three exploratory pilots, all done 2026-09-13** (Spandan Field Guide "still open"
 list — scoped down to small samples on purpose, feasibility/direction-finding, NOT
@@ -984,6 +1074,25 @@ scale any of these up, that is a new, explicit decision, not an automatic next s
       `app/build.gradle.kts` (`testOptions.unitTests.isReturnDefaultValues=true` — a
       standard, safe Android unit-test config needed because `Log.d`/`.w` throws "not
       mocked" under plain JUnit; no production behavior change).
+- [x] **Segment 18 (MATLAB colour-space; number collides with the Android Segment 18
+      above, files are named `segment18_colorspace_*`) — CIELab a\* / YCbCr Cb, Cr as
+      pulse channels vs. green.** **Done 2026-09-20. NOT promoted.** Diagnostic only;
+      `estimateVitalsAndMorphology.m`, CHROM, POS untouched. New
+      `roi/extractROISignalsLab.m` (R/G/B bit-identical to `extractROISignals.m`, verified;
+      also returns all four Task N regions per pass). Pool: 5 UBFC + 107 VIPL v1 (N=112,
+      fresh green matches the segment4 baseline 112/112) plus a new 20-subject VIPL v2
+      (head motion) pool. **Result**: a\* beats green (MAE 14.98→9.53, r 0.09→0.43, sign-rank
+      p=0.0001) but still loses to production CHROM/POS (7.83/7.22); Cb ≈ green; Cr
+      marginal. a\* has 12 severe (>10 bpm) per-subject regressions, mostly peaks near the
+      0.7Hz band edge. Median cross-ROI PLV does NOT favour a\*/Cb/Cr (0.275/0.231/0.271 vs
+      green 0.310); v2 motion pool: a\* 14.51 vs green 21.81 bpm, PLV differences ~0.01-0.02.
+      **Limitation stated in the doc**: the main pool has no deliberate head motion, so
+      this cannot validate the motion-robustness claim; v2 (N=20) is weak evidence.
+      Full detail: `matlab/docs/Segment18_ColorSpace_Ablation.md`. Outputs:
+      `matlab/src/roi/extractROISignalsLab.m`,
+      `matlab/scripts/run_segment18_colorspace_{ablation_batch,ablation_motion_batch,evaluation}.m`,
+      `results/metrics/segment18_colorspace_{ablation,ablation_motion,pooled_metrics,
+      pooled_metrics_motion,per_subject_vs_green,per_subject_vs_green_motion}.csv`.
 
 ---
 
@@ -1664,3 +1773,11 @@ Maintenance Protocol rule 3.)*
   detail, all caveats and flagged ambiguities, in each segment's own doc:
   `android/docs/Segment18_Camera_Throughput_And_Buffer_Window.md`,
   `android/docs/Segment19_Branch2_Morphology_Port.md`.
+- **2026-09-20** — Segment 18 (MATLAB colour-space ablation): a*/Cb/Cr vs green on 112 subjects plus a 20-subject VIPL v2 motion pool. a* beats green but not CHROM/POS, PLV does not support it; not promoted. See the Active Work Queue entry and `matlab/docs/Segment18_ColorSpace_Ablation.md`.
+- **2026-09-20** — Segment 21 (literature search, motion-robust combiners): opened by Segment 18's motion-pool collapse. Read PBV/LGI/OMIT in full (Segment 10 Task 2's own Tier 2 item 14, never previously read), added 2SR and the VIPL-HR dataset paper's own motion-scenario context. Ranking: LGI > 2SR > PBV > OMIT for this specific problem, nothing implemented yet — queued as Segment 22. Added `matlab/docs/Literature_Review_Master.md`, a consolidated cross-project paper index (everything in Segment 10 Task 2 plus this segment), for future sessions to check before starting a new search. See `matlab/docs/Segment21_Motion_Robust_Combiner_Literature_Search.md`.
+- **2026-09-20** — Segment 22 (motion-robust combiner implementation + stratified evaluation): closed Segment 21's line. NO-GO for both 2SR and LGI (projection-only, tracker not built) — a Tier 0 check found production CHROM/POS already beats both on the v2 motion pool (never measured before this segment) and the main pool, pooled and stratified by skin-angle/dataset/motion-level/frame-rate. Production pipeline unchanged, nothing promoted. See the Active Work Queue entry and `matlab/docs/Segment22_Motion_Robust_Combiner_Evaluation.md`.
+- **2026-09-20** — Segment 23 (fairness / native-form audit): re-ran every "EVALUATED, NOT ADOPTED" candidate in its native or completed form (T1 cPACE windowed q̂, T2 CIELab a* native ROI+KLT+Lab, T3 2SR + YCbCr skin mask, T4 LGI own read-out + state-space tracker, T5 19-combiner × 6-read-out matrix, T6 CHROM/POS de-tuned to the papers' generic forms, T7 RAKF Eq. 12 exponent) on 112 + 20 subjects, per pool. All regression checks against earlier results exact. **No verdict changed; production untouched (18/18 protected files SHA-256 identical).** Conclusion: mostly real robustness, modest tuning/read-out asymmetry that changes no ranking; new read-out-stage CANDIDATE for CHROM/POS (windowed/tracked read-out, −1.1..−1.5bpm MAIN_112 MAE) awaits held-out validation. Several brief premises were corrected against the primary papers (Yang cell size, Kaur q̂ not windowed, Pilz benchmark read-out is FFT, Debnath & Kim no numeric β; CHROM primary text BLOCKED). See `matlab/experiments/segment23_fairness_audit/MASTER_REPORT.md` and the Active Work Queue / Current State entries.
+- **2026-09-20** — Segment 24 (read-out held-out validation): preregistered one-shot; UBFC-D2 found previously used (Segment 14) and no unused VIPL subjects exist, so PRIMARY = unused VIPL videos (v7/v4/v6 source1, held out by video not subject), D2 = second look. As-tested windowed/tracker read-outs NOT validated; band-matched windowed read-out clearly better (candidate, unvalidated). See `matlab/experiments/segment24_readout_heldout_validation/REPORT.md`.
+- **2026-09-20** — Segment 25 (read-out replication): MAIN_112 holds, unseen scenarios v3+v5 replicate (Holm p 0.020/0.0007), unseen camera (v1 source3) does not. Band-matched windowed read-out promoted CANDIDATE, NOT VALIDATED → ~~CANDIDATE, VALIDATED (scenario-generalizing)~~ CANDIDATE, VALIDATED — degraded-signal conditions only (dark/low-fps/motion; not shown in normal-lighting or cross-device conditions); not adopted. See `matlab/experiments/segment25_readout_replication/REPORT.md`.
+- **2026-09-20** — Segment 26 (read-out mechanism): fixed Segment 25 verdict wording (degraded-signal conditions only; v4/v6 are not motion). Median vs mean aggregation: median-rejection NOT the mechanism (mean recovers ~90–100 % of gain on degraded sets, no Holm-significant difference). No cached quality proxy (fs, dropped frames, brightness) tracks the gain. Mechanism still unknown. See `matlab/experiments/segment26_readout_mechanism/REPORT.md`.
+- **2026-09-20** — Segment 27 (proposed third mechanism-isolation attempt for the Segment 24–26 read-out finding) was designed but deliberately NOT run — after two dedicated segments (26's median-vs-mean and quality-proxy tests) came back negative, further mechanism-hunting was judged to have hit diminishing returns with no production decision pending on the answer. Final resting verdict: CANDIDATE, VALIDATED — degraded-signal conditions only; mechanism unresolved; not adopted; no further investigation planned absent new evidence. Full consolidated summary of Segments 23–26: `matlab/docs/Fairness_Audit_Summary_Segments23-26.md`.

@@ -1,0 +1,44 @@
+CHROM native vs production (MAIN_112): worse>1bpm 25, better>1bpm 18, severe worse>10 10, signrank p=0.2479
+POS native vs production (MAIN_112): worse>1bpm 23, better>1bpm 18, severe worse>10 13, signrank p=0.1375
+                       method                          pool        n     nFail     MAE      medianAE     RMSE     pearsonR    severeGT10
+    ____________________________________________    __________    ___    _____    ______    ________    ______    ________    __________
+
+    "CHROM L0 production"                           "MAIN_112"    112      0      7.8344     4.0716     11.868     0.53187        32    
+    "POS L0 production"                             "MAIN_112"    112      0      7.2217     4.4979     10.849     0.62341        30    
+    "CHROM L1 no wavelet"                           "MAIN_112"    112      0      9.0969     3.2859     18.005     0.31448        30    
+    "POS L1 no wavelet"                             "MAIN_112"    112      0      8.6795     3.2014     16.454     0.28091        30    
+    "CHROM L2 no wavelet+no detrend"                "MAIN_112"    112      0      9.0969     3.2859     18.005     0.31448        30    
+    "POS L2 no wavelet+no detrend"                  "MAIN_112"    112      0      8.6795     3.2014     16.454     0.28091        30    
+    "CHROM L3 no filtering (whole-clip)"            "MAIN_112"    112      0      11.053     4.4684     18.384     0.33677        40    
+    "POS L3 no filtering (whole-clip)"              "MAIN_112"    112      0       10.15     3.9395     17.498     0.47431        34    
+    "CHROM L4 native windowed"                      "MAIN_112"    112      0      10.876     3.8977     21.778     0.19342        32    
+    "POS L4 native windowed"                        "MAIN_112"    112      0      11.455     3.2173     24.854    0.082009        32    
+    "CHROM L4b native CHROM band0.7-2.5"            "MAIN_112"    112      0      7.3396     3.3546     11.819     0.48533        30    
+    "CHROM L4c native + post-bandpass 0.7-2.5"      "MAIN_112"    112      0      7.6607     3.5778     12.307     0.45593        30    
+    "POS L4c native + post-bandpass 0.7-2.5"        "MAIN_112"    112      0      6.2392     3.2014     9.6037     0.69561        26    
+    "CHROM L4d native + post-bandpass 40-240bpm"    "MAIN_112"    112      0      10.876     3.8977     21.778     0.19342        32    
+    "POS L4d native + post-bandpass 40-240bpm"      "MAIN_112"    112      0      9.8848     3.2014     22.132     0.10176        29    
+    "CHROM L5 production w/ 0.7-2.5Hz band"         "MAIN_112"    112      0      7.1378     4.0716     10.362     0.59251        30    
+    "POS L5 production w/ 0.7-2.5Hz band"           "MAIN_112"    112      0      6.9159     4.2899     9.8705      0.6455        29    
+
+                       method                             pool          n     nFail     MAE      medianAE     RMSE     pearsonR    severeGT10
+    ____________________________________________    ________________    __    _____    ______    ________    ______    ________    __________
+
+    "CHROM L0 production"                           "VIPL_v2_motion"    20      0      8.8506     5.1812     12.641     0.53648         7    
+    "POS L0 production"                             "VIPL_v2_motion"    20      0      10.565     5.8846     16.061      0.3076         6    
+    "CHROM L1 no wavelet"                           "VIPL_v2_motion"    20      0      8.1821     5.1812      11.18     0.57549         7    
+    "POS L1 no wavelet"                             "VIPL_v2_motion"    20      0      9.0432     4.2462     14.859     0.41445         6    
+    "CHROM L2 no wavelet+no detrend"                "VIPL_v2_motion"    20      0      8.1821     5.1812      11.18     0.57549         7    
+    "POS L2 no wavelet+no detrend"                  "VIPL_v2_motion"    20      0      9.0432     4.2462     14.859     0.41445         6    
+    "CHROM L3 no filtering (whole-clip)"            "VIPL_v2_motion"    20      0      18.903     20.586     24.475    0.033359        12    
+    "POS L3 no filtering (whole-clip)"              "VIPL_v2_motion"    20      0      19.578     21.069     24.785    0.041181        12    
+    "CHROM L4 native windowed"                      "VIPL_v2_motion"    20      0      9.1688     4.2462     14.855     0.42486         6    
+    "POS L4 native windowed"                        "VIPL_v2_motion"    20      0      15.419     10.676     21.403     0.15612        10    
+    "CHROM L4b native CHROM band0.7-2.5"            "VIPL_v2_motion"    20      0      6.6595     4.9017     9.0544     0.78054         5    
+    "CHROM L4c native + post-bandpass 0.7-2.5"      "VIPL_v2_motion"    20      0      8.2951     4.9017     13.501     0.45441         5    
+    "POS L4c native + post-bandpass 0.7-2.5"        "VIPL_v2_motion"    20      0      13.968     5.8846     19.774     0.15419         9    
+    "CHROM L4d native + post-bandpass 40-240bpm"    "VIPL_v2_motion"    20      0      9.1688     4.2462     14.855     0.42486         6    
+    "POS L4d native + post-bandpass 40-240bpm"      "VIPL_v2_motion"    20      0      13.725     5.8846     20.028     0.13301         9    
+    "CHROM L5 production w/ 0.7-2.5Hz band"         "VIPL_v2_motion"    20      0      8.6176     4.4153     12.403     0.65698         6    
+    "POS L5 production w/ 0.7-2.5Hz band"           "VIPL_v2_motion"    20      0      13.022     7.0211     18.734     0.14274         7    
+

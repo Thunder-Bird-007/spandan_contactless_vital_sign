@@ -1,0 +1,11 @@
+PARITY max |diff| = 0.000039 bpm
+        set            stratum        GroupCount
+    ____________    ______________    __________
+
+    "A_MAIN112"     "UBFC"                 5    
+    "A_MAIN112"     "VIPL_v1"            107    
+    "B_SCENARIO"    "B_v3"                95    
+    "B_SCENARIO"    "B_v5"                93    
+    "C_DEVICE"      "C_v1_source3"       107    
+
+DONE: 814 rows, 0 failures

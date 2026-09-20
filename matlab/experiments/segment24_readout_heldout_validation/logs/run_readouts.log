@@ -1,0 +1,41 @@
+manifest: 644 videos
+            set                      stratum               GroupCount
+    ___________________    ____________________________    __________
+
+    "EXPLORATORY_PHONE"    "V1_source2_phone_notinMAIN"        95    
+    "EXPLORATORY_PHONE"    "V7_source2_phone"                  15    
+    "EXPLORATORY_PHONE"    "V8_source2_phone"                 106    
+    "EXPLORATORY_PHONE"    "V9_source2_phone"                 105    
+    "PRIMARY"              "V4_source1"                        96    
+    "PRIMARY"              "V6_source1"                        94    
+    "PRIMARY"              "V7_source1"                        91    
+    "SECONDARY_D2"         "D2_seg14excluded9"                  9    
+    "SECONDARY_D2"         "D2_seg14valid33"                   33    
+
+PARITY max |diff| vs Segment 8 wavelet numbers = 0.000039 bpm
+25/644
+50/644
+75/644
+100/644
+125/644
+150/644
+175/644
+200/644
+225/644
+250/644
+275/644
+300/644
+325/644
+350/644
+375/644
+400/644
+425/644
+450/644
+475/644
+500/644
+525/644
+550/644
+575/644
+600/644
+625/644
+DONE: 1288 rows, 0 failures

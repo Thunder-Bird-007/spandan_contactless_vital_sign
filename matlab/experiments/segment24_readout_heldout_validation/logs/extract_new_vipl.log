@@ -1,0 +1,461 @@
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7335 fps) by 18.9339% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p1\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p1_v4_source1 ok fs=29.733 n=667 gt=69.6 (1 rows)
+VIPL_p2_v4_source1 ok fs=24.959 n=468 gt=87.2 (2 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8164 fps) by 19.2657% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p3\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 116: face detector found nothing, reusing last known bounding box.
+Frame 121: face detector found nothing, reusing last known bounding box.
+Frame 141: face detector found nothing, reusing last known bounding box.
+VIPL_p3_v4_source1 ok fs=29.816 n=714 gt=79.9 (3 rows)
+VIPL_p4_v4_source1 ok fs=24.677 n=550 gt=67.6 (4 rows)
+VIPL_p5_v4_source1 ok fs=24.856 n=726 gt=89.4 (5 rows)
+VIPL_p6_v4_source1 ok fs=23.822 n=729 gt=66.1 (6 rows)
+Frame 331: face detector found nothing, reusing last known bounding box.
+Frame 336: face detector found nothing, reusing last known bounding box.
+Frame 346: face detector found nothing, reusing last known bounding box.
+Frame 351: face detector found nothing, reusing last known bounding box.
+Frame 356: face detector found nothing, reusing last known bounding box.
+Frame 366: face detector found nothing, reusing last known bounding box.
+Frame 371: face detector found nothing, reusing last known bounding box.
+Frame 376: face detector found nothing, reusing last known bounding box.
+Frame 481: face detector found nothing, reusing last known bounding box.
+VIPL_p7_v4_source1 ok fs=23.820 n=748 gt=83.3 (7 rows)
+Frame 581: face detector found nothing, reusing last known bounding box.
+Frame 586: face detector found nothing, reusing last known bounding box.
+Frame 591: face detector found nothing, reusing last known bounding box.
+Frame 596: face detector found nothing, reusing last known bounding box.
+Frame 601: face detector found nothing, reusing last known bounding box.
+VIPL_p8_v4_source1 ok fs=23.812 n=702 gt=89.8 (8 rows)
+VIPL_p9_v4_source1 ok fs=23.827 n=728 gt=92.9 (9 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8532 fps) by 19.4127% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p10\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p10_v4_source1 ok fs=29.853 n=920 gt=78.3 (10 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7973 fps) by 19.1893% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p11\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p11_v4_source1 ok fs=29.797 n=842 gt=63.8 (11 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7916 fps) by 19.1663% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p12\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p12_v4_source1 ok fs=29.792 n=850 gt=58.4 (12 rows)
+VIPL_p13_v4_source1 ok fs=24.929 n=756 gt=67.4 (13 rows)
+VIPL_p14_v4_source1 ok fs=24.868 n=753 gt=85.3 (14 rows)
+VIPL_p15_v4_source1 ok fs=24.927 n=750 gt=58.9 (15 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7963 fps) by 19.1854% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p16\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p16_v4_source1 ok fs=29.796 n=892 gt=82.5 (16 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7875 fps) by 19.1501% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p17\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p17_v4_source1 ok fs=29.788 n=908 gt=73.6 (17 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7887 fps) by 19.1549% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p18\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p18_v4_source1 ok fs=29.789 n=847 gt=77.1 (18 rows)
+VIPL_p19_v4_source1 ok fs=24.929 n=717 gt=86.0 (19 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1352 fps) by 35.4592% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p20\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p20_v4_source1 ok fs=16.135 n=507 gt=58.8 (20 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1359 fps) by 35.4564% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p21\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p21_v4_source1 ok fs=16.136 n=569 gt=73.8 (21 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.124 fps) by 23.5041% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p22\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 66: face detector found nothing, reusing last known bounding box.
+Frame 71: face detector found nothing, reusing last known bounding box.
+Frame 76: face detector found nothing, reusing last known bounding box.
+Frame 81: face detector found nothing, reusing last known bounding box.
+VIPL_p22_v4_source1 ok fs=19.124 n=583 gt=62.7 (22 rows)
+VIPL_p23_v4_source1 ok fs=23.820 n=740 gt=65.8 (23 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.0728 fps) by 35.7088% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p24\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p24_v4_source1 ok fs=16.073 n=522 gt=73.4 (24 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.3141 fps) by 22.7438% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p25\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 451: face detector found nothing, reusing last known bounding box.
+Frame 456: face detector found nothing, reusing last known bounding box.
+Frame 461: face detector found nothing, reusing last known bounding box.
+Frame 466: face detector found nothing, reusing last known bounding box.
+Frame 471: face detector found nothing, reusing last known bounding box.
+Frame 476: face detector found nothing, reusing last known bounding box.
+Frame 481: face detector found nothing, reusing last known bounding box.
+VIPL_p25_v4_source1 ok fs=19.314 n=603 gt=69.2 (25 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1356 fps) by 35.4575% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p26\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 186: face detector found nothing, reusing last known bounding box.
+Frame 191: face detector found nothing, reusing last known bounding box.
+VIPL_p26_v4_source1 ok fs=16.136 n=514 gt=91.6 (26 rows)
+Frame 326: face detector found nothing, reusing last known bounding box.
+Frame 386: face detector found nothing, reusing last known bounding box.
+Frame 541: face detector found nothing, reusing last known bounding box.
+Frame 561: face detector found nothing, reusing last known bounding box.
+Frame 586: face detector found nothing, reusing last known bounding box.
+Frame 666: face detector found nothing, reusing last known bounding box.
+VIPL_p27_v4_source1 ok fs=23.813 n=760 gt=77.8 (27 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1352 fps) by 35.4593% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p28\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p28_v4_source1 ok fs=16.135 n=467 gt=73.5 (28 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1373 fps) by 35.4508% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p29\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 26: face detector found nothing, reusing last known bounding box.
+Frame 321: face detector found nothing, reusing last known bounding box.
+Frame 346: face detector found nothing, reusing last known bounding box.
+Frame 406: face detector found nothing, reusing last known bounding box.
+Frame 416: face detector found nothing, reusing last known bounding box.
+Frame 421: face detector found nothing, reusing last known bounding box.
+Frame 436: face detector found nothing, reusing last known bounding box.
+VIPL_p29_v4_source1 ok fs=16.137 n=442 gt=70.9 (29 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2975 fps) by 22.8098% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p30\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p30_v4_source1 ok fs=19.298 n=629 gt=82.2 (30 rows)
+VIPL_p31_v4_source1 ok fs=24.915 n=1287 gt=87.1 (31 rows)
+VIPL_p32_v4_source1 ok fs=24.928 n=764 gt=87.1 (32 rows)
+VIPL_p33_v4_source1 ok fs=24.931 n=652 gt=85.7 (33 rows)
+VIPL_p34_v4_source1 ok fs=24.927 n=760 gt=51.9 (34 rows)
+VIPL_p35_v4_source1 ok fs=24.930 n=788 gt=70.8 (35 rows)
+VIPL_p36_v4_source1 ok fs=24.931 n=1007 gt=86.8 (36 rows)
+VIPL_p37_v4_source1 ok fs=24.936 n=941 gt=87.0 (37 rows)
+VIPL_p38_v4_source1 ok fs=24.934 n=761 gt=73.1 (38 rows)
+VIPL_p39_v4_source1 ok fs=24.937 n=789 gt=80.1 (39 rows)
+VIPL_p40_v4_source1 ok fs=24.941 n=770 gt=88.2 (40 rows)
+VIPL_p41_v4_source1 ok fs=24.930 n=756 gt=85.4 (41 rows)
+VIPL_p42_v4_source1 ok fs=24.937 n=712 gt=65.1 (42 rows)
+VIPL_p43_v4_source1 ok fs=24.929 n=764 gt=78.5 (43 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7661 fps) by 19.0642% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p44\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p44_v4_source1 ok fs=29.766 n=1024 gt=77.9 (44 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8663 fps) by 19.465% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p45\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 461: face detector found nothing, reusing last known bounding box.
+Frame 466: face detector found nothing, reusing last known bounding box.
+VIPL_p45_v4_source1 ok fs=29.866 n=863 gt=78.5 (45 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8527 fps) by 19.4109% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p46\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 646: face detector found nothing, reusing last known bounding box.
+Frame 651: face detector found nothing, reusing last known bounding box.
+Frame 656: face detector found nothing, reusing last known bounding box.
+Frame 661: face detector found nothing, reusing last known bounding box.
+VIPL_p46_v4_source1 ok fs=29.853 n=899 gt=81.7 (46 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8556 fps) by 19.4224% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p47\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p47_v4_source1 ok fs=29.856 n=921 gt=73.2 (47 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8607 fps) by 19.4426% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p48\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p48_v4_source1 ok fs=29.861 n=946 gt=79.3 (48 rows)
+Frame 96: face detector found nothing, reusing last known bounding box.
+Frame 101: face detector found nothing, reusing last known bounding box.
+Frame 106: face detector found nothing, reusing last known bounding box.
+VIPL_p49_v4_source1 ok fs=23.812 n=750 gt=76.8 (49 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8575 fps) by 19.4299% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p50\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 546: face detector found nothing, reusing last known bounding box.
+Frame 551: face detector found nothing, reusing last known bounding box.
+Frame 556: face detector found nothing, reusing last known bounding box.
+Frame 561: face detector found nothing, reusing last known bounding box.
+Frame 566: face detector found nothing, reusing last known bounding box.
+Frame 571: face detector found nothing, reusing last known bounding box.
+Frame 576: face detector found nothing, reusing last known bounding box.
+Frame 586: face detector found nothing, reusing last known bounding box.
+Frame 591: face detector found nothing, reusing last known bounding box.
+Frame 601: face detector found nothing, reusing last known bounding box.
+Frame 606: face detector found nothing, reusing last known bounding box.
+Frame 611: face detector found nothing, reusing last known bounding box.
+Frame 616: face detector found nothing, reusing last known bounding box.
+Frame 626: face detector found nothing, reusing last known bounding box.
+VIPL_p50_v4_source1 ok fs=29.857 n=730 gt=71.4 (50 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2365 fps) by 23.054% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p51\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p51_v4_source1 ok fs=19.236 n=583 gt=84.1 (51 rows)
+VIPL_p52_v4_source1 ok fs=23.819 n=695 gt=76.3 (52 rows)
+VIPL_p53_v4_source1 ok fs=23.817 n=738 gt=87.8 (53 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1405 fps) by 35.4381% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p54\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 106: face detector found nothing, reusing last known bounding box.
+Frame 236: face detector found nothing, reusing last known bounding box.
+VIPL_p54_v4_source1 ok fs=16.140 n=502 gt=76.5 (54 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2359 fps) by 23.0563% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p55\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p55_v4_source1 ok fs=19.236 n=575 gt=78.5 (55 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2339 fps) by 23.0644% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p56\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p56_v4_source1 ok fs=19.234 n=594 gt=74.6 (56 rows)
+VIPL_p57_v4_source1 ok fs=23.826 n=760 gt=57.0 (57 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7897 fps) by 19.1589% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p58\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 791: face detector found nothing, reusing last known bounding box.
+VIPL_p58_v4_source1 ok fs=29.790 n=919 gt=65.1 (58 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8571 fps) by 19.4284% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p59\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p59_v4_source1 ok fs=29.857 n=912 gt=77.1 (59 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8516 fps) by 19.4065% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p60\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p60_v4_source1 ok fs=29.852 n=1025 gt=76.1 (60 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (21.0679 fps) by 15.7285% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p61\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p61_v4_source1 ok fs=21.068 n=501 gt=87.1 (61 rows)
+VIPL_p62_v4_source1 ok fs=23.827 n=728 gt=73.2 (62 rows)
+VIPL_p63_v4_source1 ok fs=23.819 n=751 gt=85.1 (63 rows)
+VIPL_p64_v4_source1 ok fs=23.820 n=735 gt=85.2 (64 rows)
+VIPL_p65_v4_source1 ok fs=23.821 n=857 gt=79.2 (65 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8523 fps) by 19.4092% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p66\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p66_v4_source1 ok fs=29.852 n=1153 gt=67.7 (66 rows)
+VIPL_p67_v4_source1 ok fs=23.750 n=913 gt=77.6 (67 rows)
+VIPL_p68_v4_source1 ok fs=23.751 n=720 gt=73.4 (68 rows)
+VIPL_p69_v4_source1 ok fs=23.823 n=734 gt=64.2 (69 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2285 fps) by 23.0861% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p70\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p70_v4_source1 ok fs=19.228 n=644 gt=77.2 (70 rows)
+VIPL_p71_v4_source1 ok fs=23.830 n=876 gt=65.5 (71 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2357 fps) by 23.0571% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p72\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p72_v4_source1 ok fs=19.236 n=599 gt=83.3 (72 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2359 fps) by 23.0564% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p73\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p73_v4_source1 ok fs=19.236 n=579 gt=73.5 (73 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2365 fps) by 23.054% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p74\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p74_v4_source1 ok fs=19.236 n=583 gt=70.9 (74 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2276 fps) by 23.0897% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p75\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p75_v4_source1 ok fs=19.228 n=580 gt=79.7 (75 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2332 fps) by 23.067% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p76\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p76_v4_source1 ok fs=19.233 n=598 gt=72.4 (76 rows)
+VIPL_p77_v4_source1 ok fs=23.813 n=784 gt=70.1 (77 rows)
+VIPL_p78_v4_source1 ok fs=23.825 n=744 gt=84.7 (78 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.1286 fps) by 23.4858% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p79\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p79_v4_source1 ok fs=19.129 n=566 gt=63.2 (79 rows)
+VIPL_p80_v4_source1 ok fs=23.813 n=747 gt=77.9 (80 rows)
+VIPL_p81_v4_source1 ok fs=23.815 n=789 gt=71.9 (81 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.8589 fps) by 19.4358% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p82\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p82_v4_source1 ok fs=29.859 n=871 gt=63.4 (82 rows)
+Frame 316: face detector found nothing, reusing last known bounding box.
+Frame 321: face detector found nothing, reusing last known bounding box.
+Frame 326: face detector found nothing, reusing last known bounding box.
+Frame 331: face detector found nothing, reusing last known bounding box.
+Frame 336: face detector found nothing, reusing last known bounding box.
+Frame 341: face detector found nothing, reusing last known bounding box.
+VIPL_p83_v4_source1 ok fs=23.816 n=850 gt=80.2 (83 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.239 fps) by 23.0441% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p84\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 306: face detector found nothing, reusing last known bounding box.
+Frame 311: face detector found nothing, reusing last known bounding box.
+VIPL_p84_v4_source1 ok fs=19.239 n=588 gt=67.7 (84 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2375 fps) by 23.0501% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p85\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p85_v4_source1 ok fs=19.237 n=608 gt=74.5 (85 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1342 fps) by 35.4632% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p86\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p86_v4_source1 ok fs=16.134 n=556 gt=60.7 (86 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.139 fps) by 35.4438% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p87\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p87_v4_source1 ok fs=16.139 n=495 gt=86.7 (87 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2314 fps) by 23.0744% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p88\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p88_v4_source1 ok fs=19.231 n=593 gt=82.5 (88 rows)
+VIPL_p89_v4_source1 ok fs=24.561 n=741 gt=81.9 (89 rows)
+Frame 681: face detector found nothing, reusing last known bounding box.
+Frame 686: face detector found nothing, reusing last known bounding box.
+VIPL_p90_v4_source1 ok fs=23.822 n=729 gt=85.4 (90 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.229 fps) by 23.0842% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p91\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p91_v4_source1 ok fs=19.229 n=612 gt=68.5 (91 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1018 fps) by 35.593% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p92\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p92_v4_source1 ok fs=16.102 n=458 gt=83.8 (92 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1397 fps) by 35.4412% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p93\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p93_v4_source1 ok fs=16.140 n=635 gt=63.6 (93 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1352 fps) by 35.4592% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p94\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p94_v4_source1 ok fs=16.135 n=381 gt=72.7 (94 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (22.6468 fps) by 9.4127% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p95\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p95_v4_source1 ok fs=22.647 n=692 gt=75.3 (95 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1401 fps) by 35.4395% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p96\v4\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p96_v4_source1 ok fs=16.140 n=494 gt=71.5 (96 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7904 fps) by 19.1615% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p1\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p1_v6_source1 ok fs=29.790 n=686 gt=69.5 (97 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.641 fps) by 33.436% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p2\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p2_v6_source1 ok fs=16.641 n=390 gt=89.4 (98 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7199 fps) by 18.8794% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p3\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p3_v6_source1 ok fs=29.720 n=855 gt=80.2 (99 rows)
+Frame 386: face detector found nothing, reusing last known bounding box.
+VIPL_p5_v6_source1 ok fs=24.925 n=722 gt=104.9 (100 rows)
+VIPL_p6_v6_source1 ok fs=23.814 n=744 gt=72.2 (101 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2359 fps) by 23.0564% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p7\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p7_v6_source1 ok fs=19.236 n=579 gt=94.4 (102 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2318 fps) by 23.0728% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p8\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p8_v6_source1 ok fs=19.232 n=722 gt=87.7 (103 rows)
+VIPL_p9_v6_source1 ok fs=23.824 n=726 gt=96.7 (104 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2384 fps) by 23.0465% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p10\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 266: face detector found nothing, reusing last known bounding box.
+Frame 271: face detector found nothing, reusing last known bounding box.
+Frame 276: face detector found nothing, reusing last known bounding box.
+VIPL_p10_v6_source1 ok fs=19.238 n=584 gt=83.7 (105 rows)
+Frame 276: face detector found nothing, reusing last known bounding box.
+Frame 281: face detector found nothing, reusing last known bounding box.
+Frame 286: face detector found nothing, reusing last known bounding box.
+VIPL_p11_v6_source1 ok fs=24.934 n=672 gt=73.1 (106 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7991 fps) by 19.1965% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p12\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p12_v6_source1 ok fs=29.799 n=854 gt=61.5 (107 rows)
+VIPL_p13_v6_source1 ok fs=24.922 n=692 gt=73.8 (108 rows)
+VIPL_p14_v6_source1 ok fs=24.941 n=750 gt=86.4 (109 rows)
+VIPL_p15_v6_source1 ok fs=24.928 n=813 gt=66.8 (110 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.747 fps) by 18.988% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p16\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p16_v6_source1 ok fs=29.747 n=951 gt=85.5 (111 rows)
+VIPL_p17_v6_source1 ok fs=24.934 n=757 gt=74.9 (112 rows)
+VIPL_p18_v6_source1 ok fs=24.924 n=653 gt=83.0 (113 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7948 fps) by 19.1791% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p19\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p19_v6_source1 ok fs=29.795 n=891 gt=88.2 (114 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1394 fps) by 35.4423% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p20\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p20_v6_source1 ok fs=16.139 n=527 gt=61.7 (115 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1412 fps) by 35.4353% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p21\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p21_v6_source1 ok fs=16.141 n=494 gt=73.8 (116 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1354 fps) by 35.4584% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p22\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p22_v6_source1 ok fs=16.135 n=491 gt=56.4 (117 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2333 fps) by 23.0667% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p23\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p23_v6_source1 ok fs=19.233 n=582 gt=66.5 (118 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1363 fps) by 35.4546% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p24\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p24_v6_source1 ok fs=16.136 n=499 gt=94.7 (119 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1439 fps) by 35.4244% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p25\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p25_v6_source1 ok fs=16.144 n=491 gt=72.4 (120 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1453 fps) by 35.4188% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p26\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p26_v6_source1 ok fs=16.145 n=497 gt=75.2 (121 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2102 fps) by 23.1594% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p27\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p27_v6_source1 ok fs=19.210 n=664 gt=73.3 (122 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1412 fps) by 35.435% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p28\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p28_v6_source1 ok fs=16.141 n=470 gt=71.4 (123 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.0065 fps) by 35.9739% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p29\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 1: face detector found nothing, reusing last known bounding box.
+Frame 1: no bounding box available yet, using centered fallback box.
+Frame 2: no bounding box available yet, using centered fallback box.
+Frame 3: no bounding box available yet, using centered fallback box.
+Frame 4: no bounding box available yet, using centered fallback box.
+Frame 5: no bounding box available yet, using centered fallback box.
+Frame 66: face detector found nothing, reusing last known bounding box.
+Frame 116: face detector found nothing, reusing last known bounding box.
+Frame 136: face detector found nothing, reusing last known bounding box.
+Frame 146: face detector found nothing, reusing last known bounding box.
+Frame 156: face detector found nothing, reusing last known bounding box.
+Frame 221: face detector found nothing, reusing last known bounding box.
+Frame 261: face detector found nothing, reusing last known bounding box.
+Frame 271: face detector found nothing, reusing last known bounding box.
+Frame 281: face detector found nothing, reusing last known bounding box.
+Frame 316: face detector found nothing, reusing last known bounding box.
+Frame 326: face detector found nothing, reusing last known bounding box.
+Frame 381: face detector found nothing, reusing last known bounding box.
+Frame 386: face detector found nothing, reusing last known bounding box.
+Frame 391: face detector found nothing, reusing last known bounding box.
+Frame 396: face detector found nothing, reusing last known bounding box.
+Frame 416: face detector found nothing, reusing last known bounding box.
+Frame 426: face detector found nothing, reusing last known bounding box.
+Frame 436: face detector found nothing, reusing last known bounding box.
+Frame 446: face detector found nothing, reusing last known bounding box.
+Frame 451: face detector found nothing, reusing last known bounding box.
+Frame 456: face detector found nothing, reusing last known bounding box.
+Frame 461: face detector found nothing, reusing last known bounding box.
+Frame 466: face detector found nothing, reusing last known bounding box.
+Frame 481: face detector found nothing, reusing last known bounding box.
+Frame 501: face detector found nothing, reusing last known bounding box.
+Frame 511: face detector found nothing, reusing last known bounding box.
+Frame 546: face detector found nothing, reusing last known bounding box.
+Frame 561: face detector found nothing, reusing last known bounding box.
+Frame 586: face detector found nothing, reusing last known bounding box.
+VIPL_p29_v6_source1 ok fs=16.007 n=589 gt=67.1 (124 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.144 fps) by 35.4238% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p30\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p30_v6_source1 ok fs=16.144 n=608 gt=73.2 (125 rows)
+VIPL_p31_v6_source1 ok fs=24.931 n=727 gt=87.1 (126 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (29.7906 fps) by 19.1624% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p32\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p32_v6_source1 ok fs=29.791 n=940 gt=93.3 (127 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.6393 fps) by 33.4429% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p33\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p33_v6_source1 ok fs=16.639 n=497 gt=81.6 (128 rows)
+VIPL_p34_v6_source1 ok fs=24.929 n=766 gt=59.8 (129 rows)
+VIPL_p35_v6_source1 ok fs=24.929 n=987 gt=75.9 (130 rows)
+VIPL_p36_v6_source1 ok fs=24.929 n=841 gt=90.9 (131 rows)
+VIPL_p37_v6_source1 ok fs=24.932 n=877 gt=83.8 (132 rows)
+VIPL_p38_v6_source1 ok fs=24.935 n=702 gt=80.1 (133 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.6412 fps) by 33.4352% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p39\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p39_v6_source1 ok fs=16.641 n=513 gt=77.2 (134 rows)
+VIPL_p40_v6_source1 ok fs=24.901 n=844 gt=99.4 (135 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.6388 fps) by 33.4449% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p41\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p41_v6_source1 ok fs=16.639 n=518 gt=79.9 (136 rows)
+VIPL_p42_v6_source1 ok fs=24.932 n=802 gt=67.7 (137 rows)
+VIPL_p43_v6_source1 ok fs=24.930 n=774 gt=72.0 (138 rows)
+VIPL_p44_v6_source1 ok fs=24.927 n=819 gt=72.5 (139 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2335 fps) by 23.0658% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p45\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p45_v6_source1 ok fs=19.234 n=534 gt=79.5 (140 rows)
+VIPL_p46_v6_source1 ok fs=23.814 n=741 gt=77.6 (141 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2385 fps) by 23.046% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p47\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p47_v6_source1 ok fs=19.238 n=576 gt=69.5 (142 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.1702 fps) by 23.3193% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p48\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p48_v6_source1 ok fs=19.170 n=573 gt=85.0 (143 rows)
+VIPL_p49_v6_source1 ok fs=23.830 n=722 gt=73.2 (144 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (20.8986 fps) by 16.4056% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p50\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 261: face detector found nothing, reusing last known bounding box.
+VIPL_p50_v6_source1 ok fs=20.899 n=528 gt=81.9 (145 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1476 fps) by 35.4096% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p51\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p51_v6_source1 ok fs=16.148 n=450 gt=81.5 (146 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1376 fps) by 35.4497% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p52\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p52_v6_source1 ok fs=16.138 n=488 gt=74.2 (147 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1381 fps) by 35.4476% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p53\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p53_v6_source1 ok fs=16.138 n=489 gt=81.6 (148 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1463 fps) by 35.4148% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p54\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 301: face detector found nothing, reusing last known bounding box.
+Frame 306: face detector found nothing, reusing last known bounding box.
+Frame 311: face detector found nothing, reusing last known bounding box.
+Frame 366: face detector found nothing, reusing last known bounding box.
+Frame 381: face detector found nothing, reusing last known bounding box.
+Frame 386: face detector found nothing, reusing last known bounding box.
+Frame 391: face detector found nothing, reusing last known bounding box.
+Frame 406: face detector found nothing, reusing last known bounding box.
+VIPL_p54_v6_source1 ok fs=16.146 n=559 gt=83.1 (149 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1429 fps) by 35.4283% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p55\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p55_v6_source1 ok fs=16.143 n=694 gt=80.7 (150 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2358 fps) by 23.0569% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p57\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p57_v6_source1 ok fs=19.236 n=591 gt=57.7 (151 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2389 fps) by 23.0445% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p58\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p58_v6_source1 ok fs=19.239 n=548 gt=72.0 (152 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2274 fps) by 23.0902% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p59\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p59_v6_source1 ok fs=19.227 n=556 gt=74.9 (153 rows)
+VIPL_p60_v6_source1 ok fs=23.820 n=732 gt=80.2 (154 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2308 fps) by 23.0769% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p61\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p61_v6_source1 ok fs=19.231 n=581 gt=88.6 (155 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1355 fps) by 35.458% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p62\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p62_v6_source1 ok fs=16.136 n=483 gt=70.9 (156 rows)
+VIPL_p63_v6_source1 ok fs=23.756 n=776 gt=88.2 (157 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1362 fps) by 35.455% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p64\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p64_v6_source1 ok fs=16.136 n=506 gt=81.0 (158 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2308 fps) by 23.0769% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p65\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p65_v6_source1 ok fs=19.231 n=661 gt=80.8 (159 rows)
+VIPL_p66_v6_source1 ok fs=23.794 n=995 gt=69.6 (160 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.142 fps) by 35.4321% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p67\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p67_v6_source1 ok fs=16.142 n=524 gt=81.0 (161 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2353 fps) by 23.0589% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p68\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p68_v6_source1 ok fs=19.235 n=659 gt=67.7 (162 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1401 fps) by 35.4396% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p69\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p69_v6_source1 ok fs=16.140 n=448 gt=61.5 (163 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1352 fps) by 35.4592% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p70\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p70_v6_source1 ok fs=16.135 n=507 gt=79.5 (164 rows)
+VIPL_p71_v6_source1 ok fs=23.824 n=779 gt=72.1 (165 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1417 fps) by 35.4331% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p72\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p72_v6_source1 ok fs=16.142 n=493 gt=98.5 (166 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1339 fps) by 35.4645% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p73\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p73_v6_source1 ok fs=16.134 n=484 gt=83.8 (167 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1394 fps) by 35.4426% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p74\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 151: face detector found nothing, reusing last known bounding box.
+Frame 156: face detector found nothing, reusing last known bounding box.
+Frame 181: face detector found nothing, reusing last known bounding box.
+VIPL_p74_v6_source1 ok fs=16.139 n=480 gt=80.0 (168 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1357 fps) by 35.4571% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p75\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p75_v6_source1 ok fs=16.136 n=507 gt=91.2 (169 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1443 fps) by 35.423% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p76\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p76_v6_source1 ok fs=16.144 n=514 gt=77.1 (170 rows)
+VIPL_p77_v6_source1 ok fs=23.820 n=772 gt=71.6 (171 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2326 fps) by 23.0697% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p78\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p78_v6_source1 ok fs=19.233 n=614 gt=84.8 (172 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1381 fps) by 35.4476% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p79\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p79_v6_source1 ok fs=16.138 n=489 gt=64.1 (173 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.2387 fps) by 23.0451% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p80\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p80_v6_source1 ok fs=19.239 n=745 gt=81.3 (174 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (19.1695 fps) by 23.3218% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p81\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p81_v6_source1 ok fs=19.170 n=585 gt=72.9 (175 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1455 fps) by 35.4178% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p82\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p82_v6_source1 ok fs=16.146 n=490 gt=67.2 (176 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1401 fps) by 35.4396% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p83\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 246: face detector found nothing, reusing last known bounding box.
+VIPL_p83_v6_source1 ok fs=16.140 n=424 gt=77.6 (177 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1369 fps) by 35.4524% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p84\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p84_v6_source1 ok fs=16.137 n=497 gt=75.6 (178 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1125 fps) by 35.5499% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p85\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p85_v6_source1 ok fs=16.113 n=489 gt=71.4 (179 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1369 fps) by 35.4524% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p86\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p86_v6_source1 ok fs=16.137 n=498 gt=60.2 (180 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.138 fps) by 35.4482% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p87\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p87_v6_source1 ok fs=16.138 n=497 gt=94.8 (181 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1383 fps) by 35.4469% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p88\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p88_v6_source1 ok fs=16.138 n=480 gt=78.3 (182 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1403 fps) by 35.4389% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p89\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p89_v6_source1 ok fs=16.140 n=487 gt=89.6 (183 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1422 fps) by 35.4312% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p90\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+Frame 76: face detector found nothing, reusing last known bounding box.
+Frame 81: face detector found nothing, reusing last known bounding box.
+Frame 86: face detector found nothing, reusing last known bounding box.
+Frame 91: face detector found nothing, reusing last known bounding box.
+Frame 186: face detector found nothing, reusing last known bounding box.
+Frame 416: face detector found nothing, reusing last known bounding box.
+Frame 426: face detector found nothing, reusing last known bounding box.
+Frame 431: face detector found nothing, reusing last known bounding box.
+Frame 451: face detector found nothing, reusing last known bounding box.
+Frame 456: face detector found nothing, reusing last known bounding box.
+Frame 461: face detector found nothing, reusing last known bounding box.
+Frame 466: face detector found nothing, reusing last known bounding box.
+Frame 511: face detector found nothing, reusing last known bounding box.
+Frame 516: face detector found nothing, reusing last known bounding box.
+Frame 531: face detector found nothing, reusing last known bounding box.
+Frame 546: face detector found nothing, reusing last known bounding box.
+Frame 551: face detector found nothing, reusing last known bounding box.
+VIPL_p90_v6_source1 ok fs=16.142 n=555 gt=88.1 (184 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1381 fps) by 35.4475% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p91\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p91_v6_source1 ok fs=16.138 n=488 gt=72.5 (185 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1406 fps) by 35.4375% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p92\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p92_v6_source1 ok fs=16.141 n=517 gt=81.7 (186 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1397 fps) by 35.441% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p93\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p93_v6_source1 ok fs=16.140 n=487 gt=72.4 (187 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1371 fps) by 35.4517% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p94\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p94_v6_source1 ok fs=16.137 n=552 gt=78.6 (188 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1337 fps) by 35.4651% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p95\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p95_v6_source1 ok fs=16.134 n=500 gt=83.6 (189 rows)
+loadVIPLVideo: WARNING -- container FrameRate (25 fps) disagrees with time.txt-derived FrameRate (16.1377 fps) by 35.4492% for I:\EEE 3-1\EEE 312\project\dataset\seg24_scratch\VIPL-HR\p96\v6\source1\video.avi. Using the time.txt-derived value -- see docs/VIPL_DATA_FORMAT.md Section 4.
+VIPL_p96_v6_source1 ok fs=16.138 n=512 gt=57.1 (190 rows)
+DONE

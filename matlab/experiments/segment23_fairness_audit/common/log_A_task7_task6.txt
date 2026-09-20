@@ -1,0 +1,68 @@
+done prewavelet/chrom
+done prewavelet/pos
+done wavelet/chrom
+done wavelet/pos
+                     method                        pool        n     nFail     MAE      medianAE     RMSE     pearsonR    severeGT10       chain        combiner
+    _________________________________________    _________    ___    _____    ______    ________    ______    ________    __________    ____________    ________
+
+    "whole-clip fft"                             "VIPL_v1"    107      0      9.3458     3.3876     18.372    0.27755         29        "prewavelet"    "chrom" 
+    "naive windowed"                             "VIPL_v1"    107      0      10.338     5.3972     15.643    0.31566         39        "prewavelet"    "chrom" 
+    "RAKF original (division, data-derived)"     "VIPL_v1"    107      0      12.148     4.6843      22.04    0.20382         35        "prewavelet"    "chrom" 
+    "RAKF division + paper R0/Q"                 "VIPL_v1"    107      0      12.166     4.6796     22.044    0.20355         35        "prewavelet"    "chrom" 
+    "RAKF NATIVE exponent beta=0.5"              "VIPL_v1"    107      0      12.564     4.5546     23.207    0.19059         37        "prewavelet"    "chrom" 
+    "RAKF NATIVE exponent beta=1.0 [PRIMARY]"    "VIPL_v1"    107      0      12.899     4.5546     23.777    0.18505         37        "prewavelet"    "chrom" 
+    "RAKF NATIVE exponent beta=1.5"              "VIPL_v1"    107      0      13.001     4.6931     23.881    0.18391         37        "prewavelet"    "chrom" 
+    "RAKF NATIVE exponent beta=2.0"              "VIPL_v1"    107      0      13.032     4.8018     23.901     0.1836         37        "prewavelet"    "chrom" 
+
+                     method                         pool        n     nFail     MAE      medianAE     RMSE     pearsonR    severeGT10      chain      combiner
+    _________________________________________    __________    ___    _____    ______    ________    ______    ________    __________    _________    ________
+
+    "whole-clip fft"                             "MAIN_112"    112      0      7.8344     4.0716     11.868    0.53187         32        "wavelet"    "chrom" 
+    "naive windowed"                             "MAIN_112"    112      0      7.5853     4.6766     10.323    0.54648         36        "wavelet"    "chrom" 
+    "RAKF original (division, data-derived)"     "MAIN_112"    112      0      10.725     6.7284     17.143    0.34277         46        "wavelet"    "chrom" 
+    "RAKF division + paper R0/Q"                 "MAIN_112"    112      0      10.771     6.7996     17.172    0.34009         46        "wavelet"    "chrom" 
+    "RAKF NATIVE exponent beta=0.5"              "MAIN_112"    112      0      11.398     7.0281     18.374    0.30645         47        "wavelet"    "chrom" 
+    "RAKF NATIVE exponent beta=1.0 [PRIMARY]"    "MAIN_112"    112      0      11.949     6.7851     19.283    0.27525         47        "wavelet"    "chrom" 
+    "RAKF NATIVE exponent beta=1.5"              "MAIN_112"    112      0      12.107     6.7412     19.498    0.26754         48        "wavelet"    "chrom" 
+    "RAKF NATIVE exponent beta=2.0"              "MAIN_112"    112      0       12.15     6.7464     19.541    0.26586         48        "wavelet"    "chrom" 
+    "whole-clip fft"                             "MAIN_112"    112      0      7.2217     4.4979     10.849    0.62341         30        "wavelet"    "pos"   
+    "naive windowed"                             "MAIN_112"    112      0      7.3104     4.7999     10.094    0.55185         32        "wavelet"    "pos"   
+    "RAKF original (division, data-derived)"     "MAIN_112"    112      0      9.3611     5.9261     12.863     0.4143         45        "wavelet"    "pos"   
+    "RAKF division + paper R0/Q"                 "MAIN_112"    112      0      9.4212     5.9504     12.925    0.40959         45        "wavelet"    "pos"   
+    "RAKF NATIVE exponent beta=0.5"              "MAIN_112"    112      0      9.9209     6.7349      13.79    0.36599         46        "wavelet"    "pos"   
+    "RAKF NATIVE exponent beta=1.0 [PRIMARY]"    "MAIN_112"    112      0      10.488     6.9173     14.761    0.31303         47        "wavelet"    "pos"   
+    "RAKF NATIVE exponent beta=1.5"              "MAIN_112"    112      0      10.669     6.9968      15.04    0.29898         48        "wavelet"    "pos"   
+    "RAKF NATIVE exponent beta=2.0"              "MAIN_112"    112      0       10.72     7.0207     15.104      0.296         48        "wavelet"    "pos"   
+
+CHROM native vs production (MAIN_112): worse>1bpm 25, better>1bpm 18, severe worse>10 10, signrank p=0.2479
+POS native vs production (MAIN_112): worse>1bpm 23, better>1bpm 18, severe worse>10 13, signrank p=0.1375
+                   method                      pool        n     nFail     MAE      medianAE     RMSE     pearsonR    severeGT10
+    ____________________________________    __________    ___    _____    ______    ________    ______    ________    __________
+
+    "CHROM L0 production"                   "MAIN_112"    112      0      7.8344     4.0716     11.868     0.53187        32    
+    "POS L0 production"                     "MAIN_112"    112      0      7.2217     4.4979     10.849     0.62341        30    
+    "CHROM L1 no wavelet"                   "MAIN_112"    112      0      9.0969     3.2859     18.005     0.31448        30    
+    "POS L1 no wavelet"                     "MAIN_112"    112      0      8.6795     3.2014     16.454     0.28091        30    
+    "CHROM L2 no wavelet+no detrend"        "MAIN_112"    112      0      9.0969     3.2859     18.005     0.31448        30    
+    "POS L2 no wavelet+no detrend"          "MAIN_112"    112      0      8.6795     3.2014     16.454     0.28091        30    
+    "CHROM L3 no filtering (whole-clip)"    "MAIN_112"    112      0      11.053     4.4684     18.384     0.33677        40    
+    "POS L3 no filtering (whole-clip)"      "MAIN_112"    112      0       10.15     3.9395     17.498     0.47431        34    
+    "CHROM L4 native windowed"              "MAIN_112"    112      0      10.876     3.8977     21.778     0.19342        32    
+    "POS L4 native windowed"                "MAIN_112"    112      0      11.455     3.2173     24.854    0.082009        32    
+    "CHROM L4b native CHROM band0.7-2.5"    "MAIN_112"    112      0      7.3396     3.3546     11.819     0.48533        30    
+
+                   method                         pool          n     nFail     MAE      medianAE     RMSE     pearsonR    severeGT10
+    ____________________________________    ________________    __    _____    ______    ________    ______    ________    __________
+
+    "CHROM L0 production"                   "VIPL_v2_motion"    20      0      8.8506     5.1812     12.641     0.53648         7    
+    "POS L0 production"                     "VIPL_v2_motion"    20      0      10.565     5.8846     16.061      0.3076         6    
+    "CHROM L1 no wavelet"                   "VIPL_v2_motion"    20      0      8.1821     5.1812      11.18     0.57549         7    
+    "POS L1 no wavelet"                     "VIPL_v2_motion"    20      0      9.0432     4.2462     14.859     0.41445         6    
+    "CHROM L2 no wavelet+no detrend"        "VIPL_v2_motion"    20      0      8.1821     5.1812      11.18     0.57549         7    
+    "POS L2 no wavelet+no detrend"          "VIPL_v2_motion"    20      0      9.0432     4.2462     14.859     0.41445         6    
+    "CHROM L3 no filtering (whole-clip)"    "VIPL_v2_motion"    20      0      18.903     20.586     24.475    0.033359        12    
+    "POS L3 no filtering (whole-clip)"      "VIPL_v2_motion"    20      0      19.578     21.069     24.785    0.041181        12    
+    "CHROM L4 native windowed"              "VIPL_v2_motion"    20      0      9.1688     4.2462     14.855     0.42486         6    
+    "POS L4 native windowed"                "VIPL_v2_motion"    20      0      15.419     10.676     21.403     0.15612        10    
+    "CHROM L4b native CHROM band0.7-2.5"    "VIPL_v2_motion"    20      0      6.6595     4.9017     9.0544     0.78054         5    
+

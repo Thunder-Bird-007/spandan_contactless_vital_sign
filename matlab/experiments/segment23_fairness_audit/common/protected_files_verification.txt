@@ -1,0 +1,20 @@
+18/18 protected production files byte-identical before vs after Segment 23 (SHA-256).
+
+IDENTICAL  matlab/src/pulseextraction/chromCombine.m
+IDENTICAL  matlab/src/pulseextraction/posCombine.m
+IDENTICAL  matlab/src/heartrate/fftHeartRate.m
+IDENTICAL  matlab/src/heartrate/windowedHeartRate.m
+IDENTICAL  matlab/src/filtering/bandpassClean.m
+IDENTICAL  matlab/src/filtering/detrendSignal.m
+IDENTICAL  matlab/src/filtering/waveletDenoise.m
+IDENTICAL  matlab/src/validation/residualAdaptiveKalmanHR.m
+IDENTICAL  matlab/src/pulseextraction/cpaceProjection.m
+IDENTICAL  matlab/src/pulseextraction/cpaceEigenExtract.m
+IDENTICAL  matlab/src/pulseextraction/cpaceHomodyneNormalize.m
+IDENTICAL  matlab/src/pulseextraction/lgiProjection.m
+IDENTICAL  matlab/src/pulseextraction/spatialSubspaceRotation.m
+IDENTICAL  matlab/src/roi/extractROISignals.m
+IDENTICAL  matlab/src/roi/extractROISignalsLab.m
+IDENTICAL  matlab/src/roi/extractROICovariance.m
+IDENTICAL  matlab/src/validation/computeMetrics.m
+IDENTICAL  matlab/src/pipeline/estimateVitalsAndMorphology.m

@@ -1,0 +1,18 @@
+# Segment 23 — Fairness / native-form audit: MASTER REPORT
+
+Question: is CHROM/POS's unbroken record (Segments 6, 7, 9, 18, 21, 22) **real robustness**, or an artefact of every challenger being tested in a simplified/partial form while CHROM/POS carries 8 segments of tuning?
+
+## The direct answer
+
+**Mostly real robustness, with a real but modest tuning/read-out asymmetry that does not change any ranking. It is not a fairness artefact of incomplete challenger implementations.**
+
+* Every challenger that was re-run in its native or completed form (cPACE with windowed q̂ — T1; CIELab a* with the paper's ROI/KLT/transform — T2; 2SR with a real skin mask — T3; LGI with its own read-out and a state-space tracker — T4; RAKF with the Eq. 12 exponent — T7) **still loses**, and three of the five native forms are *worse* than the earlier simplified test (native a* 16.5 vs 9.5 bpm; RAKF 11.95 vs 10.73; masked-forehead 2SR 10.1 vs 9.5). Where a completion did help (2SR on the whole face instead of the forehead, on the motion pool: 21.3 → 15.4 bpm), it still trails CHROM (8.85) and POS (10.56) by 5–7 bpm. Supported by T1, T2, T3, T4, T7.
+* The estimator-swap matrix (T5, 19 combiners × 6 read-outs, per pool) shows **no challenger beats production CHROM/POS under the same read-out** on MAIN_112 (the only nominal exceptions are same-family CHROM/POS variants, or read-outs — RAKF — that wreck everything). Read-outs move all rows together, so "the loss was a read-out artefact" is rejected.
+* The tuning asymmetry is **real but small and not per-subject significant** (T6): stripping the wavelet stage alone costs CHROM/POS 1.3–1.5 bpm pooled MAE (roughly the size of their pooled-MAE margin over the challengers), fully native windowed forms cost 3–4 bpm pooled MAE — but paired per subject on MAIN_112 **no de-tuned variant is distinguishable from production (all p ≥ 0.08)** and a 0.7–2.5 Hz band restores or beats production. So CHROM/POS is configuration-sensitive in the pooled numbers and statistically robust per subject — "some of both", leaning robust.
+* **How strong is the incumbents' lead, honestly?** On the main pool (MAIN_112), the closest challengers (a*, 2SR, LGI, masked 2SR) are 1.4–2.5 bpm behind on pooled MAE but **not significantly worse than CHROM per subject** (paired p = 0.07–0.36; still worse than POS at p ≈ 0.02–0.08 for a*/2SR/LGI); only cPACE Full and native a* are clearly worse (p ≤ 0.04). On the motion pool (N = 20) CHROM significantly beats 2SR (p = 0.010), LGI (p = 0.016) and cPACE Full bw 0.15 (p = 0.018). So the evidence for "CHROM/POS ≥ everything tested" is solid; the evidence for "CHROM/POS ≫ the best challengers on ordinary resting data" is weaker than the pooled-MAE column suggests.
+* **The largest lever found in this segment is neither a combiner nor tuning of the combiner — it is the HR read-out** (T4/T5/T7): a windowed peak read-out (0.5–2 Hz, 256-sample/90 %) or a frequency-state tracker lowers MAIN_112 MAE of the *incumbents* by 1.1–1.5 bpm (CHROM 7.83 → 6.38 / 6.54, POS 7.22 → 6.70 / 6.29; RMSE 11.9 → 9.1 / 8.8). That is a **CANDIDATE** for held-out validation (UBFC-D2 is available), confounded by the band prior it carries; **nothing was promoted.**
+
+## Master table — every combiner / method in the project's history (best-known configuration)
+
+Cells: MAE (bpm) / RMSE (bpm) / Pearson r. MAIN_112 = the 5 UBFC + 107 VIPL v1 subjects; the per-pool columns are always shown next to it (never pooled only). The motion pool (VIPL v2, N = 20) is separate and smaller than the rest; UBFC (N = 5) is not evidence on its own. Severe-error counts, other read-outs and every cell of the full matrix: `task5_estimator_swap_audit/results/task5_matrix_long.csv`.
+
