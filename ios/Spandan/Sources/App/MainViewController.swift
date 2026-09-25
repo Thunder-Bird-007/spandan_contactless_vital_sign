@@ -1,20 +1,33 @@
 import AVFoundation
 import UIKit
 
-/// Single-screen glue: camera lifecycle, permission handling, and wiring the real
-/// analysis pipeline into the UI -- the iOS analog of MainActivity.kt. HR is a
-/// real, validated CHROM/POS+FFT port (see Signal/RealHeartRateEstimator.swift).
-/// SpO2 is a real ratio-of-ratios + linear-calibration estimate (see
-/// Signal/LiveSpo2Estimator.swift), added purely additively alongside HR -- both
-/// estimators read the same `signalBuffer` snapshot independently, neither one's
-/// class references or modifies the other's.
+/// Single-screen glue: camera lifecycle, permission handling, and wiring the
+/// real analysis pipeline into the UI -- the iOS analog of MainActivity.kt.
+/// HR is a real, validated CHROM/POS+FFT port (see
+/// Signal/RealHeartRateEstimator.swift). SpO2 is a real ratio-of-ratios +
+/// linear-calibration estimate (see Signal/LiveSpo2Estimator.swift), added
+/// purely additively alongside HR. Branch 2 (waveform morphology / dicrotic
+/// notch, see Signal/MorphologyWaveformEstimator.swift) runs independently
+/// alongside both -- all three read the same `signalBuffer` snapshot,
+/// none reads or modifies another's state.
+///
+/// UI structure mirrors android/app/.../MainActivity.kt + activity_main.xml
+/// as of that port's own Segment 31: camera preview (with a bottom scrim)
+/// -> ONE primary "LIVE SIGNAL" hero card (Branch 2's multi-cycle
+/// continuous pulse trace, not the raw unfiltered chart the OLD version of
+/// this file showed) -> a vitals card (HR/SpO2, with small tinted icons).
 final class MainViewController: UIViewController {
 
     private let previewContainer = UIView()
     private let overlayView = OverlayView()
-    private let chartView = SignalChartView()
-    private let hrLabel = UILabel()
-    private let spo2Label = UILabel()
+    private let previewScrim = CAGradientLayer()
+
+    private let liveSignalCard = UIView()
+    private let waveformView = WaveformView()
+    private let branch2StatusLabel = UILabel()
+
+    private let hrValueLabel = UILabel()
+    private let spo2ValueLabel = UILabel()
     private let permissionDeniedView = UIView()
     private let permissionRationaleLabel = UILabel()
     private let grantPermissionButton = UIButton(type: .system)
@@ -23,6 +36,7 @@ final class MainViewController: UIViewController {
     private let signalBuffer = SignalBuffer(windowSeconds: SignalBuffer.windowDurationSeconds)
     private let heartRateEstimator = RealHeartRateEstimator()
     private let spo2Estimator = LiveSpo2Estimator()
+    private let morphologyEstimator = MorphologyWaveformEstimator()
 
     private var refreshTimer: Timer?
 
@@ -32,9 +46,27 @@ final class MainViewController: UIViewController {
     // MainActivity's permissionGrantedLastKnown / onResume().
     private var permissionGrantedLastKnown = false
 
+    // MARK: - Palette (mirrors android/app/.../res/values/colors.xml's own
+    // small, deliberately limited palette additions from that port's own
+    // Segment 31 -- same colors, so a screenshot of either app reads as one
+    // system).
+    private enum Palette {
+        static let bgRoot = UIColor.black
+        static let surfaceCard = UIColor(red: 0x12 / 255, green: 0x12 / 255, blue: 0x12 / 255, alpha: 0.80)
+        static let surfaceCardTop = UIColor(red: 0x16 / 255, green: 0x16 / 255, blue: 0x16 / 255, alpha: 0.85)
+        static let cardBorder = UIColor.white.withAlphaComponent(0.2)
+        static let accentBranch2 = UIColor(red: 0x7C / 255, green: 0x4D / 255, blue: 0xFF / 255, alpha: 1)
+        static let accentBranch2Border = UIColor(red: 0x7C / 255, green: 0x4D / 255, blue: 0xFF / 255, alpha: 0.30)
+        static let accentHr = UIColor(red: 0xFF / 255, green: 0x6B / 255, blue: 0x81 / 255, alpha: 1)
+        static let accentSpo2 = UIColor(red: 0x29 / 255, green: 0xB6 / 255, blue: 0xF6 / 255, alpha: 1)
+        static let textPrimary = UIColor.white
+        static let textSecondary = UIColor.white.withAlphaComponent(0.7)
+        static let textTertiary = UIColor.white.withAlphaComponent(0.5)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        view.backgroundColor = Palette.bgRoot
         buildLayout()
 
         previewContainer.layer.addSublayer(cameraController.previewLayer)
@@ -50,6 +82,7 @@ final class MainViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         cameraController.previewLayer.frame = previewContainer.bounds
+        previewScrim.frame = CGRect(x: 0, y: previewContainer.bounds.height - 64, width: previewContainer.bounds.width, height: 64)
     }
 
     // Re-checks camera permission every time the view (re)appears, not just once
@@ -139,9 +172,9 @@ final class MainViewController: UIViewController {
         }
     }
 
-    /// Periodically refreshes the chart + HR/SpO2 text, decoupled from the camera
-    /// analysis frame rate -- same 200ms cadence as MainActivity's
-    /// startUiRefreshLoop().
+    /// Periodically refreshes the live signal + HR/SpO2 text, decoupled from
+    /// the camera analysis frame rate -- same 200ms cadence as
+    /// MainActivity's startUiRefreshLoop().
     private func startUiRefreshLoop() {
         refreshTimer?.invalidate()
         let timer = Timer(timeInterval: 0.2, repeats: true) { [weak self] _ in
@@ -153,24 +186,57 @@ final class MainViewController: UIViewController {
 
     private func refreshUi() {
         let samples = signalBuffer.snapshot()
-        chartView.updateValues(samples.map { $0.green })
 
-        // HR: real pipeline (detrend -> bandpass -> CHROM/POS -> FFT + switching
-        // rule), see Signal/RealHeartRateEstimator.swift. nil until enough of the
-        // buffer window has filled.
+        // HR: real pipeline (detrend -> bandpass -> CHROM/POS -> FFT +
+        // switching rule), see Signal/RealHeartRateEstimator.swift.
         if let hr = heartRateEstimator.update(samples: samples) {
-            hrLabel.text = String(format: "HR: %.0f bpm", hr)
+            hrValueLabel.text = String(format: "%.0f bpm", hr)
         } else {
-            hrLabel.text = "HR: -- bpm"
+            hrValueLabel.text = "-- bpm"
         }
 
         // SpO2: real ratio-of-ratios + linear calibration, see
-        // Signal/LiveSpo2Estimator.swift. Independent call on the same samples
-        // snapshot -- does not read heartRateEstimator's state or vice versa.
+        // Signal/LiveSpo2Estimator.swift. Independent call on the same
+        // samples snapshot -- does not read heartRateEstimator's state or
+        // vice versa.
         if let spo2 = spo2Estimator.update(samples: samples) {
-            spo2Label.text = String(format: "SpO2: %.2f%%", spo2)
+            spo2ValueLabel.text = String(format: "%.2f%%", spo2)
         } else {
-            spo2Label.text = "SpO2: -- %"
+            spo2ValueLabel.text = "-- %"
+        }
+
+        // Branch 2 -- independent call on the same samples snapshot (does
+        // not read heartRateEstimator/spo2Estimator state or vice versa,
+        // matching Branch 1/Branch 2's deliberate separation). Renders the
+        // multi-cycle continuous trace, not the single averaged beat -- see
+        // WaveformView's own doc.
+        let morphologyEstimate = morphologyEstimator.update(samples: samples)
+        waveformView.update(morphologyEstimate?.continuousWaveform)
+        applyBranch2Status(morphologyEstimator.lastStatus, morphologyEstimate)
+    }
+
+    private func applyBranch2Status(_ status: EstimatorStatus, _ estimate: MorphologyWaveformEstimator.Estimate?) {
+        switch status {
+        case .warmingUp:
+            branch2StatusLabel.text = "Warming up…"
+            branch2StatusLabel.textColor = Palette.textSecondary
+        case .lowSignalQuality:
+            branch2StatusLabel.text = "Low signal quality"
+            branch2StatusLabel.textColor = UIColor(red: 0xFF / 255, green: 0x70 / 255, blue: 0x43 / 255, alpha: 1)
+        case .ok:
+            guard let estimate else {
+                branch2StatusLabel.text = "Warming up…"
+                branch2StatusLabel.textColor = Palette.textSecondary
+                return
+            }
+            let methodLabel = estimate.harmonicMethodUsed == "gaussian015" ? "Gaussian (α=0.15)" : "ABPF comb"
+            if estimate.notchDetected {
+                branch2StatusLabel.text = String(format: "%@ · conf %.2f", methodLabel, estimate.notchConfidenceRaw)
+                branch2StatusLabel.textColor = estimate.notchConfidenceRaw > 0.3 ? UIColor(red: 0x4C / 255, green: 0xAF / 255, blue: 0x50 / 255, alpha: 1) : UIColor(red: 0xFF / 255, green: 0x70 / 255, blue: 0x43 / 255, alpha: 1)
+            } else {
+                branch2StatusLabel.text = "No notch detected this window"
+                branch2StatusLabel.textColor = UIColor(red: 0xFF / 255, green: 0x70 / 255, blue: 0x43 / 255, alpha: 1)
+            }
         }
     }
 
@@ -178,9 +244,9 @@ final class MainViewController: UIViewController {
         refreshTimer?.invalidate()
     }
 
-    // MARK: - Layout (programmatic, mirrors activity_main.xml's structure:
-    // camera preview + overlays on top, live raw-signal chart, then HR/SpO2
-    // readouts side by side)
+    // MARK: - Layout (programmatic, mirrors activity_main.xml's post-
+    // Segment-31 structure: camera preview + overlays -> "LIVE SIGNAL" hero
+    // card (Branch 2) -> vitals card).
 
     private func buildLayout() {
         previewContainer.translatesAutoresizingMaskIntoConstraints = false
@@ -188,6 +254,11 @@ final class MainViewController: UIViewController {
 
         overlayView.translatesAutoresizingMaskIntoConstraints = false
         previewContainer.addSubview(overlayView)
+
+        previewScrim.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.7).cgColor]
+        previewScrim.startPoint = CGPoint(x: 0.5, y: 0.0)
+        previewScrim.endPoint = CGPoint(x: 0.5, y: 1.0)
+        previewContainer.layer.addSublayer(previewScrim)
 
         permissionDeniedView.translatesAutoresizingMaskIntoConstraints = false
         permissionDeniedView.backgroundColor = UIColor.black.withAlphaComponent(0.8)
@@ -210,26 +281,64 @@ final class MainViewController: UIViewController {
         permissionStack.translatesAutoresizingMaskIntoConstraints = false
         permissionDeniedView.addSubview(permissionStack)
 
-        chartView.translatesAutoresizingMaskIntoConstraints = false
+        // --- "LIVE SIGNAL" hero card (Branch 2) ---
+        liveSignalCard.translatesAutoresizingMaskIntoConstraints = false
+        liveSignalCard.backgroundColor = Palette.surfaceCardTop
+        liveSignalCard.layer.cornerRadius = 22
+        liveSignalCard.layer.borderWidth = 1
+        liveSignalCard.layer.borderColor = Palette.accentBranch2Border.cgColor
 
-        hrLabel.textColor = .white
-        hrLabel.font = .systemFont(ofSize: 20)
-        hrLabel.textAlignment = .center
-        hrLabel.text = "HR: -- bpm"
+        let liveSignalTitle = UILabel()
+        liveSignalTitle.text = "LIVE SIGNAL"
+        liveSignalTitle.textColor = Palette.textPrimary
+        liveSignalTitle.font = .boldSystemFont(ofSize: 14)
 
-        spo2Label.textColor = .white
-        spo2Label.font = .systemFont(ofSize: 20)
-        spo2Label.textAlignment = .center
-        spo2Label.text = "SpO2: -- %"
+        let liveSignalSubtitle = UILabel()
+        liveSignalSubtitle.text = "Branch 2 · filtered pulse trace"
+        liveSignalSubtitle.textColor = Palette.textTertiary
+        liveSignalSubtitle.font = .systemFont(ofSize: 11)
 
-        let readoutStack = UIStackView(arrangedSubviews: [hrLabel, spo2Label])
-        readoutStack.axis = .horizontal
-        readoutStack.distribution = .fillEqually
-        readoutStack.translatesAutoresizingMaskIntoConstraints = false
+        waveformView.translatesAutoresizingMaskIntoConstraints = false
+
+        branch2StatusLabel.text = "Warming up…"
+        branch2StatusLabel.textColor = Palette.textSecondary
+        branch2StatusLabel.font = .systemFont(ofSize: 12)
+
+        let liveSignalStack = UIStackView(arrangedSubviews: [liveSignalTitle, liveSignalSubtitle, waveformView, branch2StatusLabel])
+        liveSignalStack.axis = .vertical
+        liveSignalStack.spacing = 4
+        liveSignalStack.setCustomSpacing(8, after: liveSignalSubtitle)
+        liveSignalStack.setCustomSpacing(10, after: waveformView)
+        liveSignalStack.translatesAutoresizingMaskIntoConstraints = false
+        liveSignalCard.addSubview(liveSignalStack)
+
+        // --- Vitals card (HR / SpO2) ---
+        let vitalsCard = UIView()
+        vitalsCard.translatesAutoresizingMaskIntoConstraints = false
+        vitalsCard.backgroundColor = Palette.surfaceCardTop
+        vitalsCard.layer.cornerRadius = 22
+        vitalsCard.layer.borderWidth = 1
+        vitalsCard.layer.borderColor = Palette.cardBorder.cgColor
+
+        let hrColumn = makeVitalsColumn(iconName: "heart.fill", iconTint: Palette.accentHr, caption: "HEART RATE", valueLabel: hrValueLabel, placeholder: "-- bpm")
+        let spo2Column = makeVitalsColumn(iconName: "drop.fill", iconTint: Palette.accentSpo2, caption: "BLOOD OXYGEN", valueLabel: spo2ValueLabel, placeholder: "-- %")
+
+        let divider = UIView()
+        divider.backgroundColor = Palette.cardBorder
+        divider.translatesAutoresizingMaskIntoConstraints = false
+        divider.widthAnchor.constraint(equalToConstant: 1).isActive = true
+
+        let vitalsRow = UIStackView(arrangedSubviews: [hrColumn, divider, spo2Column])
+        vitalsRow.axis = .horizontal
+        vitalsRow.distribution = .fill
+        vitalsRow.alignment = .fill
+        vitalsRow.spacing = 16
+        vitalsRow.translatesAutoresizingMaskIntoConstraints = false
+        vitalsCard.addSubview(vitalsRow)
 
         view.addSubview(previewContainer)
-        view.addSubview(chartView)
-        view.addSubview(readoutStack)
+        view.addSubview(liveSignalCard)
+        view.addSubview(vitalsCard)
 
         let guide = view.safeAreaLayoutGuide
         NSLayoutConstraint.activate([
@@ -252,20 +361,54 @@ final class MainViewController: UIViewController {
             permissionStack.leadingAnchor.constraint(greaterThanOrEqualTo: permissionDeniedView.leadingAnchor, constant: 24),
             permissionStack.trailingAnchor.constraint(lessThanOrEqualTo: permissionDeniedView.trailingAnchor, constant: -24),
 
-            // chartView's fixed height + the readout row's fixed content, plus this
-            // == pin at the bottom, close the vertical layout system so
-            // previewContainer's height is fully determined without needing an
-            // explicit height constraint of its own -- the Auto Layout analog of
-            // Android's layout_weight="1" fill-remaining-space behavior.
-            chartView.topAnchor.constraint(equalTo: previewContainer.bottomAnchor, constant: 4),
-            chartView.leadingAnchor.constraint(equalTo: guide.leadingAnchor),
-            chartView.trailingAnchor.constraint(equalTo: guide.trailingAnchor),
-            chartView.heightAnchor.constraint(equalToConstant: 120),
+            liveSignalCard.topAnchor.constraint(equalTo: previewContainer.bottomAnchor, constant: 6),
+            liveSignalCard.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 14),
+            liveSignalCard.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -14),
 
-            readoutStack.topAnchor.constraint(equalTo: chartView.bottomAnchor, constant: 12),
-            readoutStack.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 12),
-            readoutStack.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -12),
-            readoutStack.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -12),
+            liveSignalStack.topAnchor.constraint(equalTo: liveSignalCard.topAnchor, constant: 14),
+            liveSignalStack.leadingAnchor.constraint(equalTo: liveSignalCard.leadingAnchor, constant: 14),
+            liveSignalStack.trailingAnchor.constraint(equalTo: liveSignalCard.trailingAnchor, constant: -14),
+            liveSignalStack.bottomAnchor.constraint(equalTo: liveSignalCard.bottomAnchor, constant: -14),
+
+            waveformView.heightAnchor.constraint(equalToConstant: 140),
+
+            vitalsCard.topAnchor.constraint(equalTo: liveSignalCard.bottomAnchor, constant: 12),
+            vitalsCard.leadingAnchor.constraint(equalTo: guide.leadingAnchor, constant: 14),
+            vitalsCard.trailingAnchor.constraint(equalTo: guide.trailingAnchor, constant: -14),
+            vitalsCard.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -14),
+
+            vitalsRow.topAnchor.constraint(equalTo: vitalsCard.topAnchor, constant: 18),
+            vitalsRow.leadingAnchor.constraint(equalTo: vitalsCard.leadingAnchor, constant: 14),
+            vitalsRow.trailingAnchor.constraint(equalTo: vitalsCard.trailingAnchor, constant: -14),
+            vitalsRow.bottomAnchor.constraint(equalTo: vitalsCard.bottomAnchor, constant: -18),
         ])
+    }
+
+    private func makeVitalsColumn(iconName: String, iconTint: UIColor, caption: String, valueLabel: UILabel, placeholder: String) -> UIView {
+        let icon = UIImageView(image: UIImage(systemName: iconName))
+        icon.tintColor = iconTint
+        icon.contentMode = .scaleAspectFit
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        icon.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        icon.widthAnchor.constraint(equalToConstant: 20).isActive = true
+
+        let captionLabel = UILabel()
+        captionLabel.text = caption
+        captionLabel.textColor = Palette.textTertiary
+        captionLabel.font = .systemFont(ofSize: 11, weight: .medium)
+        captionLabel.textAlignment = .center
+
+        valueLabel.text = placeholder
+        valueLabel.textColor = Palette.textPrimary
+        valueLabel.font = .boldSystemFont(ofSize: 30)
+        valueLabel.textAlignment = .center
+        valueLabel.adjustsFontSizeToFitWidth = true
+        valueLabel.minimumScaleFactor = 0.6
+
+        let stack = UIStackView(arrangedSubviews: [icon, captionLabel, valueLabel])
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 4
+        return stack
     }
 }
