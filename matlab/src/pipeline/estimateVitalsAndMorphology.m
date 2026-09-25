@@ -64,19 +64,17 @@ function result = estimateVitalsAndMorphology(videoInput, groundTruth, calibPara
 % pre-wavelet raw trace (e.g. an on-screen "Raw ROI trace" panel) must
 % capture its own copy of R/G/B BEFORE calling this function.
 %
-% REGRESSION TEST IMPACT, FLAGGED NOT SILENTLY LEFT: this file's own
-% header already documents that tests/segment7_task_f_regression_test.m
-% requires this function's notch output to match
-% results/metrics/segment7_task_b_notch_branch2.csv bit-for-bit, and that
-% test already knows to pass opts.useConfidenceGate=false for its Part 3
-% bit-exact check. That CSV predates this wavelet fix, so with
-% useWaveletDenoise now defaulting to true, that regression test will
-% start failing its bit-exact comparison unless it is updated to also
-% pass opts.useWaveletDenoise=false (to reproduce pre-fix behavior) OR
-% the recorded CSV is regenerated under the new default. This file does
-% NOT touch that test or that CSV -- a human should decide which of the
-% two is the right fix, same discipline as every other validated-result
-% change in this project.
+% REGRESSION TEST IMPACT -- RESOLVED 2026-09-25 (Segment 27 Item A / BRANCH
+% 2 PIN, see that section below): this header used to warn that
+% tests/segment7_task_f_regression_test.m's Part 3 bit-exact check against
+% results/metrics/segment7_task_b_notch_branch2.csv would start failing
+% once useWaveletDenoise defaulted to true, and left the fix as an open
+% human decision. Segment 27 Item A found wavelet denoising HARMFUL to
+% Branch 2 specifically (notch pass rate 4/5 -> 2/5 on the UBFC pool), so
+% the resolution is the Branch 2 pin below, not a test/CSV update -- Branch
+% 2 now always runs on pre-wavelet R/G/B regardless of
+% opts.useWaveletDenoise, so tests/segment7_task_f_regression_test.m's Part
+% 3 passes again unmodified (reverified 2026-09-25, all 3 parts PASS).
 %
 % WHY TWO BRANCHES OFF ONE EXTRACTION (Segment 7 Task E's decision):
 % the filtering that helps notch morphology (a wide 0.5-8 Hz band plus
@@ -420,16 +418,41 @@ branch1.calibParamsUsed = calibParams;
 % already-passing case never touches the Gaussian path at all), and
 % morphology/harmonicFilterConfidenceGate.m -- Segment 13's own settled
 % logic, not re-derived here -- decides whether to substitute it. ===
-[R_wide, ~, ~] = bandpassMorphology(R_detrended, frameRate, 'wide');
-[G_wide, ~, ~] = bandpassMorphology(G_detrended, frameRate, 'wide');
-[B_wide, ~, ~] = bandpassMorphology(B_detrended, frameRate, 'wide');
-pulseWide = chromCombine(R_wide, G_wide, B_wide, R, G, B);
+%
+% BRANCH 2 PIN (2026-09-25, Segment 27 Item A verdict: HARMFUL): wavelet
+% denoising measurably regresses Branch 2's own notch-detection pass rate
+% (adaptiveHarmonic condition, UBFC 5-subject pool: pass count 4/5 -> 2/5
+% at the project's 0.3 confidence bar, with two previously-passing subjects
+% -- 7-gt 0.6405->0.1727, 12-gt 1.0000->0.0380 -- falling below it; see
+% matlab/experiments/segment27_branch2_wavelet_evaluation/PREREGISTRATION.md
+% and its results/s27_branch2_wavelet.csv, judged against the frozen
+% results/metrics/segment7_task_b_notch_branch2.csv baseline). Branch 2's
+% detrend chain is therefore rebuilt from the PRE-wavelet R/G/B -- same
+% "capture before reassignment, rebuild independently" pattern the SpO2 pin
+% above already uses -- regardless of opts.useWaveletDenoise, so Branch 2
+% never sees wavelet-denoised input. Android's MorphologyWaveformEstimator.kt
+% was ported before the wavelet default existed and already has no wavelet
+% step, so it already matches this pinned behavior -- no Android change.
+if opts.useWaveletDenoise
+    [R_detrendedBranch2, ~] = detrendSignal(R_preWavelet);
+    [G_detrendedBranch2, ~] = detrendSignal(G_preWavelet);
+    [B_detrendedBranch2, ~] = detrendSignal(B_preWavelet);
+else
+    R_detrendedBranch2 = R_detrended;
+    G_detrendedBranch2 = G_detrended;
+    B_detrendedBranch2 = B_detrended;
+end
+
+[R_wide, ~, ~] = bandpassMorphology(R_detrendedBranch2, frameRate, 'wide');
+[G_wide, ~, ~] = bandpassMorphology(G_detrendedBranch2, frameRate, 'wide');
+[B_wide, ~, ~] = bandpassMorphology(B_detrendedBranch2, frameRate, 'wide');
+pulseWide = chromCombine(R_wide, G_wide, B_wide, R_preWavelet, G_preWavelet, B_preWavelet);
 sharedF0Hz = fftHeartRate(pulseWide, frameRate) / 60;
 
-[R_ahf, ~, ~] = adaptiveHarmonicFilter(R_detrended, frameRate, 6, sharedF0Hz);
-[G_ahf, ~, ~] = adaptiveHarmonicFilter(G_detrended, frameRate, 6, sharedF0Hz);
-[B_ahf, ~, ~] = adaptiveHarmonicFilter(B_detrended, frameRate, 6, sharedF0Hz);
-pulseAdaptive = chromCombine(R_ahf, G_ahf, B_ahf, R, G, B);
+[R_ahf, ~, ~] = adaptiveHarmonicFilter(R_detrendedBranch2, frameRate, 6, sharedF0Hz);
+[G_ahf, ~, ~] = adaptiveHarmonicFilter(G_detrendedBranch2, frameRate, 6, sharedF0Hz);
+[B_ahf, ~, ~] = adaptiveHarmonicFilter(B_detrendedBranch2, frameRate, 6, sharedF0Hz);
+pulseAdaptive = chromCombine(R_ahf, G_ahf, B_ahf, R_preWavelet, G_preWavelet, B_preWavelet);
 
 useGroundTruth = ~isempty(groundTruth);
 
@@ -455,10 +478,13 @@ gaussianNotchConfidence = NaN;
 confidenceGateBar = 0.3; % this project's own standing notch-confidence bar
 
 if opts.useConfidenceGate && abpfNotchConfidence <= confidenceGateBar
-    [R_gau, ~, ~] = harmonicSelectiveGaussianFilter(R_detrended, frameRate, 6, sharedF0Hz, 0.15);
-    [G_gau, ~, ~] = harmonicSelectiveGaussianFilter(G_detrended, frameRate, 6, sharedF0Hz, 0.15);
-    [B_gau, ~, ~] = harmonicSelectiveGaussianFilter(B_detrended, frameRate, 6, sharedF0Hz, 0.15);
-    pulseGaussian = chromCombine(R_gau, G_gau, B_gau, R, G, B);
+    % BRANCH 2 PIN applies here too -- same pre-wavelet R_detrendedBranch2/
+    % R_preWavelet the ABPF path above uses, not the (possibly wavelet-on)
+    % R_detrended/R.
+    [R_gau, ~, ~] = harmonicSelectiveGaussianFilter(R_detrendedBranch2, frameRate, 6, sharedF0Hz, 0.15);
+    [G_gau, ~, ~] = harmonicSelectiveGaussianFilter(G_detrendedBranch2, frameRate, 6, sharedF0Hz, 0.15);
+    [B_gau, ~, ~] = harmonicSelectiveGaussianFilter(B_detrendedBranch2, frameRate, 6, sharedF0Hz, 0.15);
+    pulseGaussian = chromCombine(R_gau, G_gau, B_gau, R_preWavelet, G_preWavelet, B_preWavelet);
 
     if useGroundTruth
         [pulseGaussianFixed, wasFlippedGaussian] = fixPolarityByGroundTruth(pulseGaussian, roiTimestamps, groundTruth.ppg, groundTruth.timestamp);
