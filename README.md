@@ -43,8 +43,8 @@ iOS has no Android-style "download the APK, tap install" path: installing a
 non-App-Store app on a physical iPhone requires it to be signed with an
 Apple ID, and this build is deliberately **unsigned** (built without any
 Apple Developer account). Grab `Spandan-ios-unsigned.ipa` from the
-[Releases page](https://github.com/Thunder-Bird-007/spandan_contactless_vital_sign/releases/latest)
-and sideload it with a free tool -- e.g.
+[v1.0-demo release](https://github.com/Thunder-Bird-007/spandan_contactless_vital_sign/releases/tag/v1.0-demo)
+(the ipa isn't attached to newer, Android-only releases) and sideload it with a free tool -- e.g.
 [Sideloadly](https://sideloadly.io/) on any Windows or Mac computer, using
 your own free Apple ID -- which signs it locally at install time. Free
 Apple IDs re-sign apps for **7 days at a time**, so it'll need reinstalling
