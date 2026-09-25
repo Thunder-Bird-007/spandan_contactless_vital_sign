@@ -54,16 +54,50 @@ class FaceAnalyzer(
     private val useCroppedDetection: Boolean = false,
     private val croppedDetectionPaddingFraction: Float = 0.5f,
     private val croppedDetectionDownscaleFactor: Int = 1,
+    /** [Segment 29] PROMOTED TO DEFAULT (0.35, up from ML Kit's own default
+     *  of 0.1) after real on-device measurement (Galaxy A35): cut mean real-
+     *  detection cost ~87-90ms -> ~19-25ms (a ~4x reduction, not a noise-band
+     *  effect -- baseline was bracketed before/after and stayed at ~88-90ms)
+     *  and raised steady-state fps ~18.5-19 -> ~23.7-23.84, with 0-1 missed-
+     *  face frames out of ~1000 at both normal and increased camera distance.
+     *  Google's own docs note a larger value lets the detector skip pyramid
+     *  levels and run faster, at the cost of missing smaller/more distant
+     *  faces -- this project's own measurement above is the evidence that
+     *  cost is acceptable at 0.35 for this app's expected usage distance,
+     *  not just Google's general guidance taken on faith. See
+     *  android/docs/Segment29_MinFaceSize_And_Kalman.md for the full capture
+     *  data and caveats (distance range was NOT exhaustively swept). */
+    private val minFaceSize: Float = 0.35f,
+    /** [Segment 29] PROMOTED TO DEFAULT after real on-device measurement:
+     *  effectively free (mean predict() cost 0.03-0.04ms, max ~3ms across
+     *  two captures -- even cheaper than [OpticalFlowFaceTracker]'s SAD
+     *  matching) and composes cleanly with the [minFaceSize] promotion above
+     *  (combined capture matched the fps of minFaceSize alone). A different
+     *  risk class from [useMotionTracking] and [useCroppedDetection]: never
+     *  reads pixel content, only extrapolates box geometry, so it cannot
+     *  inherit the skin-texture/lighting drift failure mode
+     *  `matlab/docs/Segment7_Task_D_Landmark_ROI.md` documented for a
+     *  KLT-tracked ROI. HONEST CAVEAT: its positional-accuracy benefit (vs.
+     *  the plain frozen box) was validated only against synthetic motion in
+     *  [KalmanBoxTrackerTest], not against real ground-truth face positions
+     *  -- promoted on "measurably free, plausible upside, no measured
+     *  downside," not on a validated accuracy win. Takes priority over
+     *  [useMotionTracking] on a skipped frame when both are true (arbitrary
+     *  precedence, the two were never measured together); [useCroppedDetection]
+     *  still takes priority over both. */
+    private val useKalmanTracking: Boolean = true,
     private val onResult: (FaceAnalysisResult) -> Unit
 ) : ImageAnalysis.Analyzer {
 
     private val detector = FaceDetection.getClient(
         FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+            .setMinFaceSize(minFaceSize)
             .build()
     )
 
     private val motionTracker = if (useMotionTracking) OpticalFlowFaceTracker() else null
+    private val kalmanTracker = if (useKalmanTracking) KalmanBoxTracker() else null
 
     // --- Segment 7 Task G's own Action C2 proposal (android/docs/
     // Segment7_Task_G_Throughput_Profiling.md section 3), now implemented:
@@ -136,13 +170,13 @@ class FaceAnalyzer(
                 trackViaCroppedDetection(imageProxy, staleFaceBox!!, rotationDegrees, rotatedImageWidth, rotatedImageHeight)
                 return
             }
-            // Default (useMotionTracking=false): reuse the last known face
-            // box entirely -- no detector.process() call this frame, the
-            // ~98.5%-of-cost operation Task G measured. When useMotionTracking
-            // is true, try to re-estimate the box's position first (see
-            // OpticalFlowFaceTracker's own KDoc); fall back to the frozen box
-            // on any null (never worse than the default).
-            val boxToUse = trackViaMotionEstimate(imageProxy, rotationDegrees) ?: staleFaceBox!!
+            // Default (both useMotionTracking and useKalmanTracking false):
+            // reuse the last known face box entirely -- no detector.process()
+            // call this frame, the ~98.5%-of-cost operation Task G measured.
+            // useKalmanTracking takes priority over useMotionTracking when
+            // both are true (see this class's own KDoc); fall back to the
+            // frozen box on any null (never worse than the default).
+            val boxToUse = kalmanTracker?.predict() ?: trackViaMotionEstimate(imageProxy, rotationDegrees) ?: staleFaceBox!!
             lastFaceBoxRotated = boxToUse
             emitFaceDetected(boxToUse, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
             imageProxy.close()
@@ -166,6 +200,7 @@ class FaceAnalyzer(
                 if (face == null) {
                     lastFaceBoxRotated = null
                     motionTracker?.clear()
+                    kalmanTracker?.clear()
                     onResult(FaceAnalysisResult.NoFace)
                     imageProxy.close()
                     return@addOnSuccessListener
@@ -178,6 +213,15 @@ class FaceAnalyzer(
                     )
                     motionTracker.reset(imageProxy, sensorRect)
                 }
+                if (kalmanTracker != null) {
+                    // predict() first, THEN correct() -- keeps the filter's
+                    // internal dt=1-per-frame time base consistent whether
+                    // this frame's box came from a real detection or (on
+                    // skipped frames) extrapolation. See KalmanBoxTracker's
+                    // own KDoc.
+                    kalmanTracker.predict()
+                    kalmanTracker.correct(face.boundingBox)
+                }
                 emitFaceDetected(face.boundingBox, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
                 imageProxy.close()
             }
@@ -185,6 +229,7 @@ class FaceAnalyzer(
                 Log.w(TAG, "Face detection failed for this frame", e)
                 lastFaceBoxRotated = null
                 motionTracker?.clear()
+                kalmanTracker?.clear()
                 onResult(FaceAnalysisResult.NoFace)
                 imageProxy.close()
             }

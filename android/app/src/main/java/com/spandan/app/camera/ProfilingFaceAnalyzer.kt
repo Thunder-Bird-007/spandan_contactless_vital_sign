@@ -82,16 +82,25 @@ class ProfilingFaceAnalyzer(
     private val useCroppedDetection: Boolean = false,
     private val croppedDetectionPaddingFraction: Float = 0.5f,
     private val croppedDetectionDownscaleFactor: Int = 1,
+    /** [Segment 29] Mirrors FaceAnalyzer.kt's own minFaceSize -- see that
+     *  class's KDoc for why 0.35 is now the promoted production default. */
+    private val minFaceSize: Float = 0.35f,
+    /** [Segment 29] Mirrors FaceAnalyzer.kt's own useKalmanTracking -- see
+     *  that class's KDoc for why true is now the promoted production
+     *  default. */
+    private val useKalmanTracking: Boolean = true,
     private val onResult: (FaceAnalysisResult) -> Unit
 ) : ImageAnalysis.Analyzer {
 
     private val detector = FaceDetection.getClient(
         FaceDetectorOptions.Builder()
             .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
+            .setMinFaceSize(minFaceSize)
             .build()
     )
 
     private val motionTracker = if (useMotionTracking) OpticalFlowFaceTracker() else null
+    private val kalmanTracker = if (useKalmanTracking) KalmanBoxTracker() else null
 
     private val frameIndex = AtomicLong(0)
 
@@ -168,19 +177,28 @@ class ProfilingFaceAnalyzer(
                 analyzeViaCroppedDetection(imageProxy, staleFaceBox!!, rotationDegrees, rotatedImageWidth, rotatedImageHeight, callbackStartNanos)
                 return
             }
-            // Reuse the last known face box (default), or re-estimate it via
-            // OpticalFlowFaceTracker (useMotionTracking=true) -- same two
-            // paths as FaceAnalyzer.kt's own skip branch. detectMs=0.0 logged
-            // honestly either way (not measured, because detector.process()
-            // never runs on a skipped frame).
+            // Reuse the last known face box (default), extrapolate it via
+            // KalmanBoxTracker (useKalmanTracking=true, takes priority), or
+            // re-estimate it via OpticalFlowFaceTracker (useMotionTracking=true)
+            // -- same precedence as FaceAnalyzer.kt's own skip branch.
+            // detectMs=0.0 logged honestly either way (not measured, because
+            // detector.process() never runs on a skipped frame). Kalman's
+            // predict() cost is folded into the same motionMs phase as the
+            // optical-flow tracker's -- both are "skip-strategy" cost, just a
+            // different technique depending on which flag is set.
             val motionStartNanos = SystemClock.elapsedRealtimeNanos()
-            val trackedSensorRect = motionTracker?.track(imageProxy)
-            val boxToUse = if (trackedSensorRect != null) {
-                CoordinateMapper.sensorRectToRotatedRect(
-                    trackedSensorRect, rotationDegrees, imageProxy.width, imageProxy.height
-                )
+            val kalmanPredicted = kalmanTracker?.predict()
+            val boxToUse = if (kalmanPredicted != null) {
+                kalmanPredicted
             } else {
-                staleFaceBox!!
+                val trackedSensorRect = motionTracker?.track(imageProxy)
+                if (trackedSensorRect != null) {
+                    CoordinateMapper.sensorRectToRotatedRect(
+                        trackedSensorRect, rotationDegrees, imageProxy.width, imageProxy.height
+                    )
+                } else {
+                    staleFaceBox!!
+                }
             }
             lastFaceBoxRotated = boxToUse
             val motionMs = (SystemClock.elapsedRealtimeNanos() - motionStartNanos) / 1_000_000.0
@@ -228,6 +246,7 @@ class ProfilingFaceAnalyzer(
                 if (face == null) {
                     lastFaceBoxRotated = null
                     motionTracker?.clear()
+                    kalmanTracker?.clear()
                     val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
                     logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, motionMs = 0.0, cropMs = 0.0, totalMs = totalMs, faceFound = false)
                     onResult(FaceAnalysisResult.NoFace)
@@ -241,6 +260,10 @@ class ProfilingFaceAnalyzer(
                         face.boundingBox, rotationDegrees, imageProxy.width, imageProxy.height
                     )
                     motionTracker.reset(imageProxy, sensorRect)
+                }
+                if (kalmanTracker != null) {
+                    kalmanTracker.predict() // advance dt=1 first, same discipline as FaceAnalyzer.kt
+                    kalmanTracker.correct(face.boundingBox)
                 }
 
                 val roiStartNanos = SystemClock.elapsedRealtimeNanos()
@@ -275,6 +298,7 @@ class ProfilingFaceAnalyzer(
                 Log.w(TAG, "Face detection failed for this frame", e)
                 lastFaceBoxRotated = null
                 motionTracker?.clear()
+                kalmanTracker?.clear()
                 val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
                 logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, motionMs = 0.0, cropMs = 0.0, totalMs = totalMs, faceFound = false)
                 onResult(FaceAnalysisResult.NoFace)
