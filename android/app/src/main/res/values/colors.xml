@@ -32,4 +32,18 @@
     <color name="status_low_quality_bg">#33FF7043</color>
     <color name="status_no_face">#EF5350</color>            <!-- red -->
     <color name="status_no_face_bg">#33EF5350</color>
+
+    <!-- Segment 31 (UI/UX polish + promoting Branch 2's waveform to the
+         primary "LIVE SIGNAL" card): a couple of small additions, same
+         "extend the existing limited palette, don't start a second one"
+         discipline as Segment 16 Task 3's own header comment. -->
+    <color name="accent_branch2">#7C4DFF</color>            <!-- same purple WaveformView.kt already hard-coded for the Branch 2 line, moved here so the hero card's border/glow and the line itself share one source of truth -->
+    <color name="accent_branch2_border">#4D7C4DFF</color>    <!-- ~30% alpha, for the hero card's tinted border (vs. the vitals card's neutral surface_card_border) -->
+    <color name="accent_branch2_fill_top">#4D7C4DFF</color>  <!-- ~30% alpha, top stop of the area-fill gradient under the waveform line -->
+    <color name="accent_branch2_fill_bottom">#007C4DFF</color> <!-- fully transparent bottom stop -->
+    <color name="accent_hr">#FF6B81</color>                 <!-- warm pink-red for the heart icon — distinct from status_low_quality/status_no_face's own reds so it never reads as an error state -->
+    <color name="accent_spo2">#29B6F6</color>               <!-- light blue for the droplet icon -->
+    <color name="surface_card_top">#D9161616</color>        <!-- top stop of the card fill gradient, slightly lighter than surface_card for a touch of depth -->
+    <color name="preview_scrim_top">#00000000</color>       <!-- transparent top stop for the camera-preview bottom scrim -->
+    <color name="preview_scrim_bottom">#B3000000</color>    <!-- ~70% opaque bottom stop, eases the transition from live video into the card stack below -->
 </resources>

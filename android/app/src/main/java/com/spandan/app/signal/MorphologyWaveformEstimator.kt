@@ -72,7 +72,20 @@ class MorphologyWaveformEstimator(
         val notchConfidenceRaw: Double,
         val harmonicMethodUsed: String, // "adaptiveHarmonic" or "gaussian015"
         val gateSubstituted: Boolean,
-        val waveform: DoubleArray, // prototype.trimmedMean -- 1 cardiac cycle, for a UI waveform view
+        val waveform: DoubleArray, // prototype.trimmedMean -- 1 ensemble-averaged cardiac cycle
+        /** [Segment 31] The SAME selected candidate's (ABPF or Gaussian,
+         *  whichever [harmonicMethodUsed] names) continuous, polarity-
+         *  corrected, uniformly-resampled pulse (`resampled.sigUniform` in
+         *  [computeNotch] -- i.e. [ResampleUniform]'s own output, the SAME
+         *  signal [EnsembleAverageBeats] then chops into individual beats to
+         *  build [waveform] above) -- tail-windowed to the last
+         *  [CONTINUOUS_DISPLAY_SECONDS] seconds. Real Branch 2 output (post
+         *  ABPF/Gaussian harmonic filtering + CHROM combine + polarity fix),
+         *  NOT raw/Branch-1 data, and spans several real cardiac cycles
+         *  (typically 8-13 at a resting 60-100bpm over an 8s window) --
+         *  added so the UI can show a multi-cycle scrolling trace ("like a
+         *  PPG monitor") instead of one averaged beat. */
+        val continuousWaveform: DoubleArray,
         val fs: Double, // the real, runtime-measured fs this estimate ran at
         val bandModeUsed: MorphologyBandpassFilter.BandMode
     )
@@ -189,6 +202,7 @@ class MorphologyWaveformEstimator(
                 harmonicMethodUsed = harmonicMethodUsed,
                 gateSubstituted = gateSubstituted,
                 waveform = finalNotch.waveform,
+                continuousWaveform = finalNotch.continuousWaveform,
                 fs = fs,
                 bandModeUsed = bandMode
             )
@@ -225,7 +239,8 @@ class MorphologyWaveformEstimator(
         val depth: Double,
         val confidence: Double,
         val confidenceRaw: Double,
-        val waveform: DoubleArray
+        val waveform: DoubleArray,
+        val continuousWaveform: DoubleArray // [Segment 31] tail-windowed resampled.sigUniform -- see Estimate.continuousWaveform's own KDoc
     )
 
     /** [FixPolarity] -> [ResampleUniform] -> [EnsembleAverageBeats] ->
@@ -244,7 +259,18 @@ class MorphologyWaveformEstimator(
             val hrBpmUsed = HeartRateFft.estimateBpm(resampled.sigUniform, resampled.targetFs)?.bpm ?: return null
             val effectiveFsHz = beats.prototype.trimmedMean.size * (hrBpmUsed / 60.0)
             val notch = NotchDetectIEM.apply(beats.prototype.trimmedMean, effectiveFsHz)
-            NotchWithWaveform(notch.detected, notch.positionNormalized, notch.depth, notch.confidence, notch.confidenceRaw, beats.prototype.trimmedMean)
+
+            // [Segment 31] Tail-window resampled.sigUniform to the last
+            // CONTINUOUS_DISPLAY_SECONDS -- the full window can be up to
+            // SignalBuffer.WINDOW_DURATION_SECONDS (25s) long, which at a
+            // resting HR would cram 25-40+ cycles into one view; a shorter
+            // recent slice reads like an actual monitor trace, not a dense
+            // scribble, and naturally shows MORE cycles at a higher HR and
+            // fewer at a lower one, exactly like a real device would.
+            val displaySamples = (resampled.targetFs * CONTINUOUS_DISPLAY_SECONDS).toInt().coerceAtMost(resampled.sigUniform.size)
+            val continuousWaveform = resampled.sigUniform.copyOfRange(resampled.sigUniform.size - displaySamples, resampled.sigUniform.size)
+
+            NotchWithWaveform(notch.detected, notch.positionNormalized, notch.depth, notch.confidence, notch.confidenceRaw, beats.prototype.trimmedMean, continuousWaveform)
         } catch (e: IllegalStateException) {
             null
         } catch (e: IllegalArgumentException) {
@@ -269,5 +295,16 @@ class MorphologyWaveformEstimator(
         private const val NUM_HARMONICS = 6
         private const val GAUSSIAN_ALPHA = 0.15 // this project's own validated value, not the paper's 0.5
         private const val CONFIDENCE_GATE_BAR = 0.3
+
+        /** [Segment 31] How many of the most recent seconds of the
+         *  continuous, resampled pulse to expose via
+         *  [Estimate.continuousWaveform] -- see that field's own KDoc.
+         *  8 seconds is an arbitrary, unmeasured choice (no on-device
+         *  accuracy/readability A-B done this session): long enough to show
+         *  several real cycles even at a slow resting HR (~8-10 at 60-75bpm),
+         *  short enough that a fast HR (~120bpm) doesn't cram in so many
+         *  cycles the trace becomes unreadable. Revisit if a future capture
+         *  suggests otherwise. */
+        private const val CONTINUOUS_DISPLAY_SECONDS = 8.0
     }
 }

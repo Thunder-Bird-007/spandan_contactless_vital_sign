@@ -69,6 +69,26 @@ class MorphologyWaveformEstimatorTest {
         assertTrue(result.harmonicMethodUsed == "adaptiveHarmonic" || result.harmonicMethodUsed == "gaussian015")
         assertTrue(result.fs > 19.0 && result.fs < 21.0)
         for (v in result.waveform) assertTrue(v.isFinite())
+
+        // [Segment 31] continuousWaveform -- resampled.sigUniform (250Hz,
+        // ResampleUniform.DEFAULT_TARGET_FS) tail-windowed to 8s, so a full
+        // 25s window should yield exactly 250*8=2000 samples, not the
+        // shorter 256-sample single-beat `waveform` above.
+        assertEquals(2000, result.continuousWaveform.size)
+        for (v in result.continuousWaveform) assertTrue(v.isFinite())
+    }
+
+    @Test
+    fun continuousWaveformIsShorterThanTheFullWindowWhenTheWindowExceedsTheDisplaySeconds() {
+        val estimator = MorphologyWaveformEstimator()
+        // A much longer window (60s) than the 8s continuousWaveform slice --
+        // guards against a future regression that accidentally returns the
+        // WHOLE resampled signal instead of the tail-windowed slice.
+        val samples = buildPulsatileSamples(fs = 20.0, durationSec = 60.0, f0 = 1.2)
+        val result = estimator.update(samples)
+
+        assertTrue(result != null)
+        assertEquals(2000, result!!.continuousWaveform.size)
     }
 
     @Test

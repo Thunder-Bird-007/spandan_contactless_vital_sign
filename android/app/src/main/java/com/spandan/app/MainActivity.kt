@@ -31,7 +31,6 @@ import com.spandan.app.signal.MorphologyWaveformEstimator
 import com.spandan.app.signal.RealHeartRateEstimator
 import com.spandan.app.signal.SignalBuffer
 import com.spandan.app.ui.OverlayView
-import com.spandan.app.ui.SignalChartView
 import com.spandan.app.ui.WaveformView
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -49,7 +48,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var previewView: PreviewView
     private lateinit var overlayView: OverlayView
-    private lateinit var chartView: SignalChartView
     private lateinit var hrText: TextView
     private lateinit var spo2Text: TextView
     private lateinit var permissionDeniedView: View
@@ -110,7 +108,6 @@ class MainActivity : AppCompatActivity() {
 
         previewView = findViewById(R.id.previewView)
         overlayView = findViewById(R.id.overlayView)
-        chartView = findViewById(R.id.chartView)
         hrText = findViewById(R.id.hrText)
         spo2Text = findViewById(R.id.spo2Text)
         permissionDeniedView = findViewById(R.id.permissionDeniedView)
@@ -269,7 +266,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshUi() {
         val samples = signalBuffer.snapshot()
-        chartView.updateValues(samples.map { it.green })
 
         // Segment 16 Task 3 -- "No face detected" banner, debounced so a
         // single missed detection (normal noise, or one of FaceAnalyzer's
@@ -316,11 +312,9 @@ class MainActivity : AppCompatActivity() {
         // state or vice versa, matching Branch 1/Branch 2's deliberate
         // MATLAB-side separation).
         val morphologyEstimate = morphologyEstimator.update(samples)
-        morphologyWaveformView.update(
-            morphologyEstimate?.waveform,
-            morphologyEstimate?.notchDetected ?: false,
-            morphologyEstimate?.notchPositionNormalized ?: Double.NaN
-        )
+        // Segment 31 -- the multi-cycle continuous trace, not the single
+        // averaged beat; see WaveformView's own KDoc for why.
+        morphologyWaveformView.update(morphologyEstimate?.continuousWaveform)
         applyMorphologyStatusPill(noFaceSustained, morphologyEstimator.lastStatus, morphologyEstimate)
     }
 

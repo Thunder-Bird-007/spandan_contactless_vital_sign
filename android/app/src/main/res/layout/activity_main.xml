@@ -3,8 +3,8 @@
   Segment 16 Task 3 UI/UX pass. Presentation-only redesign — no change to
   the camera/signal pipeline; see docs/Segment16_Task3_UI_UX_Pass.md for the
   before/after screenshots and rationale. Kept every existing view ID
-  (previewView, overlayView, permissionDeniedView, chartView, hrText,
-  spo2Text, grantPermissionButton, rootLayout) so MainActivity.kt's existing
+  (previewView, overlayView, permissionDeniedView, hrText, spo2Text,
+  grantPermissionButton, rootLayout) so MainActivity.kt's existing
   findViewById wiring is untouched; new views/IDs are additive.
 
   What changed vs. the prior plain layout:
@@ -20,9 +20,17 @@
     - A "No face detected" banner now appears centered over the preview
       (previously: the overlay boxes just silently disappeared with no
       other feedback).
-    - The chart got a small caption and now sits inside its own card,
-      matching the vitals card's visual language instead of floating on
-      bare black.
+
+  Segment 31 (see docs/Segment31_UI_UX_Branch2_LiveSignal.md): the old
+  raw-green-channel "LIVE SIGNAL" chart (chartView/SignalChartView, id
+  removed) is GONE — it was the shared, unfiltered input both branches
+  consume, not either branch's own output, and was being read as "Branch
+  1's live signal." Branch 2's own waveform view (morphologyWaveformView,
+  id unchanged) is now promoted to be the app's ONE primary "LIVE SIGNAL"
+  card, in its own tinted "hero" panel (bg_hero_card.xml) directly under the
+  camera preview. Also added: a bottom scrim under the preview
+  (bg_preview_scrim_bottom.xml) and heart/droplet icons on the vitals card,
+  purely cosmetic.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -49,6 +57,15 @@
             android:id="@+id/overlayView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <!-- Segment 31: purely cosmetic fade at the bottom of the preview so
+             the transition into the opaque card stack below is gradual
+             instead of the hero card's top edge cutting across live video. -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_preview_scrim_bottom" />
 
         <!-- Segment 16 Task 3: NEW. Shown/hidden by MainActivity based on
              how long it's been since a face was last detected (a brief gap
@@ -116,66 +133,50 @@
 
     </FrameLayout>
 
-    <!-- Chart card -->
+    <!-- Segment 31: the app's ONE primary "LIVE SIGNAL" card — Branch 2's
+         waveform (Segment 19), promoted from a small secondary card into
+         the featured panel directly under the camera. Tinted border/
+         gradient fill (bg_hero_card.xml) visually distinguishes it as the
+         featured card, not just another copy of the vitals card. -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_vitals_card"
-        android:padding="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/chart_label"
-            android:textColor="@color/text_tertiary"
-            android:textSize="11sp"
-            android:letterSpacing="0.1"
-            android:layout_marginBottom="4dp" />
-
-        <!-- Live scrolling raw green-channel signal: genuinely useful even
-             before real filtering exists (see ui/SignalChartView.kt). -->
-        <com.spandan.app.ui.SignalChartView
-            android:id="@+id/chartView"
-            android:layout_width="match_parent"
-            android:layout_height="110dp" />
-    </LinearLayout>
-
-    <!-- Segment 19: Branch 2 (waveform morphology / dicrotic notch) card,
-         same visual language as the LIVE SIGNAL card above (caption + a
-         Canvas-drawn view inside a bg_vitals_card panel), plus a status
-         pill row matching the vitals card's own dot+label pattern. -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginHorizontal="12dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_vitals_card"
-        android:padding="10dp">
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/bg_hero_card"
+        android:padding="14dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/morphology_label"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.06" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/morphology_subtitle"
             android:textColor="@color/text_tertiary"
-            android:textSize="11sp"
-            android:letterSpacing="0.1"
-            android:layout_marginBottom="4dp" />
+            android:textSize="10sp" />
 
         <!-- One ensemble-averaged cardiac cycle, with the detected notch
-             (if any) marked; see ui/WaveformView.kt. -->
+             (if any) marked; see ui/WaveformView.kt. Taller than the old
+             secondary-card size (90dp) now that this is the hero visual. -->
         <com.spandan.app.ui.WaveformView
             android:id="@+id/morphologyWaveformView"
             android:layout_width="match_parent"
-            android:layout_height="90dp" />
+            android:layout_height="140dp" />
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:background="@drawable/bg_status_pill"
@@ -204,9 +205,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="12dp"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="14dp"
         android:background="@drawable/bg_vitals_card"
-        android:paddingVertical="16dp">
+        android:paddingVertical="18dp">
 
         <!-- HR metric -->
         <LinearLayout
@@ -215,6 +218,17 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center">
+
+            <!-- Segment 31: small tinted glyph above the caption, purely
+                 cosmetic — gives each metric a distinct visual identity at
+                 a glance instead of two identical-looking text columns. -->
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/ic_heart"
+                app:tint="@color/accent_hr"
+                android:contentDescription="@null" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -279,6 +293,14 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginBottom="4dp"
+                android:src="@drawable/ic_droplet"
+                app:tint="@color/accent_spo2"
+                android:contentDescription="@null" />
 
             <TextView
                 android:layout_width="wrap_content"
