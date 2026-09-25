@@ -7,12 +7,15 @@ baseline this segment starts from: 19.96fps at `useMotionTracking=false`, 16.33f
 `OpticalFlowFaceTracker.track()`'s per-skipped-frame `IntArray` allocations were costing
 real wall-clock throughput despite looking cheap in their own `SystemClock` timing).
 
-**No physical Android device was attached this session** (`adb devices` returned an empty
-list, checked at the start of this segment and again after all code changes below). Every
-item in this doc is therefore a code change plus unit tests, or a note on what remains
-unmeasured — never a fabricated or assumed fps number. Nothing below changes a shipped
-default; every new lever stays off unless a caller explicitly opts in, same convention as
-`useMotionTracking`, `useConfidenceGate`, `useWaveletDenoise`.
+**No physical Android device was attached when the code changes below were written** (`adb
+devices` returned an empty list, checked repeatedly). A device (the same Samsung Galaxy A35,
+`RFCXC0FFFSN`, Segment 18/19's own device) was connected later in this same session, and the
+real on-device measurement below was then run against it — see "Real on-device measurement"
+for the numbers and honest verdict. Nothing in this segment changes a shipped default; every
+new lever stays off unless a caller explicitly opts in, same convention as
+`useMotionTracking`, `useConfidenceGate`, `useWaveletDenoise` — the measurement below found
+no candidate clearly beating the existing baseline strategy given this session's own
+measured session-to-session noise, so none was promoted.
 
 ## What was fixed: `OpticalFlowFaceTracker`'s per-skipped-frame allocations
 
@@ -31,9 +34,12 @@ essentially all allocation inside `track()`.
 passes unchanged, 49/49 → 57/57 total unit tests pass after this segment's additions (see
 below).
 
-**Not yet measured**: whether this actually closes the 19.96→16.33fps gap Segment 18
-found. That requires the same three-capture re-measurement protocol Segment 18's own Task
-3 used, on a physical device.
+**Measured** (see "Real on-device measurement" below): yes, this closes the gap. Segment
+18 found `useMotionTracking=true` a clear, reproducible regression (16.33fps vs a 19.19-
+19.96fps baseline bracketing it). This session's re-measurement found `useMotionTracking=true`
+at 21.27fps against a same-session baseline that itself ranged 18.80-21.45fps across two
+captures — i.e. motion tracking now sits inside the baseline's own noise band, no longer a
+measurable regression.
 
 ## What was added: `CroppedDetectionStrategy` (new candidate, off by default)
 
@@ -55,8 +61,8 @@ the full-frame call every un-skipped frame already pays — untested assumption,
   convention `RoiPixelAverager`/`OpticalFlowFaceTracker` already use — planes are NOT
   guaranteed contiguous), optionally subsampled by an integer `downscaleFactor` (stride
   skipping, satisfying this segment's "try a downscaled detection input" item with the
-  same code path rather than a separate one). NOT unit-tested (needs a real `ImageProxy`)
-  and NOT exercised on a physical device this session.
+  same code path rather than a separate one). NOT unit-tested (needs a real `ImageProxy`),
+  exercised on a physical device below.
 - Wired into `FaceAnalyzer.kt` behind a new `useCroppedDetection` constructor flag
   (default `false`), plus `croppedDetectionPaddingFraction` (default 0.5) and
   `croppedDetectionDownscaleFactor` (default 1, i.e. off). Takes priority over
@@ -98,43 +104,65 @@ values via a private `makeRect` helper (no-arg constructor + field assignment) i
 and `CroppedDetectionStrategyTest.kt` builds every INPUT rect the same way (a `rectOf`
 test helper), so this segment's own new test is not affected by the same gap.
 
-## What was NOT attempted this session, and why
+## Real on-device measurement
 
-Every item below from the original task list needs a physical device to produce a real
-number, which this session did not have:
+A device was connected later in this session (same Samsung Galaxy A35, `RFCXC0FFFSN`).
+Method: `MainActivity.kt`'s one analyzer-construction line was temporarily swapped to
+`ProfilingFaceAnalyzer(...)`, rebuilt, installed, run with a face continuously in frame
+(confirmed per-capture: `face=false` count was 0 in every capture below), `adb logcat -s
+ProfilingFaceAnalyzer:D` captured to a file for ~40s steady-state per config, then reverted
+back to plain `FaceAnalyzer { ... }` and confirmed clean via `git diff` (empty) before
+rebuilding the final production APK. Battery 78-80%, temperature ~34°C throughout (checked
+before starting, not concerning).
 
-- **Re-measuring the allocation fix's actual fps impact** (Segment 18's own three-capture
-  protocol).
-- **Measuring `CroppedDetectionStrategy`'s actual `cropMs` vs. full-frame `detectMs`**,
-  and its miss rate / IoU-vs-next-real-detection accuracy (both already instrumented in
-  `ProfilingFaceAnalyzer`, ready to run).
-- **Downscaled-detection's actual detect-time-vs-miss-rate tradeoff** (same
-  `croppedDetectionDownscaleFactor` knob, needs the same capture).
-- **Retrying `DETECT_EVERY_N_FRAMES` at 4/5** once the above are measured — no code change
-  needed here (it is already a single constant in `FaceAnalyzer.kt`/`ProfilingFaceAnalyzer.kt`),
-  just a re-measurement once a cheaper tracker/detector makes more aggressive skipping
-  worth trying.
-- **Combining winning candidates and picking final defaults for `useMotionTracking`,
-  `useCroppedDetection`, `croppedDetectionDownscaleFactor`, and `DETECT_EVERY_N_FRAMES`.**
-  None of these defaults were changed this session — all stay at their prior, unmeasured-here
-  values, per this project's own "off by default, evidence before promotion" convention.
+| Capture | Config | Frames | Span | **fps** | Mean real-detectMs | Mean skip-phase cost |
+|---|---|---|---|---|---|---|
+| 1 | baseline (both flags off) | 840 | 44.69s | **18.80** | 88.20ms | n/a |
+| 2 | `useMotionTracking=true` | 894 | 42.03s | **21.27** | 91.61ms | motionMs 0.43ms (max 3.73ms) |
+| 3 | `useCroppedDetection=true`, downscale=1 | 552 | 42.06s | **13.12** | 90.27ms | cropMs 66.33ms (max 308.70ms) |
+| 4 | `useCroppedDetection=true`, downscale=2 | 858 | 42.13s | **20.37** | 93.33ms | cropMs 18.52ms (max 159.09ms) |
+| 5 | baseline re-check | 903 | 42.10s | **21.45** | 87.89ms | n/a |
 
-## Measurement protocol for the next session with device access
+### Honest verdict: the allocation-fix regression is resolved; no candidate demonstrated a clear win over baseline
 
-Same as Segment 18 Task 3, extended for the new phase:
+**Captures 1 and 5 are the same config, measured ~4 minutes apart, and disagree by 14%**
+(18.80 vs 21.45fps) — this session's own baseline is not stable enough to treat a single
+comparison capture as ground truth. Reading the other candidates against that noise band
+rather than against a single baseline number:
 
-1. Swap `MainActivity.kt`'s analyzer construction to
-   `ProfilingFaceAnalyzer(useMotionTracking = ..., useCroppedDetection = ..., croppedDetectionDownscaleFactor = ...) { ... }`.
-2. `adb logcat -s ProfilingFaceAnalyzer:D` for a steady-state capture (face continuously in
-   frame, same duration/lighting discipline as Segment 18's captures).
-3. Parse the `SPANDAN_PROFILE` lines for `cropMs` alongside the existing
-   `detectMs`/`roiMs`/`motionMs`/`otherMs`, and `dumpSummary()`'s `missRate=x/y` line.
-4. For any candidate that changes what box gets used (cropped detection, motion tracking),
-   also log IoU or center-distance between the box actually used and the NEXT full-frame
-   detection's box — a faster-but-wrong box is not a win. Not yet implemented as of this
-   segment; flagged as the next code addition before trusting a capture's fps number alone.
-5. Revert the `MainActivity.kt` swap and confirm via `git diff` that the revert is clean,
-   same discipline Segment 18 already used.
+- **`useMotionTracking=true` (Capture 2, 21.27fps) sits inside the baseline's own observed
+  range (18.80-21.45fps).** This is the real, meaningful result: Segment 18 found this
+  config a clear, reproducible regression (16.33fps against a 19.19-19.96fps baseline
+  bracketing it, no overlap) — that regression is gone. It cannot be claimed as a
+  *win* over baseline from this data (motion tracking's own `motionMs` cost, 0.43ms mean,
+  is negligible either way), but the fix did what Segment 18's hypothesis predicted.
+- **`useCroppedDetection=true` at downscale=1 (Capture 3, 13.12fps) is a clear loss** —
+  well outside the baseline noise band in the wrong direction. `cropMs` averaged 66.33ms,
+  not much cheaper than a full-frame `detectMs` (~88-93ms across every capture), and spiked
+  to 308.70ms at least once — plausibly the manual NV21 extraction's per-pixel loop, or ML
+  Kit reallocating internal buffers for a differently-shaped `InputImage` on every call
+  (never profiled further this session).
+- **`useCroppedDetection=true` at downscale=2 (Capture 4, 20.37fps) also lands inside the
+  baseline noise band** — `cropMs` dropped to 18.52ms mean (still not cheap the way
+  `motionMs` is), but the 159.09ms max outlier is a real concern for a per-frame budget at
+  ~20fps (~50ms/frame) that this session did not investigate further.
+
+**No new default was promoted.** `useMotionTracking` and `useCroppedDetection` both stay
+`false`, `croppedDetectionDownscaleFactor` stays `1`, `DETECT_EVERY_N_FRAMES` stays `3` —
+none of this session's candidates cleared the bar of a reproducible improvement over the
+baseline's own measured noise, which is exactly the standard Segment 18 already set
+(`useMotionTracking` stayed off there too, for the mirror-image reason: a reproducible
+*regression*). The final APK installed on-device is the plain-`FaceAnalyzer` production
+build (all of this segment's code fixes included, no flags flipped from their defaults).
+
+**What would make this measurement more conclusive** (not done this session, next-session
+work): more captures per config (3+, matching Segment 18's own three-capture discipline,
+rather than one baseline pair bracketing one candidate each), randomized/interleaved
+capture order to average out monotonic warm-up drift instead of letting it alias with
+"which config ran first," and IoU/center-distance logging between the box a candidate
+actually used and the next real detection's box (`ProfilingFaceAnalyzer` does not yet log
+this — flagged, not built, this session) so a faster-but-wrong box would be visible rather
+than just assumed absent from the fps number alone.
 
 ## Files touched
 
