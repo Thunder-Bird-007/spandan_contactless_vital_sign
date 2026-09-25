@@ -43,13 +43,30 @@ final class AdaptiveHarmonicFilterTests: XCTestCase {
         XCTAssertEqual(result!.f0Hz, f0, accuracy: 1e-9)
     }
 
-    func testReturnsNilWithoutAnF0OverrideWhenNoBinFallsInBand() {
-        // A pure 8Hz tone has no energy in HeartRateFft's 0.7-4Hz band, so
-        // the internal f0 estimate (used when no override is supplied)
-        // should fail.
+    /// [Fixed after a real CI run caught it] The first version of this test
+    /// asserted a pure 8Hz tone produces NO bin in HeartRateFft's 0.7-4Hz
+    /// band, expecting `apply` to return nil without an f0 override. A real
+    /// xcodebuild test run (no Mac available locally to catch this any
+    /// other way) showed that assumption was false: a finite-length DFT of
+    /// ANY real signal has spectral leakage into every bin (sidelobes, not
+    /// zeros), so `HeartRateFft.estimateBpm` -- which just picks the
+    /// LARGEST-magnitude in-band bin, with no minimum-magnitude floor --
+    /// essentially always finds SOME peak in-band, however small. This is a
+    /// property of the algorithm itself (the Kotlin port would behave
+    /// identically, since both compute the exact same DFT values), not a
+    /// bug this port introduced -- fixed by testing something actually
+    /// true instead: that the no-override path, when there genuinely IS
+    /// strong in-band content, finds an f0 close to the real one.
+    func testWithoutAnF0OverrideFindsTheRealF0WhenOneIsPresent() {
         let fs = 20.0
         let n = 300
-        let sig = (0..<n).map { sin(2 * Double.pi * 8.0 * Double($0) / fs) }
-        XCTAssertNil(AdaptiveHarmonicFilter.apply(sig, frameRate: fs))
+        let f0 = 1.2
+        let sig = (0..<n).map { i -> Double in
+            let t = Double(i) / fs
+            return sin(2 * .pi * f0 * t) + 0.5 * sin(2 * .pi * 2 * f0 * t)
+        }
+        let result = AdaptiveHarmonicFilter.apply(sig, frameRate: fs, numHarmonics: 6)
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result!.f0Hz, f0, accuracy: 0.1)
     }
 }
