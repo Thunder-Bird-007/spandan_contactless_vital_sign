@@ -47,8 +47,29 @@ someone with a physical iPhone has gone through that same discipline.
 | `Camera/FaceAnalyzer.swift` | `camera/FaceAnalyzer.kt` | Same orchestration shape (detect -> largest face -> ROI -> pixel-average), Vision (`VNDetectFaceRectanglesRequest`) instead of ML Kit -- **unverified orientation assumption, see below** |
 | `Camera/CoordinateMapper.swift` | `camera/CoordinateMapper.kt` | Only ports `rotatedRectToViewRect` (the overlay-placement math) -- the sensor-space mapping function isn't needed here, see `CameraController.swift`'s header comment for why |
 | `Camera/CameraController.swift` | `MainActivity.kt`'s camera lifecycle glue | New structure (no CameraX equivalent on iOS), but the same responsibilities: session lifecycle, permission state, frame delivery |
-| `App/MainViewController.swift` | `MainActivity.kt` | Same single-screen structure and behavior: permission handling with a re-check on every appearance, 200ms UI refresh loop, independent HR/SpO2 estimator calls |
-| `UI/OverlayView.swift`, `UI/SignalChartView.swift` | `ui/OverlayView.kt`, `ui/SignalChartView.kt` | Direct visual port: same colors, same plain-Core-Graphics-draw approach (no chart library) |
+| `App/MainViewController.swift` | `MainActivity.kt` | Same single-screen structure and behavior: permission handling with a re-check on every appearance, 200ms UI refresh loop, independent HR/SpO2/Branch-2 estimator calls. As of Segment 32, also mirrors the Android port's own Segment 31 UI/UX pass (raw `SignalChartView` replaced by a "LIVE SIGNAL" hero card showing Branch 2's trace, SF Symbol icons on the vitals card) as closely as UIKit allows |
+| `UI/OverlayView.swift` | `ui/OverlayView.kt` | Direct visual port: same colors, same plain-Core-Graphics-draw approach (no chart library) |
+| `UI/WaveformView.swift` | `ui/WaveformView.kt` (post-Segment-31) | Draws Branch 2's `continuousWaveform` (a multi-cycle trace, not the single averaged beat) with a gradient area-fill and smoothed curve, mirroring the Android port's own Segment 31 revision |
+
+### Branch 2 (waveform morphology / dicrotic notch) -- added in Segment 32, previously MISSING from iOS entirely
+
+The Android app gained Branch 2 in its own Segment 19, well after this iOS port's initial PR -- it was never backported until now. Segment 32 ports the full chain, same "read the Kotlin/MATLAB source directly before writing this" discipline as every file above:
+
+| File | Ported from | Status |
+|---|---|---|
+| `Signal/PchipInterpolator.swift` | `signal/PchipInterpolator.kt` | Direct port: Fritsch-Carlson shape-preserving cubic Hermite interpolation |
+| `Signal/FixPolarity.swift` | `signal/FixPolarity.kt` | Direct port: skewness-heuristic polarity correction (the ONLY polarity method a live camera app can use -- no contact-PPG ground truth exists here either) |
+| `Signal/MorphologyBandpassFilter.swift` | `signal/MorphologyBandpassFilter.kt` | Direct port, reuses `BandpassFilter`'s own `designButterworthBandpass`/`filtfilt` rather than duplicating them |
+| `Signal/ResampleUniform.swift` | `signal/ResampleUniform.kt` | Direct port: PCHIP-based uniform resampling onto REAL per-sample timestamps |
+| `Signal/ComplexDFT.swift` | (new; no Kotlin equivalent) | A direct O(n^2) complex DFT forward/inverse pair, shared by the two harmonic filters below -- same reasoning `HeartRateFft.swift`'s own header already documents for this codebase (arbitrary N, not power-of-2) instead of porting JTransforms |
+| `Signal/AdaptiveHarmonicFilter.swift` | `signal/AdaptiveHarmonicFilter.kt` | Direct port: ABPF harmonic-comb filter, via `ComplexDFT` instead of JTransforms |
+| `Signal/HarmonicSelectiveGaussianFilter.swift` | `signal/HarmonicSelectiveGaussianFilter.kt` | Direct port: Gaussian-tapered harmonic filter (alpha=0.15 production fallback) |
+| `Signal/HarmonicFilterConfidenceGate.swift` | `signal/HarmonicFilterConfidenceGate.kt` | Direct port: ABPF-primary/Gaussian-fallback selection, same single-fallback-only design (the MATLAB source's own multi-fallback mode is deliberately NOT ported, matching the Kotlin port's own documented reason -- verified worse on the MATLAB side) |
+| `Signal/EnsembleAverageBeats.swift` | `signal/EnsembleAverageBeats.kt` | Direct port: zero-crossing beat segmentation, duration gate, PCHIP resample + systolic-peak time-warp, correlation-based quality gate, trimmed-mean/median ensemble average |
+| `Signal/NotchDetectIEM.swift` | `signal/NotchDetectIEM.kt` | Direct port: Iterative Envelope Mean dicrotic-notch detection, including the same stated Savitzky-Golay boundary-handling deviation from MATLAB's exact `sgolayfilt` edge convention the Kotlin port's own header documents |
+| `Signal/MorphologyWaveformEstimator.swift` | `signal/MorphologyWaveformEstimator.kt` | Direct port of the Branch 2 orchestrator, including the `continuousWaveform` field from the Android port's own Segment 31 (a multi-cycle continuous trace for the UI, not just the single averaged beat) from the start |
+
+Kotlin's `throw`-on-bad-input functions become Swift `Optional` returns throughout (`nil` instead of an exception) -- Swift's own idiom for this, same fail-soft behavior, not a behavior change.
 
 ## Known risk areas for whoever tests this on a real iPhone
 
@@ -88,6 +109,18 @@ has been run on real hardware:
    manual pulse count (see its "Verification: the HR port" section) -- there
    is no reason to expect this port's numbers to be any more stable without
    its own equivalent multi-minute on-device runs.
+6. **Branch 2 (waveform morphology / dicrotic notch), added in Segment 32 --
+   the SAME "never run on real hardware" caveat applies, on top of everything
+   above.** Unlike Branch 1, the Android port's own Segment 19 doc is explicit
+   that even ITS live orchestrator was "NOT exercised on a physical device"
+   the session it was written, and only later, real on-device runs (this
+   project's own segment history) built confidence in it -- this iOS port
+   has had none of those runs yet, on top of never having been run at all.
+   The multi-cycle live-signal trace (`WaveformView`, `continuousWaveform`)
+   is a straightforward rendering of already-computed numbers, so if Branch 2
+   itself is producing real data, the trace should look right -- but "Branch
+   2 itself is producing real data" is exactly the part with zero on-device
+   confidence right now.
 
 ## Download & Install (without a Mac)
 
@@ -137,7 +170,15 @@ its tests, on a `macos-14` GitHub Actions runner:
 3. `xcodebuild test` on the same destination -- runs every test in
    `SpandanTests/`: `BandpassFilterTests` (ported from the Android unit test),
    `HeartRateFftTests`, `RealHeartRateEstimatorSwitchingTests`,
-   `LiveSpo2EstimatorTests`, `PulseExtractionTests`.
+   `LiveSpo2EstimatorTests`, `PulseExtractionTests`, plus (Segment 32)
+   `PchipInterpolatorTests`, `FixPolarityTests`, `MorphologyBandpassFilterTests`,
+   `AdaptiveHarmonicFilterTests`, `HarmonicSelectiveGaussianFilterTests`,
+   `HarmonicFilterConfidenceGateTests`, `EnsembleAverageBeatsTests`,
+   `NotchDetectIEMTests`, `MorphologyWaveformEstimatorTests` -- 48/48 passing
+   as of Segment 32 (this exact CI job caught two real test-authoring bugs in
+   that same session before it went green -- see `SESSION_HANDOFF.md`'s
+   Segment 32 entry for what they were and why they were test bugs, not port
+   bugs).
 
 This proves the algorithmic core is correct on synthetic signals and that
 nothing fails to compile -- it does **not** prove the camera pipeline works on
