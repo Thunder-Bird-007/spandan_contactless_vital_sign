@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Segment 16 Task 3: the centered banner shown over the camera preview
+     while no face is detected. More opaque than bg_vitals_card.xml
+     (surface_banner is ~90% vs. the card's ~80%) since this sits directly
+     over unpredictable live video content, not the more visually calm
+     bottom strip. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/surface_banner" />
+    <corners android:radius="16dp" />
+</shape>

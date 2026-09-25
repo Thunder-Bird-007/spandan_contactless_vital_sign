@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Spandan</string>
+
+    <string name="permission_rationale">Camera access is needed to capture your face for heart-rate and SpO2 estimation. No video is stored or sent anywhere.</string>
+    <string name="grant_permission">Grant camera permission</string>
+
+    <!-- HR is a real CHROM/POS+FFT pipeline, see signal/RealHeartRateEstimator.kt.
+         The old per-field "● LIVE — CHROM/POS + FFT" status chip string
+         (hr_status_real) was removed along with its TextView in
+         activity_main.xml for a cleaner UI; see that layout's own top
+         comment.
+
+         Segment 16 Task 3, found via a real on-device screenshot (not
+         guessed): the original "HR: %.0f bpm" wrapped onto two lines at the
+         redesigned card's 34sp bold size inside a half-width column ("HR: 73"
+         / "bpm" on separate lines). The "HR"/"SpO2" prefix is redundant
+         anyway now that the card has its own "HEART RATE"/"BLOOD OXYGEN"
+         caption above the value, so it was dropped rather than just shrinking
+         the font, fixing the wrap and the redundancy at once. -->
+    <string name="hr_format">%.0f bpm</string>
+    <string name="hr_placeholder_default">-- bpm</string>
+
+    <!-- SpO2 is a real computation (signal/LiveSpo2Estimator.kt: ratio-of-ratios
+         + the uncentered production linear calibration from
+         matlab/docs/SpO2_Final_Calibration_Spec.md), unlike the old fake-sine
+         placeholder.
+
+         2 decimal places, not 1: on-device verification showed the real,
+         live-tracking span (96.72-96.94% observed) is narrow enough at 1dp
+         that consecutive ticks can round to the same displayed number, making
+         a genuinely live value look static during a demo. The extra digit is
+         a DISPLAY-VISIBILITY fix only: it does not claim any measurement
+         precision beyond what LiveSpo2Estimator.kt actually computes (see
+         that file's own KDoc/docs/SpO2_Live_Implementation.md for the real
+         accuracy caveats); the underlying formula/clamp are unchanged.
+
+         The old per-field "Estimate — validated against a narrow reference
+         range (87-99%)" subtitle string (spo2_subtitle) was removed along
+         with its TextView in activity_main.xml for a cleaner UI; same
+         caveats still documented in LiveSpo2Estimator.kt's KDoc and
+         docs/SpO2_Live_Implementation.md, just not shown on-screen anymore. -->
+    <!-- Segment 16 Task 3: same prefix-drop fix as hr_format above, same
+         reason (redundant with the card's own "BLOOD OXYGEN" caption, and
+         contributed to the two-line wrap seen on a real device). -->
+    <string name="spo2_format">%.2f%%</string>
+    <string name="spo2_placeholder_default">-- %</string>
+
+    <!-- Segment 16 Task 3: status-pill labels driving the redesigned
+         vitals card, one label per signal.EstimatorStatus value plus a
+         UI-only NO_FACE case (see MainActivity's own status-resolution
+         logic). Deliberately short: these sit inside a small pill next to a
+         large number, not a paragraph. -->
+    <string name="hr_label">HEART RATE</string>
+    <string name="spo2_label">BLOOD OXYGEN</string>
+    <string name="status_ok_hr">Live — CHROM/POS + FFT</string>
+    <string name="status_ok_spo2">Estimate — narrow reference range (87–99%)</string>
+    <string name="status_warming_up">Warming up…</string>
+    <string name="status_low_signal">Low signal quality</string>
+    <string name="status_no_face">No face detected</string>
+    <string name="no_face_banner_title">No face detected</string>
+    <string name="no_face_banner_subtitle">Center your face in frame, hold still, and make sure your forehead is well lit.</string>
+    <string name="chart_label">LIVE SIGNAL</string>
+
+    <!-- Segment 19: Branch 2 (waveform morphology / dicrotic notch) card.
+         methodLabel is built in MainActivity (maps
+         MorphologyWaveformEstimator.Estimate.harmonicMethodUsed's
+         "adaptiveHarmonic"/"gaussian015" to a readable name), confidence is
+         the RAW (unclipped) notch confidence: see NotchDetectIEM.kt's own
+         KDoc for why unclipped is the one worth showing, not the [0,1]
+         clipped value alone. -->
+    <string name="morphology_label">WAVEFORM MORPHOLOGY (BRANCH 2)</string>
+    <string name="morphology_status_format">%1$s · conf %2$.2f</string>
+    <string name="morphology_method_abpf">ABPF comb</string>
+    <string name="morphology_method_gaussian">Gaussian (α=0.15)</string>
+    <string name="morphology_no_notch">No notch detected this window</string>
+</resources>

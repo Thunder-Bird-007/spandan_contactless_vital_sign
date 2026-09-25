@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Segment 16 Task 3: small, deliberately limited palette for the vitals
+  UI, extracted from colors that already existed inline in OverlayView.kt/
+  SignalChartView.kt (green #4CAF50 face box, yellow #FFEB3B ROI box, chart
+  green #00C853, chart background #141414) so the new card/chip UI reads as
+  ONE system with the existing camera overlay rather than a clashing second
+  palette. New additions are limited to what the status-chip states (Task 1/
+  2's EstimatorStatus, plus a NO_FACE case Task 3 adds at the UI layer only)
+  need, and text/surface colors for contrast against the black camera feed.
+-->
+<resources>
+    <!-- Surfaces -->
+    <color name="bg_root">#000000</color>
+    <color name="surface_card">#CC121212</color>          <!-- ~80% opaque near-black card over the camera feed -->
+    <color name="surface_card_border">#33FFFFFF</color>    <!-- faint 1dp hairline so the card reads as a distinct surface, not a shadow -->
+    <color name="surface_banner">#E6000000</color>          <!-- ~90% opaque, for the no-face banner (needs to be more opaque than the card since it sits directly over unpredictable live video) -->
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>          <!-- ~70% white -->
+    <color name="text_tertiary">#80FFFFFF</color>           <!-- ~50% white, for de-emphasized captions -->
+
+    <!-- Status semantics: shared meaning across HR/SpO2 status pills AND
+         the face box in OverlayView.kt (not re-themed here, left as-is;
+         these are named to match the SAME meaning by eye). -->
+    <color name="status_ok">#4CAF50</color>                 <!-- matches OverlayView's face-box green exactly -->
+    <color name="status_ok_bg">#334CAF50</color>
+    <color name="status_warming">#FFC107</color>            <!-- amber — distinct from the ROI box's #FFEB3B yellow so a warming-up chip is never confused with the ROI box color at a glance -->
+    <color name="status_warming_bg">#33FFC107</color>
+    <color name="status_low_quality">#FF7043</color>        <!-- warm orange-red — a real signal problem, one step short of the hard "no face" red -->
+    <color name="status_low_quality_bg">#33FF7043</color>
+    <color name="status_no_face">#EF5350</color>            <!-- red -->
+    <color name="status_no_face_bg">#33EF5350</color>
+</resources>

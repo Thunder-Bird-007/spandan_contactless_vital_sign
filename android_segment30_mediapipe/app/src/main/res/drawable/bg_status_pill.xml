@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Segment 16 Task 3: one shared pill shape for every status chip
+     (OK/WARMING_UP/LOW_SIGNAL_QUALITY/NO_FACE). The FILL color is applied
+     at runtime via setBackgroundTintList in MainActivity (one drawable,
+     tinted per-state) rather than four near-duplicate XML files, since the
+     four states differ only in color, never in shape. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/status_ok_bg" /> <!-- default/placeholder tint; always overridden at runtime -->
+    <corners android:radius="999dp" /> <!-- large enough to always render as a full pill at this view's height -->
+</shape>
