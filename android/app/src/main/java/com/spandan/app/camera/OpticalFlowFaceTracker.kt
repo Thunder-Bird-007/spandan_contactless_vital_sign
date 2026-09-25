@@ -39,11 +39,26 @@ import androidx.camera.core.ImageProxy
  * evidence before promotion" convention (`useConfidenceGate`,
  * `useWaveletDenoise`, etc.), because there is no on-device A/B evidence
  * for this one yet.
+ *
+ * [Segment 28] `track()` used to allocate two fresh `IntArray`s (the search
+ * window sample and the post-shift resample) on EVERY skipped frame --
+ * flagged in `Segment18_Camera_Throughput_And_Buffer_Window.md` as a likely
+ * contributor to this tracker measuring slower than the plain frozen-box
+ * baseline. [searchScratch] and [resampleScratch] are now class-level
+ * buffers reused across calls (reallocated only if the grid size actually
+ * changes, which it does not while tracking the same face box dimensions
+ * between resets). [referencePatch]'s own backing array is likewise reused
+ * in place via `System.arraycopy` rather than reassigned to the scratch
+ * buffer -- keeping the scratch buffers un-aliased from the committed
+ * reference patch means a sample that fails partway through (returns
+ * `false`) can never corrupt the last-known-good reference.
  */
 class OpticalFlowFaceTracker {
 
     private var referencePatch: IntArray? = null
     private var referenceSensorRect: Rect? = null
+    private var searchScratch: IntArray? = null
+    private var resampleScratch: IntArray? = null
 
     /** Discards any reference patch (e.g. after a NoFace frame) so the next
      *  real detection starts a clean tracking cycle. */
@@ -58,7 +73,14 @@ class OpticalFlowFaceTracker {
     @ExperimentalGetImage
     fun reset(imageProxy: ImageProxy, faceBoxSensor: Rect) {
         referenceSensorRect = Rect(faceBoxSensor)
-        referencePatch = samplePatch(imageProxy, faceBoxSensor)
+        val cols = faceBoxSensor.width() / STRIDE_PX
+        val rows = faceBoxSensor.height() / STRIDE_PX
+        if (cols < MIN_GRID_DIM || rows < MIN_GRID_DIM) {
+            referencePatch = null
+            return
+        }
+        val buf = obtainBuffer(referencePatch, cols * rows)
+        referencePatch = if (sampleGridInto(imageProxy, faceBoxSensor.left, faceBoxSensor.top, cols, rows, buf)) buf else null
     }
 
     /**
@@ -90,8 +112,11 @@ class OpticalFlowFaceTracker {
             return null // search window ran off-frame -- fall back rather than sample garbage
         }
 
-        val searchPatch = sampleGrid(imageProxy, searchLeft, searchTop, searchCols, searchRows) ?: return null
-        val offset = OpticalFlowMatcher.bestOffset(refPatch, cols, rows, searchPatch, SEARCH_RADIUS_GRID) ?: return null
+        val searchBuf = obtainBuffer(searchScratch, searchCols * searchRows)
+        searchScratch = searchBuf
+        if (!sampleGridInto(imageProxy, searchLeft, searchTop, searchCols, searchRows, searchBuf)) return null
+
+        val offset = OpticalFlowMatcher.bestOffset(refPatch, cols, rows, searchBuf, SEARCH_RADIUS_GRID) ?: return null
 
         val dxPx = offset.first * STRIDE_PX
         val dyPx = offset.second * STRIDE_PX
@@ -103,45 +128,51 @@ class OpticalFlowFaceTracker {
         // sanity check against ML Kit beyond the next real detection, which
         // always arrives within 2 frames at N=3) -- a real, stated limit,
         // not verified against ground truth on-device this session.
-        val resampled = sampleGrid(imageProxy, newRect.left, newRect.top, cols, rows)
-        if (resampled == null) return null
+        val resampleBuf = obtainBuffer(resampleScratch, cols * rows)
+        resampleScratch = resampleBuf
+        if (!sampleGridInto(imageProxy, newRect.left, newRect.top, cols, rows, resampleBuf)) return null
+
+        val newRefBuf = obtainBuffer(referencePatch, cols * rows)
+        System.arraycopy(resampleBuf, 0, newRefBuf, 0, resampleBuf.size)
+        referencePatch = newRefBuf
         referenceSensorRect = newRect
-        referencePatch = resampled
 
         return newRect
     }
 
-    @ExperimentalGetImage
-    private fun samplePatch(imageProxy: ImageProxy, rect: Rect): IntArray? {
-        val cols = rect.width() / STRIDE_PX
-        val rows = rect.height() / STRIDE_PX
-        if (cols < MIN_GRID_DIM || rows < MIN_GRID_DIM) return null
-        return sampleGrid(imageProxy, rect.left, rect.top, cols, rows)
-    }
+    /** Returns [existing] unchanged if it already has exactly [size]
+     *  elements, otherwise a fresh [IntArray] of that size -- the
+     *  reallocation path only fires when the tracked box's grid dimensions
+     *  actually change (e.g. a new [reset] at a different face size), never
+     *  on a steady-state skipped frame. */
+    private fun obtainBuffer(existing: IntArray?, size: Int): IntArray =
+        if (existing != null && existing.size == size) existing else IntArray(size)
 
     /** Samples a [cols] x [rows] luma grid at [STRIDE_PX] pixel spacing,
-     *  starting at ([left], [top]) in sensor pixel coordinates -- same Y-
-     *  plane indexing convention as [RoiPixelAverager.averageRgb] (rowStride/
-     *  pixelStride, not assumed-contiguous rows), Y-plane only since motion
-     *  tracking needs no chroma. */
+     *  starting at ([left], [top]) in sensor pixel coordinates, into the
+     *  caller-supplied [out] buffer (must be exactly `cols * rows` long) --
+     *  same Y-plane indexing convention as [RoiPixelAverager.averageRgb]
+     *  (rowStride/pixelStride, not assumed-contiguous rows), Y-plane only
+     *  since motion tracking needs no chroma. Returns false (leaving [out]
+     *  possibly partially written) if any sampled cell falls outside the
+     *  image bounds -- callers must not trust [out] on a false return. */
     @ExperimentalGetImage
-    private fun sampleGrid(imageProxy: ImageProxy, left: Int, top: Int, cols: Int, rows: Int): IntArray? {
-        val image = imageProxy.image ?: return null
+    private fun sampleGridInto(imageProxy: ImageProxy, left: Int, top: Int, cols: Int, rows: Int, out: IntArray): Boolean {
+        val image = imageProxy.image ?: return false
         val yPlane = image.planes[0]
         val yBuffer = yPlane.buffer
-        val out = IntArray(cols * rows)
         for (j in 0 until rows) {
             val y = top + j * STRIDE_PX
-            if (y < 0 || y >= imageProxy.height) return null
+            if (y < 0 || y >= imageProxy.height) return false
             for (i in 0 until cols) {
                 val x = left + i * STRIDE_PX
-                if (x < 0 || x >= imageProxy.width) return null
+                if (x < 0 || x >= imageProxy.width) return false
                 val idx = y * yPlane.rowStride + x * yPlane.pixelStride
-                if (idx < 0 || idx >= yBuffer.capacity()) return null
+                if (idx < 0 || idx >= yBuffer.capacity()) return false
                 out[j * cols + i] = yBuffer.get(idx).toInt() and 0xFF
             }
         }
-        return out
+        return true
     }
 
     companion object {

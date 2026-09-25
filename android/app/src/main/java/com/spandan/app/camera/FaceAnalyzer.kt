@@ -41,6 +41,19 @@ class FaceAnalyzer(
      *  `boxToUse` is always `staleFaceBox`, byte-for-byte the prior
      *  behavior. */
     private val useMotionTracking: Boolean = false,
+    /** [Segment 28] OFF by default, same convention as [useMotionTracking].
+     *  When true, skipped-detection frames run REAL ML Kit detection on a
+     *  small, padded crop around the last known box ([CroppedDetectionStrategy])
+     *  instead of freezing the box or estimating its motion -- a smaller
+     *  [com.google.mlkit.vision.common.InputImage] should cost less than the
+     *  full-frame detection un-skipped frames already pay. Takes priority
+     *  over [useMotionTracking] on a skipped frame when both are true (not a
+     *  measured combination -- just an arbitrary precedence so the two don't
+     *  race). See [CroppedDetectionStrategy]'s own "HONEST STATUS" note: not
+     *  exercised on a physical device this session. */
+    private val useCroppedDetection: Boolean = false,
+    private val croppedDetectionPaddingFraction: Float = 0.5f,
+    private val croppedDetectionDownscaleFactor: Int = 1,
     private val onResult: (FaceAnalysisResult) -> Unit
 ) : ImageAnalysis.Analyzer {
 
@@ -69,6 +82,14 @@ class FaceAnalyzer(
     // directly from the doc's own sketch).
     private var frameCounter = 0
     private var lastFaceBoxRotated: Rect? = null
+
+    // [Segment 28] useCroppedDetection path only -- consecutive skipped
+    // frames where the cropped-region detection found no face. Once this
+    // hits maxConsecutiveCroppedMisses, the NEXT skipped frame forces a
+    // full-frame detection instead of another crop attempt, so a subject
+    // who moved out of the cropped region (or left and re-entered frame)
+    // gets reacquired rather than staying stuck missing indefinitely.
+    private var consecutiveCroppedMisses = 0
 
     @ExperimentalGetImage
     override fun analyze(imageProxy: ImageProxy) {
@@ -101,9 +122,20 @@ class FaceAnalyzer(
 
         frameCounter++
         val staleFaceBox = lastFaceBoxRotated
-        val shouldSkipDetection = staleFaceBox != null && frameCounter % DETECT_EVERY_N_FRAMES != 0
+
+        // [Segment 28] Once the cropped-detection path has missed too many
+        // times in a row, force a full-frame detection this frame instead of
+        // trying the crop again -- the subject may have moved out of the
+        // cropped region entirely (or left and re-entered frame), and only a
+        // full-frame detection can reacquire them.
+        val forceFullFrameForReacquire = useCroppedDetection && consecutiveCroppedMisses >= MAX_CONSECUTIVE_CROPPED_MISSES
+        val shouldSkipDetection = staleFaceBox != null && frameCounter % DETECT_EVERY_N_FRAMES != 0 && !forceFullFrameForReacquire
 
         if (shouldSkipDetection) {
+            if (useCroppedDetection) {
+                trackViaCroppedDetection(imageProxy, staleFaceBox!!, rotationDegrees, rotatedImageWidth, rotatedImageHeight)
+                return
+            }
             // Default (useMotionTracking=false): reuse the last known face
             // box entirely -- no detector.process() call this frame, the
             // ~98.5%-of-cost operation Task G measured. When useMotionTracking
@@ -115,6 +147,10 @@ class FaceAnalyzer(
             emitFaceDetected(boxToUse, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
             imageProxy.close()
             return
+        }
+
+        if (useCroppedDetection) {
+            consecutiveCroppedMisses = 0 // about to run a full-frame detection either way
         }
 
         val inputImage = InputImage.fromMediaImage(mediaImage, rotationDegrees)
@@ -167,6 +203,97 @@ class FaceAnalyzer(
         )
     }
 
+    /** [useCroppedDetection] path only -- runs REAL ML Kit detection on a
+     *  small padded crop around [staleFaceBoxRotated] instead of freezing
+     *  the box or estimating its motion. Replaces the caller's own
+     *  synchronous skip-branch return, so it closes [imageProxy] itself on
+     *  every path (sync fallback or either async listener). */
+    @ExperimentalGetImage
+    private fun trackViaCroppedDetection(
+        imageProxy: ImageProxy,
+        staleFaceBoxRotated: Rect,
+        rotationDegrees: Int,
+        rotatedImageWidth: Int,
+        rotatedImageHeight: Int
+    ) {
+        val staleSensorRect = CoordinateMapper.rotatedRectToSensorRect(
+            staleFaceBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height
+        )
+        val cropResult = CroppedDetectionStrategy.buildCroppedInputImage(
+            imageProxy, staleSensorRect, rotationDegrees, croppedDetectionPaddingFraction, croppedDetectionDownscaleFactor
+        )
+        if (cropResult == null) {
+            // Crop too small or no image planes -- fall back to the frozen
+            // box, same as the default (no-tracking) skip path.
+            lastFaceBoxRotated = staleFaceBoxRotated
+            emitFaceDetected(staleFaceBoxRotated, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
+            imageProxy.close()
+            return
+        }
+
+        detector.process(cropResult.inputImage)
+            .addOnSuccessListener { faces ->
+                val face = faces.maxByOrNull { it.boundingBox.width().toLong() * it.boundingBox.height() }
+
+                if (face == null) {
+                    consecutiveCroppedMisses++
+                    lastFaceBoxRotated = staleFaceBoxRotated
+                    emitFaceDetected(staleFaceBoxRotated, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
+                    imageProxy.close()
+                    return@addOnSuccessListener
+                }
+                consecutiveCroppedMisses = 0
+
+                // face.boundingBox is in the cropped buffer's own ROTATED
+                // space. Undo that rotation using the SMALL buffer's own raw
+                // dimensions (cropResult.rawWidth/rawHeight, NOT
+                // imageProxy.width/height) to land in the small buffer's own
+                // sensor space, scale back up by the downscale factor to the
+                // full-res crop's local sensor coordinates, offset by the
+                // crop's own sensor-space origin to land in the FULL frame's
+                // sensor space, then convert to the full frame's rotated
+                // space for the rest of the pipeline (RoiCalculator, the
+                // overlay, etc. all expect that space).
+                val faceBoxCroppedSensor = CoordinateMapper.rotatedRectToSensorRect(
+                    face.boundingBox, rotationDegrees, cropResult.rawWidth, cropResult.rawHeight
+                )
+                val faceBoxCropLocalSensor = scaleRect(faceBoxCroppedSensor, cropResult.downscaleFactor)
+                val faceBoxFullSensor = CroppedDetectionStrategy.remapCropRectToSensorRect(
+                    faceBoxCropLocalSensor, cropResult.cropRectSensor
+                )
+                val faceBoxFullRotated = CoordinateMapper.sensorRectToRotatedRect(
+                    faceBoxFullSensor, rotationDegrees, imageProxy.width, imageProxy.height
+                )
+
+                lastFaceBoxRotated = faceBoxFullRotated
+                emitFaceDetected(faceBoxFullRotated, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
+                imageProxy.close()
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Cropped face detection failed for this frame", e)
+                consecutiveCroppedMisses++
+                lastFaceBoxRotated = staleFaceBoxRotated
+                emitFaceDetected(staleFaceBoxRotated, rotationDegrees, rotatedImageWidth, rotatedImageHeight, imageProxy)
+                imageProxy.close()
+            }
+    }
+
+    /** Scales every edge of [rect] by [factor] -- used to undo
+     *  [CroppedDetectionStrategy.buildCroppedInputImage]'s downscaling
+     *  before offsetting back into full-sensor space. Field arithmetic, not
+     *  a 4-arg `Rect(...)` construction -- see [CroppedDetectionStrategy]'s
+     *  own note on why that constructor is unsafe under this project's unit
+     *  test harness (irrelevant to this specific call site, which only ever
+     *  runs on a real device, but kept consistent regardless). */
+    private fun scaleRect(rect: Rect, factor: Int): Rect {
+        val r = Rect()
+        r.left = rect.left * factor
+        r.top = rect.top * factor
+        r.right = rect.right * factor
+        r.bottom = rect.bottom * factor
+        return r
+    }
+
     /** Shared ROI/coordinate-mapping/averaging tail for both a fresh detection
      *  and a reused (skipped-detection) face box -- identical math either
      *  way, just a different source for [faceBoxRotated]. */
@@ -204,5 +331,14 @@ class FaceAnalyzer(
          *  proposal range (N=2 or 3) -- see this class's own comment above
          *  for the staleness-bound reasoning. */
         private const val DETECT_EVERY_N_FRAMES = 3
+
+        /** [useCroppedDetection] path only -- consecutive misses tolerated
+         *  before forcing a full-frame reacquisition detection. Arbitrary,
+         *  unmeasured choice (no device this session): small enough that a
+         *  subject who has actually left the cropped region gets reacquired
+         *  within roughly one detection cycle at DETECT_EVERY_N_FRAMES=3,
+         *  large enough to tolerate one or two spurious misses without
+         *  discarding an otherwise-good crop. */
+        private const val MAX_CONSECUTIVE_CROPPED_MISSES = 3
     }
 }

@@ -71,6 +71,17 @@ import java.util.concurrent.atomic.AtomicLong
  */
 class ProfilingFaceAnalyzer(
     private val useMotionTracking: Boolean = false,
+    /** [Segment 28] Mirrors FaceAnalyzer.kt's own useCroppedDetection flag --
+     *  see that class's KDoc. When true, [cropStats]/`cropMs` times the
+     *  combined cost of building the cropped InputImage
+     *  ([CroppedDetectionStrategy.buildCroppedInputImage], NV21 extraction
+     *  included) AND running detector.process() on it, on skipped-detection
+     *  frames -- the one number the Segment 28 measurement protocol actually
+     *  needs to know whether cropped detection is cheaper than the full-
+     *  frame detectMs this file already measures on un-skipped frames. */
+    private val useCroppedDetection: Boolean = false,
+    private val croppedDetectionPaddingFraction: Float = 0.5f,
+    private val croppedDetectionDownscaleFactor: Int = 1,
     private val onResult: (FaceAnalysisResult) -> Unit
 ) : ImageAnalysis.Analyzer {
 
@@ -88,6 +99,7 @@ class ProfilingFaceAnalyzer(
     // class KDoc "[2026-09-13] UPDATED" note above.
     private var frameCounter = 0
     private var lastFaceBoxRotated: Rect? = null
+    private var consecutiveCroppedMisses = 0 // mirrors FaceAnalyzer.kt's own field
 
     // Running aggregates per phase -- crude (no percentiles), intended only
     // as a live sanity check while a capture is running. The authoritative
@@ -112,6 +124,8 @@ class ProfilingFaceAnalyzer(
     private val detectStats = PhaseStats()
     private val roiStats = PhaseStats()
     private val motionStats = PhaseStats()
+    private val cropStats = PhaseStats() // [Segment 28]
+    private var cropMissCount = 0L // [Segment 28] -- a faster-but-wrong crop shouldn't look like a win
     private val otherStats = PhaseStats()
     private val runStartNanos = SystemClock.elapsedRealtimeNanos()
 
@@ -146,9 +160,14 @@ class ProfilingFaceAnalyzer(
 
         frameCounter++
         val staleFaceBox = lastFaceBoxRotated
-        val shouldSkipDetection = staleFaceBox != null && frameCounter % DETECT_EVERY_N_FRAMES != 0
+        val forceFullFrameForReacquire = useCroppedDetection && consecutiveCroppedMisses >= MAX_CONSECUTIVE_CROPPED_MISSES
+        val shouldSkipDetection = staleFaceBox != null && frameCounter % DETECT_EVERY_N_FRAMES != 0 && !forceFullFrameForReacquire
 
         if (shouldSkipDetection) {
+            if (useCroppedDetection) {
+                analyzeViaCroppedDetection(imageProxy, staleFaceBox!!, rotationDegrees, rotatedImageWidth, rotatedImageHeight, callbackStartNanos)
+                return
+            }
             // Reuse the last known face box (default), or re-estimate it via
             // OpticalFlowFaceTracker (useMotionTracking=true) -- same two
             // paths as FaceAnalyzer.kt's own skip branch. detectMs=0.0 logged
@@ -189,8 +208,12 @@ class ProfilingFaceAnalyzer(
             imageProxy.close()
 
             val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
-            logFrame(frameIndex.incrementAndGet(), detectMs = 0.0, roiMs = roiMs, motionMs = motionMs, totalMs = totalMs, faceFound = true)
+            logFrame(frameIndex.incrementAndGet(), detectMs = 0.0, roiMs = roiMs, motionMs = motionMs, cropMs = 0.0, totalMs = totalMs, faceFound = true)
             return
+        }
+
+        if (useCroppedDetection) {
+            consecutiveCroppedMisses = 0 // about to run a full-frame detection either way
         }
 
         val detectStartNanos = SystemClock.elapsedRealtimeNanos()
@@ -206,7 +229,7 @@ class ProfilingFaceAnalyzer(
                     lastFaceBoxRotated = null
                     motionTracker?.clear()
                     val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
-                    logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, motionMs = 0.0, totalMs = totalMs, faceFound = false)
+                    logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, motionMs = 0.0, cropMs = 0.0, totalMs = totalMs, faceFound = false)
                     onResult(FaceAnalysisResult.NoFace)
                     imageProxy.close()
                     return@addOnSuccessListener
@@ -244,7 +267,7 @@ class ProfilingFaceAnalyzer(
                 imageProxy.close()
 
                 val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
-                logFrame(frameIndex.incrementAndGet(), detectMs, roiMs, motionMs = 0.0, totalMs, faceFound = true)
+                logFrame(frameIndex.incrementAndGet(), detectMs, roiMs, motionMs = 0.0, cropMs = 0.0, totalMs = totalMs, faceFound = true)
             }
             .addOnFailureListener { e ->
                 val detectEndNanos = SystemClock.elapsedRealtimeNanos()
@@ -253,24 +276,115 @@ class ProfilingFaceAnalyzer(
                 lastFaceBoxRotated = null
                 motionTracker?.clear()
                 val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
-                logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, motionMs = 0.0, totalMs = totalMs, faceFound = false)
+                logFrame(frameIndex.incrementAndGet(), detectMs, roiMs = 0.0, motionMs = 0.0, cropMs = 0.0, totalMs = totalMs, faceFound = false)
                 onResult(FaceAnalysisResult.NoFace)
                 imageProxy.close()
             }
     }
 
-    private fun logFrame(idx: Long, detectMs: Double, roiMs: Double, motionMs: Double, totalMs: Double, faceFound: Boolean) {
-        val otherMs = (totalMs - detectMs - roiMs - motionMs).coerceAtLeast(0.0)
+    /** [Segment 28] [useCroppedDetection] path -- times the combined cost of
+     *  building the cropped InputImage (including NV21 extraction) AND
+     *  running detector.process() on it, together as `cropMs`, since that
+     *  combined cost vs. the full-frame `detectMs` is the number the
+     *  Segment 28 measurement protocol actually needs. Mirrors
+     *  FaceAnalyzer.kt's own trackViaCroppedDetection -- see that method for
+     *  the coordinate-mapping reasoning, not repeated here. */
+    @ExperimentalGetImage
+    private fun analyzeViaCroppedDetection(
+        imageProxy: ImageProxy,
+        staleFaceBoxRotated: Rect,
+        rotationDegrees: Int,
+        rotatedImageWidth: Int,
+        rotatedImageHeight: Int,
+        callbackStartNanos: Long
+    ) {
+        val cropStartNanos = SystemClock.elapsedRealtimeNanos()
+        val staleSensorRect = CoordinateMapper.rotatedRectToSensorRect(
+            staleFaceBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height
+        )
+        val cropResult = CroppedDetectionStrategy.buildCroppedInputImage(
+            imageProxy, staleSensorRect, rotationDegrees, croppedDetectionPaddingFraction, croppedDetectionDownscaleFactor
+        )
+        if (cropResult == null) {
+            val cropMs = (SystemClock.elapsedRealtimeNanos() - cropStartNanos) / 1_000_000.0
+            lastFaceBoxRotated = staleFaceBoxRotated
+            val roiBoxRotated = RoiCalculator.foreheadRoiFrom(staleFaceBoxRotated)
+            val roiBoxSensor = CoordinateMapper.rotatedRectToSensorRect(roiBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height)
+            val rgbSample = RoiPixelAverager.averageRgb(imageProxy, roiBoxSensor)
+            onResult(FaceAnalysisResult.FaceDetected(staleFaceBoxRotated, roiBoxRotated, rotatedImageWidth, rotatedImageHeight, rgbSample))
+            imageProxy.close()
+            val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
+            logFrame(frameIndex.incrementAndGet(), detectMs = 0.0, roiMs = 0.0, motionMs = 0.0, cropMs = cropMs, totalMs = totalMs, faceFound = true)
+            return
+        }
+
+        detector.process(cropResult.inputImage)
+            .addOnSuccessListener { faces ->
+                val cropMs = (SystemClock.elapsedRealtimeNanos() - cropStartNanos) / 1_000_000.0
+                val face = faces.maxByOrNull { it.boundingBox.width().toLong() * it.boundingBox.height() }
+
+                val roiStartNanos = SystemClock.elapsedRealtimeNanos()
+                val boxToUse: Rect
+                if (face == null) {
+                    consecutiveCroppedMisses++
+                    cropMissCount++
+                    boxToUse = staleFaceBoxRotated
+                } else {
+                    consecutiveCroppedMisses = 0
+                    val faceBoxCroppedSensor = CoordinateMapper.rotatedRectToSensorRect(
+                        face.boundingBox, rotationDegrees, cropResult.rawWidth, cropResult.rawHeight
+                    )
+                    val faceBoxCropLocalSensor = Rect().also {
+                        it.left = faceBoxCroppedSensor.left * cropResult.downscaleFactor
+                        it.top = faceBoxCroppedSensor.top * cropResult.downscaleFactor
+                        it.right = faceBoxCroppedSensor.right * cropResult.downscaleFactor
+                        it.bottom = faceBoxCroppedSensor.bottom * cropResult.downscaleFactor
+                    }
+                    val faceBoxFullSensor = CroppedDetectionStrategy.remapCropRectToSensorRect(faceBoxCropLocalSensor, cropResult.cropRectSensor)
+                    boxToUse = CoordinateMapper.sensorRectToRotatedRect(faceBoxFullSensor, rotationDegrees, imageProxy.width, imageProxy.height)
+                }
+                lastFaceBoxRotated = boxToUse
+
+                val roiBoxRotated = RoiCalculator.foreheadRoiFrom(boxToUse)
+                val roiBoxSensor = CoordinateMapper.rotatedRectToSensorRect(roiBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height)
+                val rgbSample = RoiPixelAverager.averageRgb(imageProxy, roiBoxSensor)
+                val roiMs = (SystemClock.elapsedRealtimeNanos() - roiStartNanos) / 1_000_000.0
+
+                onResult(FaceAnalysisResult.FaceDetected(boxToUse, roiBoxRotated, rotatedImageWidth, rotatedImageHeight, rgbSample))
+                imageProxy.close()
+
+                val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
+                logFrame(frameIndex.incrementAndGet(), detectMs = 0.0, roiMs = roiMs, motionMs = 0.0, cropMs = cropMs, totalMs = totalMs, faceFound = true)
+            }
+            .addOnFailureListener { e ->
+                val cropMs = (SystemClock.elapsedRealtimeNanos() - cropStartNanos) / 1_000_000.0
+                Log.w(TAG, "Cropped face detection failed for this frame", e)
+                consecutiveCroppedMisses++
+                cropMissCount++
+                lastFaceBoxRotated = staleFaceBoxRotated
+                val roiBoxRotated = RoiCalculator.foreheadRoiFrom(staleFaceBoxRotated)
+                val roiBoxSensor = CoordinateMapper.rotatedRectToSensorRect(roiBoxRotated, rotationDegrees, imageProxy.width, imageProxy.height)
+                val rgbSample = RoiPixelAverager.averageRgb(imageProxy, roiBoxSensor)
+                onResult(FaceAnalysisResult.FaceDetected(staleFaceBoxRotated, roiBoxRotated, rotatedImageWidth, rotatedImageHeight, rgbSample))
+                imageProxy.close()
+                val totalMs = (SystemClock.elapsedRealtimeNanos() - callbackStartNanos) / 1_000_000.0
+                logFrame(frameIndex.incrementAndGet(), detectMs = 0.0, roiMs = 0.0, motionMs = 0.0, cropMs = cropMs, totalMs = totalMs, faceFound = true)
+            }
+    }
+
+    private fun logFrame(idx: Long, detectMs: Double, roiMs: Double, motionMs: Double, cropMs: Double, totalMs: Double, faceFound: Boolean) {
+        val otherMs = (totalMs - detectMs - roiMs - motionMs - cropMs).coerceAtLeast(0.0)
         detectStats.record(detectMs)
         if (faceFound) roiStats.record(roiMs)
         if (useMotionTracking) motionStats.record(motionMs)
+        if (useCroppedDetection && cropMs > 0.0) cropStats.record(cropMs)
         otherStats.record(otherMs)
 
         val elapsedSinceStartS = (SystemClock.elapsedRealtimeNanos() - runStartNanos) / 1_000_000_000.0
         Log.d(
             TAG,
-            "SPANDAN_PROFILE idx=$idx t=%.2fs face=%b detectMs=%.2f roiMs=%.2f motionMs=%.2f otherMs=%.2f totalMs=%.2f"
-                .format(elapsedSinceStartS, faceFound, detectMs, roiMs, motionMs, otherMs, totalMs)
+            "SPANDAN_PROFILE idx=$idx t=%.2fs face=%b detectMs=%.2f roiMs=%.2f motionMs=%.2f cropMs=%.2f otherMs=%.2f totalMs=%.2f"
+                .format(elapsedSinceStartS, faceFound, detectMs, roiMs, motionMs, cropMs, otherMs, totalMs)
         )
     }
 
@@ -288,6 +402,7 @@ class ProfilingFaceAnalyzer(
                 "detect(mean=%.2f,min=%.2f,max=%.2f)ms ".format(detectStats.meanMs(), detectStats.minMs, detectStats.maxMs) +
                 "roi(mean=%.2f,min=%.2f,max=%.2f)ms ".format(roiStats.meanMs(), roiStats.minMs, roiStats.maxMs) +
                 (if (useMotionTracking) "motion(mean=%.2f,min=%.2f,max=%.2f)ms ".format(motionStats.meanMs(), motionStats.minMs, motionStats.maxMs) else "") +
+                (if (useCroppedDetection) "crop(mean=%.2f,min=%.2f,max=%.2f)ms missRate=%d/%d ".format(cropStats.meanMs(), cropStats.minMs, cropStats.maxMs, cropMissCount, cropStats.count) else "") +
                 "other(mean=%.2f,min=%.2f,max=%.2f)ms".format(otherStats.meanMs(), otherStats.minMs, otherStats.maxMs)
         )
     }
@@ -299,5 +414,8 @@ class ProfilingFaceAnalyzer(
          *  this is a profiling mirror of that production constant, not an
          *  independent choice. */
         private const val DETECT_EVERY_N_FRAMES = 3
+
+        /** Must match FaceAnalyzer.kt's own MAX_CONSECUTIVE_CROPPED_MISSES. */
+        private const val MAX_CONSECUTIVE_CROPPED_MISSES = 3
     }
 }
